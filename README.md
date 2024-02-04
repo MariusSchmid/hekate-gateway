@@ -4,13 +4,28 @@ Outdoor Lora Gateway with Pico Pi
 # submodules
 git submodule add "https://github.com/lorabasics/basicstation.git" external/basicstation
 
-# how to build lora simulation
-in wsl:
+# lora simulation
+## build
 ~~~
 cd external/basicstation/examples/simulation
 pip install -r requirements.txt
 make station
 ~~~
+
+
+
+
+## basicstation
+
+What is part of platform layer (sys)?
+
+src-linux/sys_linux #main
+src/sys.c #socket options
+src/lgwsim.c #socket write
+
+Radio Layer (RAL)
+
+
 
 # Troubleshooting
 
@@ -25,4 +40,14 @@ sudo apt install dos2unix
 dos2unix external/basicstation/examples/cups/prep.sh
 dos2unix external/basicstation/deps/lgw/prep.sh
 dos2unix external/basicstation/deps/mbedtls/prep.sh
+~~~
+
+
+
+# MicroPython
+sudo apt-get install build-essential libffi-dev git pkg-config
+~~~
+cd ports/unix
+make submodules
+make
 ~~~
