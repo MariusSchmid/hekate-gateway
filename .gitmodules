@@ -1,0 +1,3 @@
+[submodule "external/basicstation"]
+	path = external/basicstation
+	url = https://github.com/lorabasics/basicstation.git
