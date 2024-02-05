@@ -4,6 +4,16 @@ Outdoor Lora Gateway with Pico Pi
 # submodules
 git submodule add "https://github.com/lorabasics/basicstation.git" external/basicstation
 
+# custom gateway
+
+## build
+~~~
+cd custom-gateway
+cmake -B build
+cmake --build build
+~~~
+
+
 # lora simulation
 ## build
 ~~~
@@ -22,6 +32,11 @@ What is part of platform layer (sys)?
 src-linux/sys_linux #main
 src/sys.c #socket options
 src/lgwsim.c #socket write
+
+sys_log.c #thread for logging
+
+build-linux-testsim #header file is generated
+
 
 Radio Layer (RAL)
 
