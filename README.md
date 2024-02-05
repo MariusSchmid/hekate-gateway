@@ -4,6 +4,19 @@ Outdoor Lora Gateway with Pico Pi
 # submodules
 git submodule add "https://github.com/lorabasics/basicstation.git" external/basicstation
 
+
+
+# prerequisites
+git submodule init 
+git submodule update
+
+~~~
+cd external/basicstation/examples/simulation
+pip install -r requirements.txt
+make station
+~~~
+
+
 # custom gateway
 
 ## build
@@ -12,16 +25,6 @@ cd custom-gateway
 cmake -B build
 cmake --build build
 ~~~
-
-
-# lora simulation
-## build
-~~~
-cd external/basicstation/examples/simulation
-pip install -r requirements.txt
-make station
-~~~
-
 
 
 

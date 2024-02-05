@@ -36,6 +36,7 @@ target_include_directories(basicstatic PUBLIC
     ${_BASIC_PATH}/src-linux
 )
 
+cmake_policy(SET CMP0077 NEW)
 set(ENABLE_PROGRAMS OFF)
 set(ENABLE_TESTING OFF)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/basicstation/deps/mbedtls/platform-linux mbedtls)
