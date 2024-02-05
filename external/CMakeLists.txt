@@ -38,6 +38,9 @@ target_include_directories(basicstatic PUBLIC
 )
 
 
+
+set(ENABLE_PROGRAMS OFF)
+set(ENABLE_TESTING OFF)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/basicstation/deps/mbedtls/platform-linux mbedtls)
 
 target_compile_definitions(basicstatic PUBLIC
