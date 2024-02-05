@@ -32,12 +32,9 @@ target_sources(basicstatic PRIVATE
 
 target_include_directories(basicstatic PUBLIC 
     ${_BASIC_PATH}/src
-    #${_BASIC_PATH}/build-linux-testsim/include
     ${_BASIC_PATH}/../../custom-gateway
     ${_BASIC_PATH}/src-linux
 )
-
-
 
 set(ENABLE_PROGRAMS OFF)
 set(ENABLE_TESTING OFF)
@@ -54,6 +51,4 @@ target_compile_definitions(basicstatic PUBLIC
     CFG_lgwsim
 )
 
-
 target_link_libraries(basicstatic PUBLIC mbedtls m)
-# target_link_libraries(basicstatic PUBLIC mbedtls)
