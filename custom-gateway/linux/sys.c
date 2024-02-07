@@ -632,7 +632,7 @@ dbuf_t sys_sigKey (int key_id) {
 }
 
 void sys_keepAlive (int fd) {
-#if IFTODO
+
     str_t tag = "SO_KEEPALIVE";
     int v = TCP_KEEPALIVE_EN;
     if( setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,  &v, sizeof(v)) == -1 ) goto err;
@@ -649,5 +649,5 @@ void sys_keepAlive (int fd) {
     return;
  err:
     LOG(MOD_AIO|ERROR, "Failed to set %s=%d: %s", tag, v, strerror(errno));
-#endif
+
 }

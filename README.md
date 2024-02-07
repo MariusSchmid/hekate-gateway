@@ -19,6 +19,12 @@ make station
 
 # custom gateway
 
+## to use vs code for debugging
+* open wsl terminal
+~~~
+code .
+~~~
+
 ## build
 ~~~
 cd custom-gateway
