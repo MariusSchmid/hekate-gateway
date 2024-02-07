@@ -1,3 +1,6 @@
 /custom-gateway/build
 /build/
 /external/basicstation/build-linux-testsim/
+
+/ttn-config/*bak.*
+/ttn-config/tc.*
