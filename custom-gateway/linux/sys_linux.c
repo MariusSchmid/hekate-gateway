@@ -317,7 +317,7 @@ int sys_findPids (str_t device, u4_t* pids, int n_pids) {
 
 str_t sys_radioDevice (str_t device, u1_t* comtype) {
     str_t f = device==NULL ? radioDevice : device;
-#if IFTODO
+
     if( f == NULL )
         f = RADIODEV;
     // check for comtype prefix
@@ -337,7 +337,7 @@ str_t sys_radioDevice (str_t device, u1_t* comtype) {
 	f = colon + 1;
     }
     // Caller must free result
-#endif
+
     return sys_makeFilepath(f, 0);
 }
 

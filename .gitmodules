@@ -1,3 +1,6 @@
 [submodule "external/basicstation"]
 	path = external/basicstation
 	url = https://github.com/lorabasics/basicstation.git
+[submodule "external/micropython"]
+	path = external/micropython
+	url = https://github.com/micropython/micropython.git

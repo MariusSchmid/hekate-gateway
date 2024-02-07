@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "selftests.h": "c",
+        "version.h": "c",
+        "fs.h": "c",
+        "s2conf.h": "c",
+        "rt.h": "c",
+        "sys_linux.h": "c",
+        "sys.h": "c"
+    }
+}

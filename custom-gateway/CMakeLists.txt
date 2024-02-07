@@ -1,19 +1,19 @@
-cmake_minimum_required(VERSION 3.15)
 
-project(CustomGateway)
+
+set(_PATH ${CMAKE_CURRENT_SOURCE_DIR}/linux)
 
 add_executable(custom-gateway 
-    sys.c
-    sys_linux.c 
-    sys_log.c
-    leds.c
-    gps.c
-    cmdfifo.c
-    commands.c
-    ral_master.c
-    rmtsh.c
-    web_linux.c
-    station_main.c
+    ${_PATH}/sys.c
+    ${_PATH}/sys_linux.c 
+    ${_PATH}/sys_log.c
+    ${_PATH}/leds.c
+    ${_PATH}/gps.c
+    ${_PATH}/cmdfifo.c
+    ${_PATH}/commands.c
+    ${_PATH}/ral_master.c
+    ${_PATH}/rmtsh.c
+    ${_PATH}/web_linux.c
+    ${_PATH}/station_main.c
     )
 
 add_subdirectory(../external external)
