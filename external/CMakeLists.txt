@@ -45,7 +45,7 @@ target_compile_definitions(basicstatic PUBLIC
     CFG_linux
     CFG_no_leds
     CFG_version="2.0.6"
-    CFG_platform=linux
+    CFG_platform="linux"
     CFG_bdate="today"
     CFG_lgw1
     CFG_ral_lgw
