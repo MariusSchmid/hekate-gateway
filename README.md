@@ -69,9 +69,16 @@ dos2unix external/basicstation/deps/mbedtls/prep.sh
 
 
 # MicroPython
+install prerequisites
+~~~
 sudo apt-get install build-essential libffi-dev git pkg-config
 ~~~
-cd ports/unix
+~~~
+cd external/micropython/ports/unix
 make submodules
 make
+~~~
+
+~~~
+make USER_C_MODULES=../../../../mpy-modules/
 ~~~

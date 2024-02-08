@@ -1,9 +1,9 @@
 
-add_library(basicstatic STATIC "")
+add_library(basicstation STATIC "")
 
 set(_BASIC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/basicstation)
 
-target_sources(basicstatic PRIVATE
+target_sources(basicstation PRIVATE
 
     ${_BASIC_PATH}/src/aio.c
     ${_BASIC_PATH}/src/log.c
@@ -30,10 +30,11 @@ target_sources(basicstatic PRIVATE
 
 )
 
-target_include_directories(basicstatic PUBLIC 
+target_include_directories(basicstation PUBLIC 
     ${_BASIC_PATH}/src
     ${_BASIC_PATH}/../../custom-gateway
     ${_BASIC_PATH}/src-linux
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 
@@ -41,7 +42,7 @@ set(ENABLE_PROGRAMS OFF)
 set(ENABLE_TESTING OFF)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/basicstation/deps/mbedtls/platform-linux mbedtls)
 
-target_compile_definitions(basicstatic PUBLIC
+target_compile_definitions(basicstation PUBLIC
     CFG_linux
     CFG_no_leds
     CFG_version="2.0.6"
@@ -52,4 +53,4 @@ target_compile_definitions(basicstatic PUBLIC
     CFG_lgwsim
 )
 
-target_link_libraries(basicstatic PUBLIC mbedtls m)
+target_link_libraries(basicstation PUBLIC mbedtls m)

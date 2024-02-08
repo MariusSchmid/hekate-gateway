@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/custom-gateway/custom-gateway",
+            "program": "${workspaceFolder}/build/hekatelib/hekatebin",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/ttn-config",
