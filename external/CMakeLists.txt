@@ -32,12 +32,13 @@ target_sources(basicstation PRIVATE
 
 target_include_directories(basicstation PUBLIC 
     ${_BASIC_PATH}/src
-    ${_BASIC_PATH}/../../custom-gateway
+    ${_BASIC_PATH}/../../hekatelib
     ${_BASIC_PATH}/src-linux
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-
+cmake_policy(SET CMP0077 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 set(ENABLE_PROGRAMS OFF)
 set(ENABLE_TESTING OFF)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/basicstation/deps/mbedtls/platform-linux mbedtls)
