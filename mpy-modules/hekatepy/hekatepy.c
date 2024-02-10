@@ -10,14 +10,7 @@
 
 // This is the function which will be called from Python as cexample.add_ints(a, b).
 STATIC mp_obj_t init() {
-// STATIC mp_obj_t example_add_ints(mp_obj_t a_obj, mp_obj_t b_obj) {
-    // Extract the ints from the micropython input objects.
-    // int a = mp_obj_get_int(a_obj);
-    // int b = mp_obj_get_int(b_obj);
-    // printf("before init\n");
-    // init();
-    // printf("after init\n");
-    // Calculate the addition and convert to MicroPython object.
+    hekate_init();
     return mp_obj_new_bool(1);
 }
 // Define a Python reference to the function above.

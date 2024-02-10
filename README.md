@@ -69,16 +69,33 @@ dos2unix external/basicstation/deps/mbedtls/prep.sh
 
 
 # MicroPython
-install prerequisites
+
+## unix port
+prerequisites
 ~~~
 sudo apt-get install build-essential libffi-dev git pkg-config
 ~~~
+
 ~~~
-cd external/micropython/ports/unix
-make submodules
-make
+#build for unix
+build-mpy-unix.sh
+~~~
+
+
+## rp2
+prerequisites
+~~~
+sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
 ~~~
 
 ~~~
-make USER_C_MODULES=../../../../mpy-modules/
+cd external/micropython
+make -C mpy-cross
+~~~
+
+## run micropython
+~~~
+./external/micropython/ports/unix/build-standard/micropython
+import hekate
+hekate.init()
 ~~~
