@@ -3,5 +3,5 @@
 
 void hekate_init(){
 
-       //s2conf_ini();
+       s2conf_ini();
 }
