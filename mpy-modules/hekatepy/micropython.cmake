@@ -7,5 +7,5 @@ target_sources(usermod_hekatepy INTERFACE
 target_include_directories(usermod_hekatepy INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}
 )
-
+add_subdirectory(../../external external)
 target_link_libraries(usermod INTERFACE usermod_hekatepy)

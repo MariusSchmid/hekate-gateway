@@ -1,6 +1,6 @@
 // Include MicroPython API.
 #include "py/runtime.h"
-
+#include "hekate.h"
 // Used to get the time in the Timer class example.
 #include "py/mphal.h"
 
