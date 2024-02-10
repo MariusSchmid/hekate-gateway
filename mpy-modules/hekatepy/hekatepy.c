@@ -4,17 +4,24 @@
 // Used to get the time in the Timer class example.
 #include "py/mphal.h"
 
-// This is the function which will be called from Python as cexample.add_ints(a, b).
-STATIC mp_obj_t example_add_ints(mp_obj_t a_obj, mp_obj_t b_obj) {
-    // Extract the ints from the micropython input objects.
-    int a = mp_obj_get_int(a_obj);
-    int b = mp_obj_get_int(b_obj);
+// STATIC void init(){
+//     hekate_init();
+// }
 
+// This is the function which will be called from Python as cexample.add_ints(a, b).
+STATIC mp_obj_t init() {
+// STATIC mp_obj_t example_add_ints(mp_obj_t a_obj, mp_obj_t b_obj) {
+    // Extract the ints from the micropython input objects.
+    // int a = mp_obj_get_int(a_obj);
+    // int b = mp_obj_get_int(b_obj);
+    // printf("before init\n");
+    // init();
+    // printf("after init\n");
     // Calculate the addition and convert to MicroPython object.
-    return mp_obj_new_int(a + b + a +b );
+    return mp_obj_new_bool(1);
 }
 // Define a Python reference to the function above.
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(example_add_ints_obj, example_add_ints);
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(init_obj, init);
 
 // This structure represents Timer instance objects.
 typedef struct _example_Timer_obj_t {
@@ -73,18 +80,18 @@ MP_DEFINE_CONST_OBJ_TYPE(
 // and the MicroPython object reference.
 // All identifiers and strings are written as MP_QSTR_xxx and will be
 // optimized to word-sized integers by the build system (interned strings).
-STATIC const mp_rom_map_elem_t example_module_globals_table[] = {
+STATIC const mp_rom_map_elem_t hekate_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_cexample) },
-    { MP_ROM_QSTR(MP_QSTR_add_ints), MP_ROM_PTR(&example_add_ints_obj) },
+    { MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&init_obj) },
     { MP_ROM_QSTR(MP_QSTR_Timer),    MP_ROM_PTR(&example_type_Timer) },
 };
-STATIC MP_DEFINE_CONST_DICT(example_module_globals, example_module_globals_table);
+STATIC MP_DEFINE_CONST_DICT(hekate_globals, hekate_globals_table);
 
 // Define module object.
-const mp_obj_module_t example_user_cmodule = {
+const mp_obj_module_t hekate_cmodule = {
     .base = { &mp_type_module },
-    .globals = (mp_obj_dict_t *)&example_module_globals,
+    .globals = (mp_obj_dict_t *)&hekate_globals,
 };
 
 // Register the module to make it available in Python.
-MP_REGISTER_MODULE(MP_QSTR_mymodule, example_user_cmodule);
+MP_REGISTER_MODULE(MP_QSTR_hekate, hekate_cmodule);
