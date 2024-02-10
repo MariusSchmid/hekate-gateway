@@ -5,7 +5,5 @@
 
 
 
-set(PLATFORM "linux")
-add_subdirectory(../custom-gateway custom)
-include(${CMAKE_CURRENT_LIST_DIR}/mymodule/micropython.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/hekatepy/micropython.cmake)
 

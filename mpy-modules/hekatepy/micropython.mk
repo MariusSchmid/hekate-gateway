@@ -1,5 +1,14 @@
 CEXAMPLE_MOD_DIR := $(USERMOD_DIR)
 
+
+CFLAGS_USERMOD += -I$(CEXAMPLE_MOD_DIR)/../../hekatelib/include
+# CFLAGS_USERMOD += -I../../hekatelib/include
+LDFLAGS_USERMOD += -L$(CEXAMPLE_MOD_DIR)/../../build/hekatelib -lhekatelib 
+# LDFLAGS_USERMOD += -L../build/hekatelib -lhekatelib 
+
+# CXXFLAGS_USERMOD :=
+# LDFLAGS_USERMOD :=
+
 # Add all C files to SRC_USERMOD.
 SRC_USERMOD += $(CEXAMPLE_MOD_DIR)/hekatepy.c
 
