@@ -47,7 +47,8 @@
 // #include "ral.h"
 // #include "timesync.h"
 #include "sys.h"
-// #include "sys_linux.h"
+#include "sys_linux.h"
+
 // #include "fs.h"
 // #include "selftests.h"
 
@@ -107,7 +108,12 @@
 // static str_t  protoEuiSrc;
 // static str_t  prefixEuiSrc;
 // static str_t  radioInitSrc;
-
+static sys_hal_t this_sys_hal;
+int sys_init(sys_hal_t sys_hal)
+{
+    this_sys_hal = sys_hal;
+    return 0;
+}
 
 // static void handle_signal (int signum) {
 //     // Calling exit() in a signal handler is unsafe
@@ -121,8 +127,6 @@
 //     // Signal safe but less convenient
 //     //_exit(128+signum);
 // }
-
-
 
 // static int updateDirSetting (str_t path, str_t source, str_t* pdir, str_t* psrc) {
 //     int l = strlen(path);
@@ -172,14 +176,12 @@
 //     return updateDirSetting(path, source, &tempDir, &tempDirSrc);
 // }
 
-
 // static dbuf_t stripTrailingWsp (dbuf_t b) {
 //     while( b.bufsize > 0 && strchr(" \t\r\n", b.buf[b.bufsize-1]) ) {
 //         b.buf[--b.bufsize] = 0;
 //     }
 //     return b;
 // }
-
 
 // static str_t parseEui (str_t s, int n, uL_t* peui, int nonzero) {
 //     str_t p = s;
@@ -191,7 +193,6 @@
 //     *peui = eui;
 //     return NULL;
 // }
-
 
 // static void findDefaultEui () {
 //     str_t dirname = "/sys/class/net";
@@ -239,7 +240,6 @@
 //     }
 // }
 
-
 // static int setEui (str_t spec, str_t source) {
 //     str_t err;
 //     if( access(spec, R_OK) == 0 ) {
@@ -268,7 +268,6 @@
 //     LOG(MOD_SYS|ERROR, "Station proto EUI: '%s' (%s): %s", spec, source, err);
 //     return 0;
 // }
-
 
 // // Check if there is a process that has an open file handle to a specific device/file
 // int sys_findPids (str_t device, u4_t* pids, int n_pids) {
@@ -314,7 +313,6 @@
 //     return cnt;
 // }
 
-
 // str_t sys_radioDevice (str_t device, u1_t* comtype) {
 //     str_t f = device==NULL ? radioDevice : device;
 
@@ -340,7 +338,6 @@
 
 //     return sys_makeFilepath(f, 0);
 // }
-
 
 // void sys_fatal (int code) {
 //     exit(code==0 ? FATAL_GENERIC : code);
@@ -369,7 +366,6 @@
 //     rt_free(pidsfile);
 // }
 
-
 // static void killOldPid () {
 //     int pid = readPid();
 //     if( daemonPid && pid == daemonPid )
@@ -389,8 +385,6 @@
 //         }
 //     }
 // }
-
-
 
 // static void leds_off () {
 //     sys_inState(SYSIS_STATION_DEAD);
@@ -421,7 +415,6 @@
 //     srand(seed);
 // }
 
-
 // void sys_seed (unsigned char* seed, int len) {
 //     int fd;
 //     if( (fd = open("/dev/urandom", O_RDONLY)) == -1 ) {
@@ -444,8 +437,8 @@
 //     close(fd);
 // }
 
-
-void sys_usleep (sL_t us) {
+void sys_usleep(sL_t us)
+{
     // mp_hal_delay_us(us);
     // if( us <= 0 )
     //     return;
@@ -457,7 +450,6 @@ void sys_usleep (sL_t us) {
     // }
 }
 
-
 // sL_t sys_time () {
 //     struct timespec tp;
 //     int err = clock_gettime(CLOCK_MONOTONIC, &tp);
@@ -466,7 +458,6 @@ void sys_usleep (sL_t us) {
 //     return tp.tv_sec*(sL_t)1000000 + tp.tv_nsec/1000;
 // }
 
-
 // sL_t sys_utc () {
 //     struct timespec tp;
 //     int err = clock_gettime(CLOCK_REALTIME, &tp);
@@ -474,7 +465,6 @@ void sys_usleep (sL_t us) {
 //         rt_fatal("clock_gettime(2) failed: %s\n", strerror(errno));      // LCOV_EXCL_LINE
 //     return (tp.tv_sec*(sL_t)1000000 + tp.tv_nsec/1000);
 // }
-
 
 // str_t sys_version () {
 //     return readFileAsString("version", ".txt", &versionTxt);
@@ -524,7 +514,6 @@ void sys_usleep (sL_t us) {
 //     return 1;
 // }
 
-
 // void sys_runUpdate () {
 //     makeFilepath("/tmp/update", ".bin", &updfile, 0);
 //     if( access(updfile, X_OK) != 0 )
@@ -550,7 +539,6 @@ void sys_usleep (sL_t us) {
 //     }
 //     return sys_execCommand(RADIO_INIT_WAIT, argv) == 0;
 // }
-
 
 // int sys_execCommand (ustime_t max_wait, str_t* argv) {
 //     int argc = 0;
@@ -827,7 +815,6 @@ void sys_usleep (sL_t us) {
 //     return 1;
 // }
 
-
 // static struct opts {
 //     str_t logLevel;
 //     str_t logFile;
@@ -843,7 +830,6 @@ void sys_usleep (sL_t us) {
 //     u1_t  kill;
 //     u1_t  notc;
 // } *opts;
-
 
 // static struct argp_option options[] = {
 //     { "log-file", 'L', "FILE[,SIZE[,ROT]]", 0,
@@ -918,7 +904,6 @@ void sys_usleep (sL_t us) {
 //     },
 //     { 0 }
 // };
-
 
 // static int parse_opt (int key, char* arg, struct argp_state* state) {
 //     switch(key) {
@@ -1022,7 +1007,6 @@ void sys_usleep (sL_t us) {
 
 // struct argp argp = { options, parse_opt, "", NULL, NULL, NULL, NULL };
 
-
 // static void startupMaster2 (tmr_t* tmr) {
 // #if !defined(CFG_no_rmtsh)
 //     rt_addFeature("rmtsh");
@@ -1056,9 +1040,8 @@ void sys_usleep (sL_t us) {
 //     atexit(leds_off);
 //     // Wait until slaves are up
 //     //startupMaster2(tmr);
-//     rt_setTimerCb(tmr, rt_millis_ahead(200), startupMaster2); 
+//     rt_setTimerCb(tmr, rt_millis_ahead(200), startupMaster2);
 // }
-
 
 // // Fwd decl
 // static void startupDaemon (tmr_t* tmr);
@@ -1079,7 +1062,6 @@ void sys_usleep (sL_t us) {
 //     }
 // }
 
-
 // static void startupDaemon (tmr_t* tmr) {
 //     int subprocPid;
 //     // Respawn station worker process
@@ -1099,220 +1081,220 @@ void sys_usleep (sL_t us) {
 //     }
 // }
 
-
-int sys_main () {
+int sys_main()
+{
     // Because we log even before rt_ini()...
     // rt_utcOffset = sys_utc() - rt_getTime();
 
-//     signal(SIGHUP,  SIG_IGN);
-//     signal(SIGINT,  handle_signal);
-//     signal(SIGTERM, handle_signal);
+    //     signal(SIGHUP,  SIG_IGN);
+    //     signal(SIGINT,  handle_signal);
+    //     signal(SIGTERM, handle_signal);
 
-//     char cwd[MAX_FILEPATH_LEN];
-//     if( getcwd(cwd, sizeof(cwd)) != NULL )
-//         fs_chdir(cwd);
+    //     char cwd[MAX_FILEPATH_LEN];
+    //     if( getcwd(cwd, sizeof(cwd)) != NULL )
+    //         fs_chdir(cwd);
 
-//     s2conf_ini();
-//     logfile.size = LOGFILE_SIZE;
-//     logfile.rotate = LOGFILE_ROTATE;
-//     setHomeDir(".", "builtin");
-//     // setWebDir("./web", "builtin");
-//     setTempDir(access("/var/tmp", W_OK) < 0 ? "/tmp" : "/var/tmp", "builtin");
-//     prefixEuiSrc = rt_strdup("builtin");
-//     findDefaultEui();
+    //     s2conf_ini();
+    //     logfile.size = LOGFILE_SIZE;
+    //     logfile.rotate = LOGFILE_ROTATE;
+    //     setHomeDir(".", "builtin");
+    //     // setWebDir("./web", "builtin");
+    //     setTempDir(access("/var/tmp", W_OK) < 0 ? "/tmp" : "/var/tmp", "builtin");
+    //     prefixEuiSrc = rt_strdup("builtin");
+    //     findDefaultEui();
 
-//     opts = rt_malloc(struct opts);
-//     int err = argp_parse (&argp, argc, argv, 0, NULL, NULL);
-//     if( err != 0 )
-//         return err;
+    //     opts = rt_malloc(struct opts);
+    //     int err = argp_parse (&argp, argc, argv, 0, NULL, NULL);
+    //     if( err != 0 )
+    //         return err;
 
-// #if defined(CFG_ral_master_slave)
-//     int slave_rdfd = -1, slave_wrfd = -1;
-//     if( opts->slaveMode ) {
-//         str_t const* sn = SLAVE_ENVS;
-//         while( *sn ) {
-//             str_t sv = getenv(*sn);
-//             if( sv == NULL )
-//                 rt_fatal("Missing mandatory env var: %s", *sn);
-//             str_t sve = sv;
-//             sL_t v = rt_readDec(&sve);
-//             if( v < 0 )
-//                 rt_fatal("Env var %s has illegal value: %s", *sn, sv);
-//             switch(sn[0][6]) {
-//             case 'I': log_setSlaveIdx(sys_slaveIdx = v); break;
-//             case 'R': slave_rdfd = v; break;
-//             case 'W': slave_wrfd = v; break;
-//             }
-//             sn++;
-//         }
-//     }
-//     if( sys_slaveExec == NULL ) {
-//         sys_slaveExec = rt_strdup("/proc/self/exe -S");
-//     }
-// #endif // defined(CFG_ral_master_slave)
+    // #if defined(CFG_ral_master_slave)
+    //     int slave_rdfd = -1, slave_wrfd = -1;
+    //     if( opts->slaveMode ) {
+    //         str_t const* sn = SLAVE_ENVS;
+    //         while( *sn ) {
+    //             str_t sv = getenv(*sn);
+    //             if( sv == NULL )
+    //                 rt_fatal("Missing mandatory env var: %s", *sn);
+    //             str_t sve = sv;
+    //             sL_t v = rt_readDec(&sve);
+    //             if( v < 0 )
+    //                 rt_fatal("Env var %s has illegal value: %s", *sn, sv);
+    //             switch(sn[0][6]) {
+    //             case 'I': log_setSlaveIdx(sys_slaveIdx = v); break;
+    //             case 'R': slave_rdfd = v; break;
+    //             case 'W': slave_wrfd = v; break;
+    //             }
+    //             sn++;
+    //         }
+    //     }
+    //     if( sys_slaveExec == NULL ) {
+    //         sys_slaveExec = rt_strdup("/proc/self/exe -S");
+    //     }
+    // #endif // defined(CFG_ral_master_slave)
 
-//     {
-//         str_t prefix = opts->euiprefix;
-//         str_t source = "--eui-prefix";
-//         if( prefix == NULL ) {
-//             source = "STATION_EUIPREFIX";
-//             prefix = getenv(source);
-//         } else {
-//             setenv("STATION_EUIPREFIX", prefix, 1);
-//         }
-//         if( prefix ) {
-//             str_t err = parseEui(prefix, 0, & prefixEUI, 0);
-//             if( err )
-//                 rt_fatal("%s has illegal EUI value: %s", source, err);
-//             free((void*)prefixEuiSrc);
-//             prefixEuiSrc = rt_strdup(source);
-//         }
-//     }
-//     if( opts->tempDir ) {
-//         if( !setTempDir(opts->tempDir, "--temp") )
-//             return 1;
-//         setenv("STATION_TEMPDIR", opts->tempDir, 1);
-//     } else {
-//         str_t source = "STATION_TEMPDIR";
-//         str_t v = getenv(source);
-//         if( v && !setTempDir(v, source) )
-//             return 1;
-//     }
+    //     {
+    //         str_t prefix = opts->euiprefix;
+    //         str_t source = "--eui-prefix";
+    //         if( prefix == NULL ) {
+    //             source = "STATION_EUIPREFIX";
+    //             prefix = getenv(source);
+    //         } else {
+    //             setenv("STATION_EUIPREFIX", prefix, 1);
+    //         }
+    //         if( prefix ) {
+    //             str_t err = parseEui(prefix, 0, & prefixEUI, 0);
+    //             if( err )
+    //                 rt_fatal("%s has illegal EUI value: %s", source, err);
+    //             free((void*)prefixEuiSrc);
+    //             prefixEuiSrc = rt_strdup(source);
+    //         }
+    //     }
+    //     if( opts->tempDir ) {
+    //         if( !setTempDir(opts->tempDir, "--temp") )
+    //             return 1;
+    //         setenv("STATION_TEMPDIR", opts->tempDir, 1);
+    //     } else {
+    //         str_t source = "STATION_TEMPDIR";
+    //         str_t v = getenv(source);
+    //         if( v && !setTempDir(v, source) )
+    //             return 1;
+    //     }
 
-//     if( opts->homeDir ) {
-//         if( !setHomeDir(opts->homeDir, "--home") )
-//             return 1;
-//         setenv("STATION_HOME", opts->homeDir, 1);
-//     } else {
-//         str_t source = "STATION_HOME";
-//         str_t v = getenv(source);
-//         if( v && !setHomeDir(v, source) )
-//             return 1;
-//     }
+    //     if( opts->homeDir ) {
+    //         if( !setHomeDir(opts->homeDir, "--home") )
+    //             return 1;
+    //         setenv("STATION_HOME", opts->homeDir, 1);
+    //     } else {
+    //         str_t source = "STATION_HOME";
+    //         str_t v = getenv(source);
+    //         if( v && !setHomeDir(v, source) )
+    //             return 1;
+    //     }
 
-//     if( !parseStationConf() )
-//         return 1;
-//     if( opts->params ) {
-//         s2conf_printAll();
-//     }
+    //     if( !parseStationConf() )
+    //         return 1;
+    //     if( opts->params ) {
+    //         s2conf_printAll();
+    //     }
 
-//     if( opts->logFile ) {
-//         if( !setLogFile(opts->logFile, "--log-file") )
-//             return 1;
-//         setenv("STATION_LOGFILE", opts->logFile, 1);
-//     } else {
-//         str_t source = "STATION_LOGFILE";
-//         str_t v = getenv(source);
-//         if( v && !setLogFile(v, source) )
-//             return 1;
-//     }
-//     if( opts->radioInit ) {
-//         radioInitSrc = "--radio-init";
-//         free((char*)radioInit);
-//         radioInit = rt_strdup(opts->radioInit);
-//         setenv("STATION_RADIOINIT", radioInit, 1);
-//     } else {
-//         str_t s = "STATION_RADIOINIT";
-//         str_t v = getenv(s);
-//         if( v ) {
-//             radioInitSrc = s;
-//             free((char*)radioInit);
-//             radioInit = rt_strdup(v);
-//         }
-//     }
-//     if( opts->logLevel ) {
-//         if( !setLogLevel(opts->logLevel, "--log-level") )
-//             return 1;
-//         setenv("STATION_LOGLEVEL", opts->logLevel, 1);
-//     } else {
-//         str_t source = "STATION_LOGLEVEL";
-//         str_t v = getenv(source);
-//         if( v && !setLogLevel(v, source) )
-//             return 1;
-//     }
-//     {
-//         str_t source = "STATION_TLSDBG";
-//         str_t v = getenv(source);
-//         if( v && (v[0]&0xF0) == '0' )
-//             tls_dbgLevel = v[0] - '0';
-//     }
+    //     if( opts->logFile ) {
+    //         if( !setLogFile(opts->logFile, "--log-file") )
+    //             return 1;
+    //         setenv("STATION_LOGFILE", opts->logFile, 1);
+    //     } else {
+    //         str_t source = "STATION_LOGFILE";
+    //         str_t v = getenv(source);
+    //         if( v && !setLogFile(v, source) )
+    //             return 1;
+    //     }
+    //     if( opts->radioInit ) {
+    //         radioInitSrc = "--radio-init";
+    //         free((char*)radioInit);
+    //         radioInit = rt_strdup(opts->radioInit);
+    //         setenv("STATION_RADIOINIT", radioInit, 1);
+    //     } else {
+    //         str_t s = "STATION_RADIOINIT";
+    //         str_t v = getenv(s);
+    //         if( v ) {
+    //             radioInitSrc = s;
+    //             free((char*)radioInit);
+    //             radioInit = rt_strdup(v);
+    //         }
+    //     }
+    //     if( opts->logLevel ) {
+    //         if( !setLogLevel(opts->logLevel, "--log-level") )
+    //             return 1;
+    //         setenv("STATION_LOGLEVEL", opts->logLevel, 1);
+    //     } else {
+    //         str_t source = "STATION_LOGLEVEL";
+    //         str_t v = getenv(source);
+    //         if( v && !setLogLevel(v, source) )
+    //             return 1;
+    //     }
+    //     {
+    //         str_t source = "STATION_TLSDBG";
+    //         str_t v = getenv(source);
+    //         if( v && (v[0]&0xF0) == '0' )
+    //             tls_dbgLevel = v[0] - '0';
+    //     }
 
-//     if( opts->kill ) {
-//         if( opts->daemon || opts->force ) {
-//             fprintf(stderr, "Option -k is incompatible with -d/-f\n");
-//             return 1;
-//         }
-//         killOldPid();
-//         return 0;
-//     }
-//     sys_noTC = opts->notc;
+    //     if( opts->kill ) {
+    //         if( opts->daemon || opts->force ) {
+    //             fprintf(stderr, "Option -k is incompatible with -d/-f\n");
+    //             return 1;
+    //         }
+    //         killOldPid();
+    //         return 0;
+    //     }
+    //     sys_noTC = opts->notc;
 
-//     int daemon = opts->daemon;
-//     int force = opts->force;
-//     free(opts);
-//     opts = NULL;
+    //     int daemon = opts->daemon;
+    //     int force = opts->force;
+    //     free(opts);
+    //     opts = NULL;
 
-// #if defined(CFG_ral_master_slave)
-//     int isSlave = (sys_slaveIdx >= 0);
-// #else
-//     int isSlave = 0;
-// #endif
+    // #if defined(CFG_ral_master_slave)
+    //     int isSlave = (sys_slaveIdx >= 0);
+    // #else
+    //     int isSlave = 0;
+    // #endif
 
-//     if( !isSlave ) {
-//         if( !force ) {
-//             int pid = readPid();
-//             if( pid && kill(pid, 0) == 0 ) {
-//                 // Some process is still running
-//                 fprintf(stderr, "A station with pid=%d is still running (use -f to take over)\n", pid);
-//                 exit(EXIT_NOP);
-//             }
-//         } else {
-//             killOldPid();
-//         }
-//     }
+    //     if( !isSlave ) {
+    //         if( !force ) {
+    //             int pid = readPid();
+    //             if( pid && kill(pid, 0) == 0 ) {
+    //                 // Some process is still running
+    //                 fprintf(stderr, "A station with pid=%d is still running (use -f to take over)\n", pid);
+    //                 exit(EXIT_NOP);
+    //             }
+    //         } else {
+    //             killOldPid();
+    //         }
+    //     }
 
-//     setupConfigFilenames();
-//     checkRollForward();
-//     if( !checkUris() )
-//         return 1;
+    //     setupConfigFilenames();
+    //     checkRollForward();
+    //     if( !checkUris() )
+    //         return 1;
 
-//     if( daemon ) {
-//         if( logfile.path == NULL ) {
-//             setLogFile("~temp/station.log", "builtin");  // change default stderr to a file
-//             setenv("STATION_TEMPDIR", tempDir, 1);
-//         }
-//         int subprocPid;
-//         if( (subprocPid = fork()) == -1 )
-//             rt_fatal("Daemonize fork failed: %s\n", strerror(errno));
-//         if( subprocPid != 0 ) {
-//             fprintf(stderr, "Daemon pid=%d running...\n", subprocPid);
-//             daemonPid = subprocPid;
-//             writePid();
-//             exit(0); // parent exit
-//         }
-//         // child is the daemon process
-//         daemonPid = getpid();
-//         setsid();
-//     }
+    //     if( daemon ) {
+    //         if( logfile.path == NULL ) {
+    //             setLogFile("~temp/station.log", "builtin");  // change default stderr to a file
+    //             setenv("STATION_TEMPDIR", tempDir, 1);
+    //         }
+    //         int subprocPid;
+    //         if( (subprocPid = fork()) == -1 )
+    //             rt_fatal("Daemonize fork failed: %s\n", strerror(errno));
+    //         if( subprocPid != 0 ) {
+    //             fprintf(stderr, "Daemon pid=%d running...\n", subprocPid);
+    //             daemonPid = subprocPid;
+    //             writePid();
+    //             exit(0); // parent exit
+    //         }
+    //         // child is the daemon process
+    //         daemonPid = getpid();
+    //         setsid();
+    //     }
 
-//     aio_ini();
-//     sys_iniLogging(&logfile, !isSlave && !daemon);
-//     sys_ini();
-//     rt_ini();
-//     ts_iniTimesync();
+    //     aio_ini();
+    //     sys_iniLogging(&logfile, !isSlave && !daemon);
+    //     sys_ini();
+    //     rt_ini();
+    //     ts_iniTimesync();
 
-// #if defined(CFG_ral_master_slave)
-//     if( isSlave ) {
-//         sys_startupSlave(slave_rdfd, slave_wrfd);
-//         // NOT REACHED
-//         assert(0);
-//     }
-// #endif // defined(CFG_ral_master_slave)
+    // #if defined(CFG_ral_master_slave)
+    //     if( isSlave ) {
+    //         sys_startupSlave(slave_rdfd, slave_wrfd);
+    //         // NOT REACHED
+    //         assert(0);
+    //     }
+    // #endif // defined(CFG_ral_master_slave)
 
-//     rt_yieldTo(&startupTmr, daemon ? startupDaemon : startupMaster);
-//     aio_loop();
-//     // NOT REACHED
-//     assert(0);
+    //     rt_yieldTo(&startupTmr, daemon ? startupDaemon : startupMaster);
+    //     aio_loop();
+    //     // NOT REACHED
+    //     assert(0);
 
     return 0;
 }

@@ -8,9 +8,21 @@
 //     hekate_init();
 // }
 
+
+
+STATIC hekate_hal_t init_hekate_hal(){
+    sys_hal_t sys_hal;
+    sys_hal.sleep_us = mp_hal_delay_us;
+
+    hekate_hal_t hekate_hal;
+    hekate_hal.sys_hal = sys_hal;
+    return hekate_hal;
+}
+
 // This is the function which will be called from Python as cexample.add_ints(a, b).
 STATIC mp_obj_t init() {
-    hekate_init();
+    hekate_hal_t hekate_hal = init_hekate_hal();
+    hekate_init(hekate_hal);
     return mp_obj_new_bool(1);
 }
 // Define a Python reference to the function above.
