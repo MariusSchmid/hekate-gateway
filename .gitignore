@@ -1,5 +1,6 @@
 /custom-gateway/build
 /build/
+/build_mpy_unix/
 /external/basicstation/build-linux-testsim/
 
 /ttn-config/*bak.*

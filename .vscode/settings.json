@@ -8,6 +8,10 @@
         "sys_linux.h": "c",
         "sys.h": "c",
         "random": "c",
-        "hekate.h": "c"
+        "hekate.h": "c",
+        "hekate_handles.h": "c",
+        "dirent.h": "c",
+        "types.h": "c",
+        "stdio.h": "c"
     }
 }

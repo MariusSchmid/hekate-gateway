@@ -231,13 +231,13 @@
 // }
 
 
-// void sys_addLog (const char *logline, int len) {
+void sys_addLog (const char *logline, int len) {
 //     if( len == 0 ) {
 //         sys_flushLog();
 //     } else {
 //         addLog(logline, len);
 //     }
-// }
+}
 
 
 // void sys_iniLogging (struct logfile* lf, int captureStdio) {

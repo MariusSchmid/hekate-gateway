@@ -27,16 +27,17 @@
 //  */
 
 // #define _GNU_SOURCE  // syncfs(fd)
-// #include <limits.h>
-// #include <stdio.h>
-// #include <fcntl.h>
-// #include <errno.h>
-// #include <time.h>
-// #include <unistd.h>
+#include <limits.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <time.h>
+#include <unistd.h>
 // #include <dirent.h>
-// #include <sys/types.h>
-// #include <sys/stat.h>
-// #include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <sys/time.h>
 
 // #include "argp2.h"
 // #include "s2conf.h"
@@ -339,9 +340,9 @@ int sys_init(sys_hal_t sys_hal)
 //     return sys_makeFilepath(f, 0);
 // }
 
-// void sys_fatal (int code) {
+void sys_fatal (int code) {
 //     exit(code==0 ? FATAL_GENERIC : code);
-// }
+}
 
 // static char* makePidFilename() {
 //     return makeFilepath("~temp/station",".pid",NULL,0);
@@ -450,21 +451,23 @@ void sys_usleep(sL_t us)
     // }
 }
 
-// sL_t sys_time () {
-//     struct timespec tp;
-//     int err = clock_gettime(CLOCK_MONOTONIC, &tp);
-//     if( err == -1 )
-//         rt_fatal("clock_gettime(2) failed: %s\n", strerror(errno));      // LCOV_EXCL_LINE
-//     return tp.tv_sec*(sL_t)1000000 + tp.tv_nsec/1000;
-// }
+sL_t sys_time () {
+    // struct timespec tp;
+    // int err = clock_gettime(CLOCK_MONOTONIC, &tp);
+    // if( err == -1 )
+    //     rt_fatal("clock_gettime(2) failed: %s\n", strerror(errno));      // LCOV_EXCL_LINE
+    // return tp.tv_sec*(sL_t)1000000 + tp.tv_nsec/1000;
+    return this_sys_hal.get_time_ms();
+}
 
-// sL_t sys_utc () {
-//     struct timespec tp;
-//     int err = clock_gettime(CLOCK_REALTIME, &tp);
-//     if( err == -1 )
-//         rt_fatal("clock_gettime(2) failed: %s\n", strerror(errno));      // LCOV_EXCL_LINE
-//     return (tp.tv_sec*(sL_t)1000000 + tp.tv_nsec/1000);
-// }
+sL_t sys_utc () {
+    // struct timespec tp;
+    // int err = clock_gettime(CLOCK_REALTIME, &tp);
+    // if( err == -1 )
+    //     rt_fatal("clock_gettime(2) failed: %s\n", strerror(errno));      // LCOV_EXCL_LINE
+    // return (tp.tv_sec*(sL_t)1000000 + tp.tv_nsec/1000);
+    return this_sys_hal.get_time_ms();
+}
 
 // str_t sys_version () {
 //     return readFileAsString("version", ".txt", &versionTxt);
@@ -1084,7 +1087,14 @@ void sys_usleep(sL_t us)
 int sys_main()
 {
     // Because we log even before rt_ini()...
-    // rt_utcOffset = sys_utc() - rt_getTime();
+
+    //###############
+    // sys_utc();
+    //  rt_getTime();
+    // sys_eui();
+    // aio_ini();
+    //###############
+    rt_utcOffset = sys_utc() - rt_getTime();
 
     //     signal(SIGHUP,  SIG_IGN);
     //     signal(SIGINT,  handle_signal);
@@ -1094,7 +1104,7 @@ int sys_main()
     //     if( getcwd(cwd, sizeof(cwd)) != NULL )
     //         fs_chdir(cwd);
 
-    //     s2conf_ini();
+        // s2conf_ini();
     //     logfile.size = LOGFILE_SIZE;
     //     logfile.rotate = LOGFILE_ROTATE;
     //     setHomeDir(".", "builtin");

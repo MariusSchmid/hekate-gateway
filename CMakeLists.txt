@@ -4,7 +4,7 @@ project(CustomGateway)
 
 
 set(PLATFORM "linux")
-# set(BUILD_EXECUTABLE ON)
+set(BUILD_EXECUTABLE ON)
 
 cmake_policy(SET CMP0077 NEW)
 add_subdirectory(hekatelib)
