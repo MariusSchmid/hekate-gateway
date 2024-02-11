@@ -35,7 +35,8 @@ target_sources(basicstation PRIVATE
 target_include_directories(basicstation PUBLIC 
     ${_BASIC_PATH}/src
     ${_BASIC_PATH}/../../hekatelib
-    ${_BASIC_PATH}/src-linux
+
+    # ${_BASIC_PATH}/src-linux
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

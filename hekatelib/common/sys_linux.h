@@ -29,8 +29,8 @@
 #ifndef _sys_linux_h_
 #define _sys_linux_h_
 
+#include "hekate_handles.h"
 #include "rt.h"
-
 #define EXIT_NOP          6
 #define FATAL_GENERIC    30
 #define FATAL_PTHREAD    31
@@ -45,6 +45,9 @@ struct logfile {
 
 extern str_t  sys_slaveExec;  // template to start slave processes
 
+
+
+int      sys_init(sys_hal_t sys_hal);
 void     sys_startLogThread ();
 void     sys_iniLogging (struct logfile* lf, int captureStdio);
 void     sys_flushLog ();
