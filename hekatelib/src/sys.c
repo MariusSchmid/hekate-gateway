@@ -37,9 +37,9 @@
 // #include <netinet/tcp.h>
 // #endif
 
-// #include "sys.h"
-// #include "uj.h"
-// #include "s2conf.h"
+#include "sys.h"
+#include "uj.h"
+#include "s2conf.h"
 // #include "fs.h"
 // #include "net.h" // uri_checkHostPortUri
 
@@ -239,7 +239,7 @@
 //     rt_free((void*)fn);
 // }
 
-// uL_t sys_eui () {
+uL_t sys_eui () {
 //     if( (protoEUI >> 48) != 0 )
 //         return protoEUI;
 //     if( (prefixEUI & 0xFFFFffffFFFF) != 0 ) {
@@ -247,7 +247,8 @@
 //         return ((protoEUI & 0xFFFFFF000000) << 16) | 0xFFFE000000 | (protoEUI & 0xFFFFFF);
 //     }
 //     return prefixEUI | protoEUI;
-// }
+    return 0;
+}
 
 // str_t sys_uri (int cred_cat, int cred_set) {
 //     str_t uri_fn = configFilename(cred_cat, cred_set, FN_URI);

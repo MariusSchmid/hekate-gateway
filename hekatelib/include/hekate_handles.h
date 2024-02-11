@@ -5,7 +5,9 @@
 #include "stdint.h"
 
 
-typedef void (*sleep_us_t)(uint64_t us);
+typedef void (*sleep_us_t)(uint32_t us);
+typedef uint64_t (*get_time_ms_t)();
+typedef int (*printf_t)(const char * restrict, ...);
 
 /**
  * @brief hardware abstraction layer for system specific functions
@@ -13,6 +15,8 @@ typedef void (*sleep_us_t)(uint64_t us);
  */
 typedef struct sys_hal {
     sleep_us_t sleep_us;
+    get_time_ms_t get_time_ms;
+    printf_t print;
 } sys_hal_t;
 
 

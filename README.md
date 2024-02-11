@@ -98,3 +98,10 @@ make -C mpy-cross
 import hekate
 hekate.init()
 ~~~
+
+
+
+# need to build for
+unix # normal cmake
+mpy unix #shell script
+mpy rp2 #shell script

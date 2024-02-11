@@ -3,16 +3,21 @@
 #include "hekate.h"
 // Used to get the time in the Timer class example.
 #include "py/mphal.h"
+#include <stdio.h>
 
-// STATIC void init(){
-//     hekate_init();
-// }
+STATIC uint64_t this_get_time_ms(){
+    return mp_hal_ticks_ms();
+}
 
-
+STATIC void this_hal_delay_us(uint32_t us){
+    mp_hal_delay_us(us);
+}
 
 STATIC hekate_hal_t init_hekate_hal(){
     sys_hal_t sys_hal;
-    sys_hal.sleep_us = mp_hal_delay_us;
+    sys_hal.sleep_us = this_hal_delay_us;
+    sys_hal.print = printf;
+    sys_hal.get_time_ms = this_get_time_ms;
 
     hekate_hal_t hekate_hal;
     hekate_hal.sys_hal = sys_hal;
@@ -22,8 +27,12 @@ STATIC hekate_hal_t init_hekate_hal(){
 // This is the function which will be called from Python as cexample.add_ints(a, b).
 STATIC mp_obj_t init() {
     hekate_hal_t hekate_hal = init_hekate_hal();
-    hekate_init(hekate_hal);
-    return mp_obj_new_bool(1);
+    if(!hekate_init(hekate_hal)){
+        printf("hekate_init failed \n");
+        return mp_obj_new_bool(false);
+    }
+    printf("ok2 \n");
+    return mp_obj_new_bool(true);
 }
 // Define a Python reference to the function above.
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(init_obj, init);
