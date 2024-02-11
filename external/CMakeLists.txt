@@ -28,8 +28,8 @@ target_sources(basicstation PRIVATE
     #if unix
     # ${_BASIC_PATH}/src/fs.c
     # ${_BASIC_PATH}/src/lgwsim.c
+    #common
 
-    #if mpy
 )
 
 target_include_directories(basicstation PUBLIC 
@@ -47,11 +47,12 @@ set(ENABLE_TESTING OFF)
 
 # add_subdirectory(/mnt/d/Development/Repos/hekate/external/micropython/lib/mbedtls mbedtls)
 
+# message(FATAL_ERROR "${CMAKE_CURRENT_LIST_DIR}/micropython/lib/mbedtls/include")
+target_include_directories(basicstation PUBLIC ${CMAKE_CURRENT_LIST_DIR}/micropython/lib/mbedtls/include)
+
 target_compile_definitions(basicstation PUBLIC
 #if unix
     # CFG_linux
-
-
     CFG_no_leds
     CFG_version="2.0.6"
     CFG_platform="linux"
@@ -63,7 +64,6 @@ target_compile_definitions(basicstation PUBLIC
 
 # MBEDTLS_CONFIG_FILE=
 
-target_include_directories(basicstation PRIVATE /mnt/d/Development/Repos/hekate/external/micropython/lib/mbedtls/include)
 # /mnt/d/Development/Repos/hekate/external/micropython/lib/mbedtls/include
 # target_link_libraries(basicstation PUBLIC mbedtls)
 # target_link_libraries(basicstation PUBLIC mbedtls m)

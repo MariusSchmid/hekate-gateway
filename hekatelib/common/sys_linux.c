@@ -41,12 +41,12 @@
 // #include "argp2.h"
 // #include "s2conf.h"
 // #include "kwcrc.h"
-// #include "rt.h"
+#include "rt.h"
 // #include "uj.h"
 // #include "s2e.h"
 // #include "ral.h"
 // #include "timesync.h"
-// #include "sys.h"
+#include "sys.h"
 // #include "sys_linux.h"
 // #include "fs.h"
 // #include "selftests.h"
@@ -445,16 +445,17 @@
 // }
 
 
-// void sys_usleep (sL_t us) {
-//     if( us <= 0 )
-//         return;
-//     struct timespec slp, rem = { .tv_sec = us/1000000, .tv_nsec = us%1000000*1000 }; // 200ms
-//     while( rem.tv_sec > 0 || rem.tv_nsec > 0 ) {
-//         slp = rem;
-//         if( nanosleep(&slp, &rem) == 0 )
-//             break;
-//     }
-// }
+void sys_usleep (sL_t us) {
+    // mp_hal_delay_us(us);
+    // if( us <= 0 )
+    //     return;
+    // struct timespec slp, rem = { .tv_sec = us/1000000, .tv_nsec = us%1000000*1000 }; // 200ms
+    // while( rem.tv_sec > 0 || rem.tv_nsec > 0 ) {
+    //     slp = rem;
+    //     if( nanosleep(&slp, &rem) == 0 )
+    //         break;
+    // }
+}
 
 
 // sL_t sys_time () {
@@ -1099,9 +1100,9 @@
 // }
 
 
-// int sys_main (int argc, char** argv) {
-//     // Because we log even before rt_ini()...
-//     rt_utcOffset = sys_utc() - rt_getTime();
+int sys_main () {
+    // Because we log even before rt_ini()...
+    // rt_utcOffset = sys_utc() - rt_getTime();
 
 //     signal(SIGHUP,  SIG_IGN);
 //     signal(SIGINT,  handle_signal);
@@ -1312,4 +1313,6 @@
 //     aio_loop();
 //     // NOT REACHED
 //     assert(0);
-// }
+
+    return 0;
+}

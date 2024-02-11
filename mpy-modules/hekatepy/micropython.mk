@@ -1,8 +1,9 @@
 CEXAMPLE_MOD_DIR := $(USERMOD_DIR)
 
-
+# target_include_directories(basicstation PRIVATE /mnt/d/Development/Repos/hekate/external/micropython/lib/mbedtls/include)
 CFLAGS_USERMOD += -I$(CEXAMPLE_MOD_DIR)/../../hekatelib/include
-LDFLAGS_USERMOD += -L$(CEXAMPLE_MOD_DIR)/../../build/hekatelib -lhekatelib 
+# CFLAGS_USERMOD += -I$(CEXAMPLE_MOD_DIR)/lib/mbedtls/include
+LDFLAGS_USERMOD += -L$(CEXAMPLE_MOD_DIR)/../../build/hekatelib -lhekatelib_static
 
 
 # Add all C files to SRC_USERMOD.
