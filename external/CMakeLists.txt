@@ -9,7 +9,6 @@ target_sources(basicstation PRIVATE
     ${_BASIC_PATH}/src/log.c
     ${_BASIC_PATH}/src/rt.c
     ${_BASIC_PATH}/src/uj.c
-    ${_BASIC_PATH}/src/fs.c
     ${_BASIC_PATH}/src/lora.c
     ${_BASIC_PATH}/src/net.c
     ${_BASIC_PATH}/src/s2conf.c
@@ -25,9 +24,12 @@ target_sources(basicstation PRIVATE
     ${_BASIC_PATH}/src/tls.c
     ${_BASIC_PATH}/src/timesync.c
     ${_BASIC_PATH}/src/flashsim.c
-    ${_BASIC_PATH}/src/lgwsim.c
     ${_BASIC_PATH}/src/sx130xconf.c
+    #if unix
+    # ${_BASIC_PATH}/src/fs.c
+    # ${_BASIC_PATH}/src/lgwsim.c
 
+    #if mpy
 )
 
 target_include_directories(basicstation PUBLIC 
@@ -41,10 +43,15 @@ cmake_policy(SET CMP0077 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 set(ENABLE_PROGRAMS OFF)
 set(ENABLE_TESTING OFF)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/basicstation/deps/mbedtls/platform-linux mbedtls)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/basicstation/deps/mbedtls/platform-linux mbedtls)
+
+# add_subdirectory(/mnt/d/Development/Repos/hekate/external/micropython/lib/mbedtls mbedtls)
 
 target_compile_definitions(basicstation PUBLIC
-    CFG_linux
+#if unix
+    # CFG_linux
+
+
     CFG_no_leds
     CFG_version="2.0.6"
     CFG_platform="linux"
@@ -54,4 +61,9 @@ target_compile_definitions(basicstation PUBLIC
     CFG_lgwsim
 )
 
-target_link_libraries(basicstation PUBLIC mbedtls m)
+# MBEDTLS_CONFIG_FILE=
+
+target_include_directories(basicstation PRIVATE /mnt/d/Development/Repos/hekate/external/micropython/lib/mbedtls/include)
+# /mnt/d/Development/Repos/hekate/external/micropython/lib/mbedtls/include
+# target_link_libraries(basicstation PUBLIC mbedtls)
+# target_link_libraries(basicstation PUBLIC mbedtls m)
