@@ -7,5 +7,7 @@ target_sources(usermod_hekatepy INTERFACE
 target_include_directories(usermod_hekatepy INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}
 )
-add_subdirectory(../../external external)
+set(PLATFORM "mpy")
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../../hekatelib hekatelib)
+target_link_libraries(usermod_hekatepy INTERFACE hekatelib)
 target_link_libraries(usermod INTERFACE usermod_hekatepy)
