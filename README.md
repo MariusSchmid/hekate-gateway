@@ -41,7 +41,6 @@ What is part of platform layer (sys)?
 src-linux/sys_linux #main
 src/sys.c #socket options
 src/lgwsim.c #socket write
-
 sys_log.c #thread for logging
 
 build-linux-testsim #header file is generated
