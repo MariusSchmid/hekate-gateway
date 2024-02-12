@@ -1,7 +1,7 @@
 # hekate
 Outdoor Lora Gateway with Pico Pi.
 
-Documentation: [readthedocs]( https://hekate-gateway.readthedocs.io/en/latest/)
+Full Documentation: [readthedocs]( https://hekate-gateway.readthedocs.io/en/latest/)
 
 # Build instructions
 
