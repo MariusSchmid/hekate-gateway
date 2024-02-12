@@ -39,76 +39,76 @@
 #include <sys/wait.h>
 #include <sys/time.h>
 
-// #include "argp2.h"
-// #include "s2conf.h"
-// #include "kwcrc.h"
+#include "argp2.h"
+#include "s2conf.h"
+#include "kwcrc.h"
 #include "rt.h"
-// #include "uj.h"
-// #include "s2e.h"
-// #include "ral.h"
-// #include "timesync.h"
+#include "uj.h"
+#include "s2e.h"
+#include "ral.h"
+#include "timesync.h"
 #include "sys.h"
 #include "sys_linux.h"
 
-// #include "fs.h"
-// #include "selftests.h"
+#include "fs.h"
+#include "selftests.h"
 
-// #include "mbedtls/version.h"
+#include "mbedtls/version.h"
 
-// #define XSTR(x) STR(x)
-// #define STR(x) #x
-// #pragma message "Value : " XSTR(RADIO_INIT_WAIT)
+#define XSTR(x) STR(x)
+#define STR(x) #x
+#pragma message "Value : " XSTR(RADIO_INIT_WAIT)
 
-// extern char* makeFilepath (const char* prefix, const char* suffix, char** pCachedFile, int isReadable); // sys.c
-// extern int writeFile (str_t file, const char* data, int datalen);
-// extern dbuf_t readFile (str_t file, int complain);
-// extern str_t readFileAsString (str_t basename, str_t suffix, str_t* pCachedValue);
-// extern void setupConfigFilenames ();
-// extern int checkUris ();
-// extern void checkRollForward ();
+extern char* makeFilepath (const char* prefix, const char* suffix, char** pCachedFile, int isReadable); // sys.c
+extern int writeFile (str_t file, const char* data, int datalen);
+extern dbuf_t readFile (str_t file, int complain);
+extern str_t readFileAsString (str_t basename, str_t suffix, str_t* pCachedValue);
+extern void setupConfigFilenames ();
+extern int checkUris ();
+extern void checkRollForward ();
 
-// #define CFG_version "1"
-// #define CFG_bdate "19200"
+#define CFG_version "1"
+#define CFG_bdate "19200"
 
-// #if defined(CFG_ral_master_slave)
-// static const char* const SLAVE_ENVS[] = {
-//     "SLAVE_IDX",
-//     "SLAVE_WRFD",
-//     "SLAVE_RDFD",
-//     NULL
-// };
-// #endif // defined(CFG_ral_master_slave)
+#if defined(CFG_ral_master_slave)
+static const char* const SLAVE_ENVS[] = {
+    "SLAVE_IDX",
+    "SLAVE_WRFD",
+    "SLAVE_RDFD",
+    NULL
+};
+#endif // defined(CFG_ral_master_slave)
 
-// static struct logfile logfile;
-// static char* gpsDevice    = NULL;
-// static tmr_t startupTmr;
+static struct logfile logfile;
+static char* gpsDevice    = NULL;
+static tmr_t startupTmr;
 
-// str_t sys_slaveExec;
-// u1_t  sys_deviceMode;
-// u1_t  sys_modePPS;      // special mode?
-// u2_t  sys_webPort;
-// u1_t  sys_noTC;
-// u1_t  sys_noCUPS;
+str_t sys_slaveExec;
+u1_t  sys_deviceMode;
+u1_t  sys_modePPS;      // special mode?
+u2_t  sys_webPort;
+u1_t  sys_noTC;
+u1_t  sys_noCUPS;
 
-// extern str_t  homeDir;
-// extern str_t  tempDir;
-// extern str_t  webDir;
-// static str_t  homeDirSrc;
-// static str_t  tempDirSrc;
-// static str_t  webDirSrc;
+extern str_t  homeDir;
+extern str_t  tempDir;
+extern str_t  webDir;
+static str_t  homeDirSrc;
+static str_t  tempDirSrc;
+static str_t  webDirSrc;
 
-// static int    daemonPid;
-// static int    workerPid;
-// static str_t  radioInit;
-// static str_t  radioDevice;
-// static str_t  versionTxt;
-// static char*  updfile;
-// static char*  temp_updfile;
-// static int    updfd = -1;
+static int    daemonPid;
+static int    workerPid;
+static str_t  radioInit;
+static str_t  radioDevice;
+static str_t  versionTxt;
+static char*  updfile;
+static char*  temp_updfile;
+static int    updfd = -1;
 
-// static str_t  protoEuiSrc;
-// static str_t  prefixEuiSrc;
-// static str_t  radioInitSrc;
+static str_t  protoEuiSrc;
+static str_t  prefixEuiSrc;
+static str_t  radioInitSrc;
 static sys_hal_t this_sys_hal;
 int sys_init(sys_hal_t sys_hal)
 {
@@ -387,9 +387,9 @@ void sys_fatal (int code) {
 //     }
 // }
 
-// static void leds_off () {
-//     sys_inState(SYSIS_STATION_DEAD);
-// }
+static void leds_off () {
+    sys_inState(SYSIS_STATION_DEAD);
+}
 
 // void sys_ini () {
 //     LOG(MOD_SYS|INFO, "Logging     : %s (maxsize=%d, rotate=%d)\n",
@@ -1010,90 +1010,83 @@ sL_t sys_utc () {
 
 // struct argp argp = { options, parse_opt, "", NULL, NULL, NULL, NULL };
 
-// static void startupMaster2 (tmr_t* tmr) {
-// #if !defined(CFG_no_rmtsh)
-//     rt_addFeature("rmtsh");
-// #endif
-// #if defined(CFG_prod)
-//     rt_addFeature("prod");  // certain development/test/debug features not accepted
-// #endif
-//     sys_enableCmdFIFO(makeFilepath("~/cmd",".fifo",NULL,0));
-//     if( gpsDevice ) {
-//         rt_addFeature("gps");
-//         sys_enableGPS(gpsDevice);
-//     }
-//     sys_iniTC();
-//     sys_startTC();
-//     sys_iniCUPS();
-//     sys_triggerCUPS(0);
-//     sys_iniWeb();
-// }
+static void startupMaster2 (tmr_t* tmr) {
+#if !defined(CFG_no_rmtsh)
+    rt_addFeature("rmtsh");
+#endif
+#if defined(CFG_prod)
+    rt_addFeature("prod");  // certain development/test/debug features not accepted
+#endif
+    sys_enableCmdFIFO(makeFilepath("~/cmd",".fifo",NULL,0));
+    if( gpsDevice ) {
+        rt_addFeature("gps");
+        sys_enableGPS(gpsDevice);
+    }
+    sys_iniTC();
+    sys_startTC();
+    sys_iniCUPS();
+    sys_triggerCUPS(0);
+    sys_iniWeb();
+}
 
-// static void startupMaster (tmr_t* tmr) {
-//     sys_startLogThread();
-//     if( getenv("STATION_SELFTESTS") ) {
-//         selftests();
-//         // NOT REACHED
-//     }
-//     // Kill off any old processes - create a file with my pid
-//     writePid();
-//     // If there is an update pending - run it
-//     sys_runUpdate();
-//     ral_ini();
-//     atexit(leds_off);
-//     // Wait until slaves are up
-//     //startupMaster2(tmr);
-//     rt_setTimerCb(tmr, rt_millis_ahead(200), startupMaster2);
-// }
+static void startupMaster (tmr_t* tmr) {
+    sys_startLogThread();
+    if( getenv("STATION_SELFTESTS") ) {
+        selftests();
+        // NOT REACHED
+    }
+    // Kill off any old processes - create a file with my pid
+    writePid();
+    // If there is an update pending - run it
+    sys_runUpdate();
+    ral_ini();
+    atexit(leds_off);
+    // Wait until slaves are up
+    //startupMaster2(tmr);
+    rt_setTimerCb(tmr, rt_millis_ahead(200), startupMaster2);
+}
 
 // // Fwd decl
-// static void startupDaemon (tmr_t* tmr);
+static void startupDaemon (tmr_t* tmr);
 
-// // We poll here because using SIGCHLD would require pselect in aio which
-// // is less portable (e.g. LWIP on FreeRTOS). Polling is not a problem because
-// // we also would like to slow down restart to avoid blocking the system in a tight restart cycle.
-// static void waitForWorker (tmr_t* tmr) {
-//     int wstatus;
-//     pid_t wpid = waitpid(workerPid, &wstatus, WNOHANG);
-//     //NOT-NEEDED sys_inState(SYSIS_STATION_DEAD);
-//     if( wpid < 0 || wpid == workerPid ) {
-//         LOG(MOD_SYS|ERROR, "DAEMON: Station process %d died (exit code 0x%X)", workerPid, wstatus);
-//         workerPid = 0;
-//         startupDaemon(&startupTmr);
-//     } else {
-//         rt_setTimer(&startupTmr, rt_millis_ahead(500));
-//     }
-// }
+// We poll here because using SIGCHLD would require pselect in aio which
+// is less portable (e.g. LWIP on FreeRTOS). Polling is not a problem because
+// we also would like to slow down restart to avoid blocking the system in a tight restart cycle.
+static void waitForWorker (tmr_t* tmr) {
+    int wstatus;
+    pid_t wpid = waitpid(workerPid, &wstatus, WNOHANG);
+    //NOT-NEEDED sys_inState(SYSIS_STATION_DEAD);
+    if( wpid < 0 || wpid == workerPid ) {
+        LOG(MOD_SYS|ERROR, "DAEMON: Station process %d died (exit code 0x%X)", workerPid, wstatus);
+        workerPid = 0;
+        startupDaemon(&startupTmr);
+    } else {
+        rt_setTimer(&startupTmr, rt_millis_ahead(500));
+    }
+}
 
-// static void startupDaemon (tmr_t* tmr) {
-//     int subprocPid;
-//     // Respawn station worker process
-//     sys_inState(SYSIS_STATION_DEAD);
-//     sys_flushLog();
-//     if( (subprocPid = fork()) == -1 )
-//         rt_fatal("DAEMON: Failed to fork station: %s", strerror(errno));
-//     if( subprocPid == 0 ) {
-//         // Child
-//         sys_iniLogging(&logfile, 1);
-//         LOG(MOD_SYS|INFO, "DAEMON: Station process %d started...", getpid());
-//         rt_yieldTo(&startupTmr, startupMaster);
-//     } else {
-//         // Parent
-//         workerPid = subprocPid;
-//         rt_yieldTo(&startupTmr, waitForWorker);
-//     }
-// }
+static void startupDaemon (tmr_t* tmr) {
+    int subprocPid;
+    // Respawn station worker process
+    sys_inState(SYSIS_STATION_DEAD);
+    sys_flushLog();
+    if( (subprocPid = fork()) == -1 )
+        rt_fatal("DAEMON: Failed to fork station: %s", strerror(errno));
+    if( subprocPid == 0 ) {
+        // Child
+        sys_iniLogging(&logfile, 1);
+        LOG(MOD_SYS|INFO, "DAEMON: Station process %d started...", getpid());
+        rt_yieldTo(&startupTmr, startupMaster);
+    } else {
+        // Parent
+        workerPid = subprocPid;
+        rt_yieldTo(&startupTmr, waitForWorker);
+    }
+}
 
 int sys_main()
 {
     // Because we log even before rt_ini()...
-
-    //###############
-    // sys_utc();
-    //  rt_getTime();
-    // sys_eui();
-    // aio_ini();
-    //###############
     rt_utcOffset = sys_utc() - rt_getTime();
 
     //     signal(SIGHUP,  SIG_IGN);
@@ -1104,21 +1097,22 @@ int sys_main()
     //     if( getcwd(cwd, sizeof(cwd)) != NULL )
     //         fs_chdir(cwd);
 
-        // s2conf_ini();
-    //     logfile.size = LOGFILE_SIZE;
-    //     logfile.rotate = LOGFILE_ROTATE;
+        s2conf_ini();
+        // logfile.size = LOGFILE_SIZE;
+        // logfile.rotate = LOGFILE_ROTATE;
     //     setHomeDir(".", "builtin");
     //     // setWebDir("./web", "builtin");
     //     setTempDir(access("/var/tmp", W_OK) < 0 ? "/tmp" : "/var/tmp", "builtin");
     //     prefixEuiSrc = rt_strdup("builtin");
     //     findDefaultEui();
 
-    //     opts = rt_malloc(struct opts);
+        // opts = rt_malloc(struct opts);
     //     int err = argp_parse (&argp, argc, argv, 0, NULL, NULL);
     //     if( err != 0 )
     //         return err;
 
-    // #if defined(CFG_ral_master_slave)
+    #if defined(CFG_ral_master_slave)
+
     //     int slave_rdfd = -1, slave_wrfd = -1;
     //     if( opts->slaveMode ) {
     //         str_t const* sn = SLAVE_ENVS;
@@ -1141,7 +1135,7 @@ int sys_main()
     //     if( sys_slaveExec == NULL ) {
     //         sys_slaveExec = rt_strdup("/proc/self/exe -S");
     //     }
-    // #endif // defined(CFG_ral_master_slave)
+    #endif // defined(CFG_ral_master_slave)
 
     //     {
     //         str_t prefix = opts->euiprefix;
@@ -1244,11 +1238,11 @@ int sys_main()
     //     free(opts);
     //     opts = NULL;
 
-    // #if defined(CFG_ral_master_slave)
-    //     int isSlave = (sys_slaveIdx >= 0);
-    // #else
-    //     int isSlave = 0;
-    // #endif
+    #if defined(CFG_ral_master_slave)
+        int isSlave = (sys_slaveIdx >= 0);
+    #else
+        int isSlave = 0;
+    #endif
 
     //     if( !isSlave ) {
     //         if( !force ) {
@@ -1287,24 +1281,24 @@ int sys_main()
     //         setsid();
     //     }
 
-    //     aio_ini();
-    //     sys_iniLogging(&logfile, !isSlave && !daemon);
-    //     sys_ini();
-    //     rt_ini();
-    //     ts_iniTimesync();
+        aio_ini();
+        sys_iniLogging(&logfile, !isSlave && !daemon);
+        sys_ini();
+        rt_ini();
+        ts_iniTimesync();
 
-    // #if defined(CFG_ral_master_slave)
-    //     if( isSlave ) {
-    //         sys_startupSlave(slave_rdfd, slave_wrfd);
-    //         // NOT REACHED
-    //         assert(0);
-    //     }
-    // #endif // defined(CFG_ral_master_slave)
+    #if defined(CFG_ral_master_slave)
+        if( isSlave ) {
+            sys_startupSlave(slave_rdfd, slave_wrfd);
+            // NOT REACHED
+            assert(0);
+        }
+    #endif // defined(CFG_ral_master_slave)
 
-    //     rt_yieldTo(&startupTmr, daemon ? startupDaemon : startupMaster);
-    //     aio_loop();
-    //     // NOT REACHED
-    //     assert(0);
+        rt_yieldTo(&startupTmr, daemon ? startupDaemon : startupMaster);
+        aio_loop();
+        // NOT REACHED
+        assert(0);
 
     return 0;
 }
