@@ -1,5 +1,5 @@
 Welcome to Hekate Gateway documentation!
-===================================
+========================================
 
 **Hekate** is Outdoor Lora Gateway with low power consumption based on Raspberry Pi Pico .
 
