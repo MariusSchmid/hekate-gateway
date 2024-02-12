@@ -1,12 +1,14 @@
 # hekate
-Outdoor Lora Gateway with Pico Pi
+Outdoor Lora Gateway with Pico Pi.
 
-# submodules
+Full Documentation: [readthedocs]( https://hekate-gateway.readthedocs.io/en/latest/)
+
+# Build instructions
+
+## submodules
 git submodule add "https://github.com/lorabasics/basicstation.git" external/basicstation
 
-
-
-# prerequisites
+## prerequisites
 git submodule init 
 git submodule update
 
