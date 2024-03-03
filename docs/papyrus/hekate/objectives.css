@@ -1,0 +1,27 @@
+[appliedStereotypes~="Objective"] Compartment[type=StereotypeCompartment]{
+	visible:true;
+}
+[appliedStereotypes~="Objective"] Compartment[type=StereotypeCompartment]>[property="allocatedTo"]{
+	visible:false;
+}
+[appliedStereotypes~="Objective"] Compartment[type=StereotypeCompartment]>[property="master"]{
+	visible:false;
+}
+[appliedStereotypes~="Objective"] Compartment[type=StereotypeCompartment]>[property="derived"]{
+	visible:false;
+}
+[appliedStereotypes~="Objective"] Compartment[type=StereotypeCompartment]>[property="derivedFrom"]{
+	visible:false;
+}
+[appliedStereotypes~="Objective"] Compartment[type=StereotypeCompartment]>[property="tracedTo"]{
+	visible:false;
+}
+[appliedStereotypes~="Objective"] Compartment[type=StereotypeCompartment]>[property="verifiedBy"]{
+	visible:false;
+}
+[appliedStereotypes~="Objective"] Compartment[type=StereotypeCompartment]>[property="refinedBy"]{
+	visible:false;
+}
+[appliedStereotypes~="Objective"] Compartment[type=StereotypeCompartment]>[property="satisfiedBy"]{
+	visible:false;
+}

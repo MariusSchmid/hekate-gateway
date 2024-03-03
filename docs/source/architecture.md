@@ -41,3 +41,5 @@ The hekate system will have
 
 ### Architecture Decisions
 * The LoRaWAN Network Server will be "The Things Network"
+* The Power supply will be a battery that is recharged by a solar panel.
+* 
