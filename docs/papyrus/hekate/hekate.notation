@@ -2167,6 +2167,7 @@
       <intListValue>0</intListValue>
       <intListValue>1</intListValue>
     </styles>
+    <styles xmi:type="nattablestyle:BooleanValueStyle" xmi:id="_bhN4MNlDEe6c0MSyQZhveg" name="autoResizeCellHeight" booleanValue="true"/>
     <context xmi:type="uml:Package" href="hekate.uml#_eg2lQNiXEe6ndsZGHkuDcw"/>
     <owner xmi:type="uml:Package" href="hekate.uml#_eg2lQNiXEe6ndsZGHkuDcw"/>
     <tableConfiguration xmi:type="nattableconfiguration:TableConfiguration" href="platform:/plugin/org.eclipse.papyrus.uml.nattable/configs/genericTreeTable.nattableconfiguration#PapyrusUMLGenericTreeTable_XMI_ID"/>

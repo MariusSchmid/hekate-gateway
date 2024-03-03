@@ -30,7 +30,7 @@ The system is equipped with a low power cellular transceiver to have an internet
 
 Main features of **Hekate** are:
 * Low power consumption
-* Low BOM costs
+* Low Bill of Material (BOM) costs
 * The Things Stacks as LoRaWAN Network Server
 * Secure transmitting with state-of-the-art "LoRa Basics™ Station" protocol
 
@@ -43,3 +43,18 @@ Main features of **Hekate** are:
 ![hekate_stakeholder](../papyrus/hekate/stakeholder.png)
 
 
+## Base architecture
+
+
+
+### Brief description
+The hekate system will have 
+* Internet, Cellular Network
+* LoRa Devices
+* Power Supply, Battery
+* LoRaWAN Network Server
+
+
+### Architecture Decisions
+* The LoRaWAN Network Server will be "The Things Network"
+* 
