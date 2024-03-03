@@ -45,6 +45,10 @@ Main features of **Hekate** are:
 
 ## Base architecture
 
+.. drawio-figure:: example.drawio
+   :format: png
+
+   An example diagram
 
 
 ### Brief description
@@ -57,4 +61,5 @@ The hekate system will have
 
 ### Architecture Decisions
 * The LoRaWAN Network Server will be "The Things Network"
-* 
+
+
