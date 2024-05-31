@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 from mdutils.mdutils import MdUtils
+from pathlib import Path
+
 
 root = None
 ns = {'xmi': 'http://www.omg.org/spec/XMI/20131001'}
@@ -37,7 +39,6 @@ def _create_md_table(objectives, output_md_filepath):
     table = []
     header = ["ID", "Stakeholder", "Name", "Description"]
     table.extend(header)
-    print(len(header))
     for objective in objectives:
         table.extend([objective['id'],objective['stakeholder'],objective['name'],objective['text']])
     mdFile.new_line()
@@ -48,6 +49,7 @@ def _create_md_table(objectives, output_md_filepath):
 
 
 def create_output(input_xml_filepath, output_md_filepath):
+    Path(output_md_filepath).parent.mkdir(parents=True, exist_ok=True)
     global root
     tree = ET.parse(input_xml_filepath)
     root = tree.getroot()

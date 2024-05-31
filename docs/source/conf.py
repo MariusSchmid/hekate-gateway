@@ -44,5 +44,3 @@ epub_show_urls = 'footnote'
 
 import create_objectives_table as ot
 ot.create_output("../papyrus/hekate/hekate.uml", "generated/objectives.md")
-
-# print("Helloooo from the conf.py")
