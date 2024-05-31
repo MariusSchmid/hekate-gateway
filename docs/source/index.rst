@@ -1,9 +1,7 @@
 Welcome to Hekate Gateway documentation!
 ========================================
 
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
-
+Check out the :doc:`architecture` section for further information.
 Check out the Source Code under [Github](https://github.com/MariusSchmid/hekate-gateway)
 
 .. note::
@@ -16,8 +14,6 @@ Contents
 .. toctree::
 
    architecture
-   usage
-   api
 
 
 

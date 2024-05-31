@@ -294,7 +294,7 @@
   <SYSMODProfile:SystemContext xmi:id="_EC3dANZGEe6HVtzs0vN4cQ" base_Class="_BgFXMNZGEe6HVtzs0vN4cQ"/>
   <Blocks:Block xmi:id="_JLYS8NiLEe6ndsZGHkuDcw" base_Class="_JLMswNiLEe6ndsZGHkuDcw"/>
   <SYSMODProfile:System xmi:id="_KrSmgNiLEe6ndsZGHkuDcw" base_Class="_JLMswNiLEe6ndsZGHkuDcw"/>
-  <SYSMODProfile:Objective xmi:id="_pQCooNiTEe6ndsZGHkuDcw" base_NamedElement="_mQJJANiTEe6ndsZGHkuDcw" id="OBJ-2" text="The system is affordable by private persons." base_Class="_mQJJANiTEe6ndsZGHkuDcw"/>
+  <SYSMODProfile:Objective xmi:id="_pQCooNiTEe6ndsZGHkuDcw" base_NamedElement="_mQJJANiTEe6ndsZGHkuDcw" id="OBJ-2" text="The system is affordable by private persons." base_Class="_mQJJANiTEe6ndsZGHkuDcw" Stakeholder="_UO7voNk-Ee6c0MSyQZhveg"/>
   <SYSMODProfile:Objective xmi:id="_SLboENiUEe6ndsZGHkuDcw" base_NamedElement="_SLbBANiUEe6ndsZGHkuDcw" id="OBJ-3" text="The system uses off the shelf components to reduce the development time" base_Class="_SLbBANiUEe6ndsZGHkuDcw"/>
   <SYSMODProfile:Objective xmi:id="_chvfINiVEe6ndsZGHkuDcw" base_NamedElement="_chu4ENiVEe6ndsZGHkuDcw" id="OBJ-4" text="The system works reliable with reduced effort for maintainance" base_Class="_chu4ENiVEe6ndsZGHkuDcw"/>
   <SYSMODProfile:ExtendedStakeholder xmi:id="_PGKfANk-Ee6c0MSyQZhveg" base_Classifier="_3aOVgNk6Ee6NV6nLpjk7jA" concernList="_KQa_cNk7Ee6NV6nLpjk7jA" priority="High" effort="Low">

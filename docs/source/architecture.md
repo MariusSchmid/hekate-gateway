@@ -1,5 +1,5 @@
 # System Architecture
-Hekate system model is described in SysML using the SYSMOD as a modeling method.
+Hekate system model is described in SysML using SYSMOD as a modeling methodology.
 
 ## Problem Statement
 How can IoT device messages forwarded into the cloud with an affordable price and self-sufficient power supply?
@@ -16,25 +16,19 @@ Main features of **Hekate** are:
 
 ## System Objectives
 
-![hekate_system_objectives](../papyrus/hekate/system_objectives_table.png)
+[Objectives](./generated/objectives.md)
 
 ## Stakeholder
 
 ![hekate_stakeholder](../papyrus/hekate/stakeholder.png)
 
 
-## Base architecture
+## Base Architecture
 ![base_architecture](../drawio/base_architecture.drawio.png)
 
-### Brief description
-The hekate system will have 
-* Internet, Cellular Network
-* LoRa Devices
-* Power Supply, Battery
-* LoRaWAN Network Server
-
+The hekate system consists of a **LoRa Concentrator** that is sending and receiving messages from/towards multiple **LoRa End Devices** such as Sensors. Hekate is powered by a **Battery** that could be powered by **Solar Panels**. The **Cellular Modem** connects to the **LoRaWAN Network Server**  using mobile network. The **LoRaWAN Network Server** manages the LoRaWAN Network.
 
 ### Architecture Decisions
-* The LoRaWAN Network Server will be "The Things Network"
-* The Power supply will be a battery that is recharged by a solar panel.
+* The LoRaWAN Network Server is provided by "The Things Network"
+* The Power supply is a battery that is recharged by a solar panel.
 

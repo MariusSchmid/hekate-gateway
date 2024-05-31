@@ -1,5 +1,9 @@
 # Configuration file for the Sphinx documentation builder.
 
+# -- helper scripts for documentation generation
+import sys
+sys.path.append('../scripts/')
+
 # -- Project information
 
 project = 'hekate-gateway'
@@ -36,3 +40,9 @@ html_theme = 'sphinx_rtd_theme'
 
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
+
+
+import create_objectives_table as ot
+ot.create_output("../papyrus/hekate/hekate.uml", "generated/objectives.md")
+
+# print("Helloooo from the conf.py")
