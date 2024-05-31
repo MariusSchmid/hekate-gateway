@@ -12,8 +12,14 @@ Contents
 --------
 
 .. toctree::
-
    architecture
+
+
+Generated Documents
+-------------------
+
+.. toctree::
+   generated/objectives
 
 
 

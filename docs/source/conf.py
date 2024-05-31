@@ -41,6 +41,6 @@ html_theme = 'sphinx_rtd_theme'
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
 
-
+# -- generate documentation from uml model --
 import create_objectives_table as ot
 ot.create_output("../papyrus/hekate/hekate.uml", "generated/objectives.md")
