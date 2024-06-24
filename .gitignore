@@ -2,6 +2,9 @@
 /build/
 /build_mpy_unix/
 /external/basicstation/build-linux-testsim/
+electronics/hekate_pcb/gerber
+electronics/hekate_pcb/*backups
+electronics/hekate_pcb/fp-info-cache
 
 /ttn-config/*bak.*
 /ttn-config/tc.*

@@ -42,7 +42,7 @@ def _create_md_table(objectives, output_md_filepath):
     for objective in objectives:
         table.extend([objective['id'],objective['stakeholder'],objective['name'],objective['text']])
     mdFile.new_line()
-    mdFile.new_table(columns=4, rows=5, text=table, text_align='center')
+    mdFile.new_table(columns=4, rows=len(objectives)+1, text=table, text_align='center')
 
     mdFile.create_md_file()
 
@@ -55,6 +55,6 @@ def create_output(input_xml_filepath, output_md_filepath):
     root = tree.getroot()
     objectives = _get_objectives()
     _create_md_table(objectives,output_md_filepath)
-# print(objectives)
+
 
 

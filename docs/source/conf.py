@@ -43,4 +43,6 @@ epub_show_urls = 'footnote'
 
 # -- generate documentation from uml model --
 import create_objectives_table as ot
+import create_risks_table as rt
 ot.create_output("../papyrus/hekate/hekate.uml", "generated/objectives.md")
+rt.create_output("../papyrus/hekate/hekate.uml", "generated/risks.md")

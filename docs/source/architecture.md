@@ -38,3 +38,33 @@ The hekate system consists of a **LoRa Concentrator** that is sending and receiv
 
 ### Model of Base Architecture
 ![hekate_base_architecture](../papyrus/hekate/hekate_base_architecture_definition.png)
+
+![hekate_base_architecture_idd](../papyrus/hekate/hekta_base_architecture_context.png)
+
+
+## Risks
+
+## Requirements
+
+## System Context
+
+## System Use Cases
+
+## System Processes
+
+## Use Case Activities
+
+## Domain Knowledge
+
+## Test Cases
+
+## Logical Architecture
+
+## Product Architecture
+
+## Scenarios
+
+## System States
+
+## Test Architecture
+

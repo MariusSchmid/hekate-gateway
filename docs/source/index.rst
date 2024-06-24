@@ -20,6 +20,7 @@ Generated Documents
 
 .. toctree::
    generated/objectives
+   generated/risks
 
 
 
