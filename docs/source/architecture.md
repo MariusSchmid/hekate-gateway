@@ -44,6 +44,8 @@ The hekate system consists of a **LoRa Concentrator** that is sending and receiv
 
 ## Risks
 
+[Risks](./generated/risks.md)
+
 ## Requirements
 
 ## System Context
