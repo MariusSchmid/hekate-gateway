@@ -1,0 +1,142 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "e946c318-fd4c-4e38-9119-73b21c9a8418")
+	(paper "A4")
+	(title_block
+		(title "Lora Multichannel Gateway STM32")
+		(rev "2.0")
+		(company "Marius Schmid")
+	)
+	(lib_symbols)
+	(sheet
+		(at 19.05 81.28)
+		(size 41.91 24.13)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "77559526-3e8c-4298-b38c-78789c5ef2e2")
+		(property "Sheetname" "SIM"
+			(at 19.05 80.5684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+				(hide yes)
+			)
+		)
+		(property "Sheetfile" "SIM.kicad_sch"
+			(at 19.05 105.9946 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "hekate_pcb"
+				(path "/e946c318-fd4c-4e38-9119-73b21c9a8418"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 91.44 85.09)
+		(size 41.91 20.32)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "903a401a-7dd9-488e-85a5-029b887791c7")
+		(property "Sheetname" "pico_pi"
+			(at 91.44 84.3784 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "pico_pi.kicad_sch"
+			(at 91.44 105.9946 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "hekate_pcb"
+				(path "/e946c318-fd4c-4e38-9119-73b21c9a8418"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 19.05 49.53)
+		(size 41.91 22.86)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "a0c4d1d3-fd6a-4e9a-b069-4caa221c1de5")
+		(property "Sheetname" "LoRa"
+			(at 19.05 48.8184 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "lora.kicad_sch"
+			(at 19.05 72.9746 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(property "Field2" ""
+			(at 19.05 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "hekate_pcb"
+				(path "/e946c318-fd4c-4e38-9119-73b21c9a8418"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
