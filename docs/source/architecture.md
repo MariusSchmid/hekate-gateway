@@ -37,9 +37,9 @@ The hekate system consists of a **LoRa Concentrator** that is sending and receiv
 
 
 ### Model of Base Architecture
-![hekate_base_architecture](../papyrus/hekate/hekate_base_architecture_definition.png)
+![hekate_base_architecture](../papyrus/hekate/hekate_base_architecture_definition.PNG)
 
-![hekate_base_architecture_idd](../papyrus/hekate/hekta_base_architecture_context.png)
+![hekate_base_architecture_idd](../papyrus/hekate/hekta_base_architecture_context.PNG)
 
 
 ## Risks
