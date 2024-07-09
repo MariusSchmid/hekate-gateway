@@ -67,6 +67,9 @@ The hekate system consists of a **LoRa Concentrator** that is sending and receiv
 ### Hardware Overview
 ![hw_overview](../drawio/HW_Overview.drawio.png)
 
+* TODO: Which lora module HW is used
+* 
+
 ### Software Overview
 
 
