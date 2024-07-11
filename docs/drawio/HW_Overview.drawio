@@ -1,23 +1,74 @@
-<mxfile host="Electron" modified="2024-07-09T16:08:46.082Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.4 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="dM52h7ORUHh-uQtgJsVW" version="24.6.4" type="device">
+<mxfile host="Electron" modified="2024-07-11T17:25:43.651Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.4 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="F2fMicwKQOvg2Z1MovT9" version="24.6.4" type="device">
   <diagram name="Seite-1" id="NwcWuR-mgWnYf0p7Uhna">
-    <mxGraphModel dx="1036" dy="614" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1434" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="OQtJD34ANyuCAwRn3eNC-4" value="SPI" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="OQtJD34ANyuCAwRn3eNC-2" target="OQtJD34ANyuCAwRn3eNC-3">
+        <mxCell id="OQtJD34ANyuCAwRn3eNC-4" value="SPI" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="OQtJD34ANyuCAwRn3eNC-2" target="OQtJD34ANyuCAwRn3eNC-3" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="OQtJD34ANyuCAwRn3eNC-6" value="UART" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="OQtJD34ANyuCAwRn3eNC-2" target="OQtJD34ANyuCAwRn3eNC-5">
+        <mxCell id="OQtJD34ANyuCAwRn3eNC-6" value="UART" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="OQtJD34ANyuCAwRn3eNC-2" target="OQtJD34ANyuCAwRn3eNC-5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="OQtJD34ANyuCAwRn3eNC-2" value="Raspberry Pi Pico" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="OQtJD34ANyuCAwRn3eNC-2" value="Raspberry Pi Pico" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="220" y="170" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="OQtJD34ANyuCAwRn3eNC-3" value="LoRa Concentrator" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="430" y="170" width="120" height="60" as="geometry" />
+        <mxCell id="OQtJD34ANyuCAwRn3eNC-3" value="LoRa Concentrator" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="550" y="170" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="OQtJD34ANyuCAwRn3eNC-5" value="LTE Module" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="220" y="310" width="120" height="60" as="geometry" />
+        <mxCell id="OQtJD34ANyuCAwRn3eNC-5" value="NB-IoT Module" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-14" value="is a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;" edge="1" parent="1" source="D2OjFSy1RnR8QeEHkvpF-1" target="OQtJD34ANyuCAwRn3eNC-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-1" value="&lt;a href=&quot;https://wiki.seeedstudio.com/WM1302_module/&quot;&gt;WM1302 &lt;/a&gt;/&lt;div&gt;&lt;a href=&quot;http://wiki.dragino.com/xwiki/bin/view/Main/User%20Manual%20for%20All%20Gateway%20models/PG1302/&quot;&gt;PG1302&lt;/a&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="320" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamond;endFill=1;" edge="1" parent="1" source="D2OjFSy1RnR8QeEHkvpF-4" target="D2OjFSy1RnR8QeEHkvpF-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="474" y="400" />
+              <mxPoint x="610" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-4" value="&lt;a href=&quot;https://www.semtech.com/products/wireless-rf/lora-core/sx1302&quot;&gt;SX1302&lt;/a&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="414" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-9" value="2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamond;endFill=1;" edge="1" parent="1" source="D2OjFSy1RnR8QeEHkvpF-5" target="D2OjFSy1RnR8QeEHkvpF-1">
+          <mxGeometry x="-0.8182" y="-10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-5" value="&lt;a href=&quot;https://www.semtech.com/products/wireless-rf/lora-core/sx1250&quot;&gt;SX1250&lt;/a&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamond;endFill=1;" edge="1" parent="1" source="D2OjFSy1RnR8QeEHkvpF-10" target="D2OjFSy1RnR8QeEHkvpF-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740" y="400" />
+              <mxPoint x="610" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-10" value="&lt;a href=&quot;https://www.semtech.com/products/wireless-rf/lora-connect/sx1261&quot;&gt;SX1261&lt;/a&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-12" value="RF Front End" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="580" y="490" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-13" value="Baseband Processor" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="440" y="490" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-17" value="is a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;" edge="1" parent="1" source="D2OjFSy1RnR8QeEHkvpF-16" target="OQtJD34ANyuCAwRn3eNC-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-16" value="&lt;a href=&quot;https://www.tme.eu/Document/543c60bc0ffeb01ccdb161f636fac67f/SIM7020E.pdf&quot;&gt;SIM7020E&lt;/a&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="D2OjFSy1RnR8QeEHkvpF-18" value="RF Transceiver" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="710" y="490" width="60" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

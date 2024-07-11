@@ -13,6 +13,7 @@ Contents
 
 .. toctree::
    architecture
+   tasks
 
 
 Generated Documents

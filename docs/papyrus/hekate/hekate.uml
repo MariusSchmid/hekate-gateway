@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Blocks="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Blocks" xmlns:Requirements="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Requirements" xmlns:SYSMODProfile="http:///schemas/SYSMODProfile/_1NciIDJhEe-vnrdk_DuPIQ/46" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Blocks http://www.eclipse.org/papyrus/sysml/1.6/SysML#//blocks http://www.eclipse.org/papyrus/sysml/1.6/SysML/Requirements http://www.eclipse.org/papyrus/sysml/1.6/SysML#//requirements http:///schemas/SYSMODProfile/_1NciIDJhEe-vnrdk_DuPIQ/46 ../SYSMOD/SYSMOD.profile.uml#_1NhaoDJhEe-vnrdk_DuPIQ">
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Blocks="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Blocks" xmlns:PortsAndFlows="http://www.eclipse.org/papyrus/sysml/1.6/SysML/PortsAndFlows" xmlns:Requirements="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Requirements" xmlns:SYSMODProfile="http:///schemas/SYSMODProfile/_1NciIDJhEe-vnrdk_DuPIQ/46" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Blocks http://www.eclipse.org/papyrus/sysml/1.6/SysML#//blocks http://www.eclipse.org/papyrus/sysml/1.6/SysML/PortsAndFlows http://www.eclipse.org/papyrus/sysml/1.6/SysML#//portsandflows http://www.eclipse.org/papyrus/sysml/1.6/SysML/Requirements http://www.eclipse.org/papyrus/sysml/1.6/SysML#//requirements http:///schemas/SYSMODProfile/_1NciIDJhEe-vnrdk_DuPIQ/46 ../SYSMOD/SYSMOD.profile.uml#_1NhaoDJhEe-vnrdk_DuPIQ">
   <uml:Model xmi:id="_7_wc4NL9Ee6l85wEdsX-kg" name="hekate">
     <packagedElement xmi:type="uml:Package" xmi:id="_GqBnMNL-Ee6sMdDma9uCFA" name="hekate_issues"/>
     <packagedElement xmi:type="uml:Package" xmi:id="_JlnOkNL-Ee6sMdDma9uCFA" name="hekate_model_queries"/>
@@ -103,13 +103,79 @@
           </eAnnotations>
           <ownedEnd xmi:type="uml:Property" xmi:id="_6nTv4h8zEe-SxuPV3OgxOg" name="hekate_base_architecture" type="_8mIq8NL-Ee6sMdDma9uCFA" association="_6nTI0B8zEe-SxuPV3OgxOg"/>
         </packagedElement>
+        <packagedElement xmi:type="uml:InformationFlow" xmi:id="_c-7tkDP_Ee-QTcVSo3wIMQ" name="ItemFlow14" informationSource="_swEsstlKEe6c0MSyQZhveg" informationTarget="_eOlw4DP6Ee-QTcVSo3wIMQ"/>
       </packagedElement>
       <packagedElement xmi:type="uml:Package" xmi:id="_SxOpkNL-Ee6sMdDma9uCFA" name="hekate_context">
         <packagedElement xmi:type="uml:Class" xmi:id="_eQ-FEB82Ee-SxuPV3OgxOg" name="hekate_system_context">
           <generalization xmi:type="uml:Generalization" xmi:id="_qnpG0B82Ee-SxuPV3OgxOg" general="_Piq1ENO9Ee6Gy46Uxtx9HA"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_eOlw4DP6Ee-QTcVSo3wIMQ" name="hekate" type="_B5QNkNMDEe6ZTvdcSJNY9w" aggregation="composite" association="_eOkiwDP6Ee-QTcVSo3wIMQ">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_eOlw4TP6Ee-QTcVSo3wIMQ"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_eOlw4jP6Ee-QTcVSo3wIMQ" value="1"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_P_4aAjP7Ee-QTcVSo3wIMQ" name="mobile network" type="_uLggkDP6Ee-QTcVSo3wIMQ" aggregation="composite" association="_P_3y8DP7Ee-QTcVSo3wIMQ">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_P_4aAzP7Ee-QTcVSo3wIMQ"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_P_4aBDP7Ee-QTcVSo3wIMQ" value="1"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_Qwf-ozP7Ee-QTcVSo3wIMQ" name="operator" type="_n4tsgNiXEe6ndsZGHkuDcw" aggregation="composite" association="_Qwf-oDP7Ee-QTcVSo3wIMQ">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QwglsDP7Ee-QTcVSo3wIMQ"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QwglsTP7Ee-QTcVSo3wIMQ" value="1"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_iu-WYDP7Ee-QTcVSo3wIMQ" name="service technican" type="_xCbqENiXEe6ndsZGHkuDcw" aggregation="composite" association="_iu9vUDP7Ee-QTcVSo3wIMQ">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_iu-WYTP7Ee-QTcVSo3wIMQ"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_iu-WYjP7Ee-QTcVSo3wIMQ" value="1"/>
+          </ownedAttribute>
+          <ownedConnector xmi:type="uml:Connector" xmi:id="_8yur0DP-Ee-QTcVSo3wIMQ" name="Connector7">
+            <end xmi:type="uml:ConnectorEnd" xmi:id="_8yvS4DP-Ee-QTcVSo3wIMQ" role="_Qwf-ozP7Ee-QTcVSo3wIMQ"/>
+            <end xmi:type="uml:ConnectorEnd" xmi:id="_8yvS4TP-Ee-QTcVSo3wIMQ" role="_eOlw4DP6Ee-QTcVSo3wIMQ"/>
+          </ownedConnector>
+          <ownedConnector xmi:type="uml:Connector" xmi:id="_9v43oDP-Ee-QTcVSo3wIMQ" name="Connector8">
+            <end xmi:type="uml:ConnectorEnd" xmi:id="_9v5esDP-Ee-QTcVSo3wIMQ" role="_iu-WYDP7Ee-QTcVSo3wIMQ"/>
+            <end xmi:type="uml:ConnectorEnd" xmi:id="_9v6FwDP-Ee-QTcVSo3wIMQ" role="_eOlw4DP6Ee-QTcVSo3wIMQ"/>
+          </ownedConnector>
+          <ownedConnector xmi:type="uml:Connector" xmi:id="_-TpsADP-Ee-QTcVSo3wIMQ" name="Connector9">
+            <end xmi:type="uml:ConnectorEnd" xmi:id="_-Tq6IDP-Ee-QTcVSo3wIMQ" role="_ubhh4dlKEe6c0MSyQZhveg"/>
+            <end xmi:type="uml:ConnectorEnd" xmi:id="_-Tq6ITP-Ee-QTcVSo3wIMQ" role="_eOlw4DP6Ee-QTcVSo3wIMQ"/>
+          </ownedConnector>
+          <ownedConnector xmi:type="uml:Connector" xmi:id="_-zitADP-Ee-QTcVSo3wIMQ" name="Connector10">
+            <end xmi:type="uml:ConnectorEnd" xmi:id="_-zj7IDP-Ee-QTcVSo3wIMQ" role="_4K9RENlJEe6c0MSyQZhveg"/>
+            <end xmi:type="uml:ConnectorEnd" xmi:id="_-zj7ITP-Ee-QTcVSo3wIMQ" role="_eOlw4DP6Ee-QTcVSo3wIMQ"/>
+          </ownedConnector>
+          <ownedConnector xmi:type="uml:Connector" xmi:id="__Sgg8DP-Ee-QTcVSo3wIMQ" name="Connector11">
+            <end xmi:type="uml:ConnectorEnd" xmi:id="__ShIADP-Ee-QTcVSo3wIMQ" role="_P_4aAjP7Ee-QTcVSo3wIMQ"/>
+            <end xmi:type="uml:ConnectorEnd" xmi:id="__ShIATP-Ee-QTcVSo3wIMQ" role="_eOlw4DP6Ee-QTcVSo3wIMQ"/>
+          </ownedConnector>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Package" xmi:id="_2ggSEDP5Ee-QTcVSo3wIMQ" name="external_systems"/>
+        <packagedElement xmi:type="uml:Package" xmi:id="_4f-2gDP5Ee-QTcVSo3wIMQ" name="user"/>
+        <packagedElement xmi:type="uml:Association" xmi:id="_eOkiwDP6Ee-QTcVSo3wIMQ" memberEnd="_eOlw4DP6Ee-QTcVSo3wIMQ _eOlw4zP6Ee-QTcVSo3wIMQ">
+          <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_eOlJ0DP6Ee-QTcVSo3wIMQ" source="org.eclipse.papyrus">
+            <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_eOlJ0TP6Ee-QTcVSo3wIMQ" key="nature" value="UML_Nature"/>
+          </eAnnotations>
+          <ownedEnd xmi:type="uml:Property" xmi:id="_eOlw4zP6Ee-QTcVSo3wIMQ" name="hekate_system_context" type="_eQ-FEB82Ee-SxuPV3OgxOg" association="_eOkiwDP6Ee-QTcVSo3wIMQ"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_uLggkDP6Ee-QTcVSo3wIMQ" name="mobile_network"/>
+        <packagedElement xmi:type="uml:Association" xmi:id="_P_3y8DP7Ee-QTcVSo3wIMQ" memberEnd="_P_4aAjP7Ee-QTcVSo3wIMQ _P_4aBTP7Ee-QTcVSo3wIMQ">
+          <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_P_4aADP7Ee-QTcVSo3wIMQ" source="org.eclipse.papyrus">
+            <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_P_4aATP7Ee-QTcVSo3wIMQ" key="nature" value="UML_Nature"/>
+          </eAnnotations>
+          <ownedEnd xmi:type="uml:Property" xmi:id="_P_4aBTP7Ee-QTcVSo3wIMQ" name="hekate_system_context" type="_eQ-FEB82Ee-SxuPV3OgxOg" association="_P_3y8DP7Ee-QTcVSo3wIMQ"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Association" xmi:id="_Qwf-oDP7Ee-QTcVSo3wIMQ" memberEnd="_Qwf-ozP7Ee-QTcVSo3wIMQ _QwglsjP7Ee-QTcVSo3wIMQ">
+          <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Qwf-oTP7Ee-QTcVSo3wIMQ" source="org.eclipse.papyrus">
+            <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Qwf-ojP7Ee-QTcVSo3wIMQ" key="nature" value="UML_Nature"/>
+          </eAnnotations>
+          <ownedEnd xmi:type="uml:Property" xmi:id="_QwglsjP7Ee-QTcVSo3wIMQ" name="hekate_system_context" type="_eQ-FEB82Ee-SxuPV3OgxOg" association="_Qwf-oDP7Ee-QTcVSo3wIMQ"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Association" xmi:id="_iu9vUDP7Ee-QTcVSo3wIMQ" memberEnd="_iu-WYDP7Ee-QTcVSo3wIMQ _iu-WYzP7Ee-QTcVSo3wIMQ">
+          <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_iu9vUTP7Ee-QTcVSo3wIMQ" source="org.eclipse.papyrus">
+            <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_iu9vUjP7Ee-QTcVSo3wIMQ" key="nature" value="UML_Nature"/>
+          </eAnnotations>
+          <ownedEnd xmi:type="uml:Property" xmi:id="_iu-WYzP7Ee-QTcVSo3wIMQ" name="hekate_system_context" type="_eQ-FEB82Ee-SxuPV3OgxOg" association="_iu9vUDP7Ee-QTcVSo3wIMQ"/>
         </packagedElement>
       </packagedElement>
-      <packagedElement xmi:type="uml:Package" xmi:id="_S0IzoNL-Ee6sMdDma9uCFA" name="hekate_domain"/>
+      <packagedElement xmi:type="uml:Package" xmi:id="_S0IzoNL-Ee6sMdDma9uCFA" name="hekate_domain">
+        <packagedElement xmi:type="uml:DataType" xmi:id="_1JudoDP_Ee-QTcVSo3wIMQ" name="ValueType1"/>
+      </packagedElement>
       <packagedElement xmi:type="uml:Package" xmi:id="_S2Ab4NL-Ee6sMdDma9uCFA" name="hekate_functional_architecture"/>
       <packagedElement xmi:type="uml:Package" xmi:id="_zgxOkNZDEe6HVtzs0vN4cQ" name="hekate_logical_architecture">
         <packagedElement xmi:type="uml:Class" xmi:id="_-5bI4NZDEe6HVtzs0vN4cQ" name="hekate_logical_architecture">
@@ -195,7 +261,7 @@
           <packagedElement xmi:type="uml:Actor" xmi:id="_n4tsgNiXEe6ndsZGHkuDcw" name="Operator"/>
           <packagedElement xmi:type="uml:Actor" xmi:id="_xCbqENiXEe6ndsZGHkuDcw" name="Service Technican"/>
           <packagedElement xmi:type="uml:Actor" xmi:id="_2wbHoNiXEe6ndsZGHkuDcw" name="CEO"/>
-          <packagedElement xmi:type="uml:Actor" xmi:id="_DWvHoNk3Ee6NV6nLpjk7jA" name="Cellular Network Provider"/>
+          <packagedElement xmi:type="uml:Actor" xmi:id="_DWvHoNk3Ee6NV6nLpjk7jA" name="Mobile Network Provider"/>
           <packagedElement xmi:type="uml:Actor" xmi:id="_GqhzoNk3Ee6NV6nLpjk7jA" name="External IoT Users"/>
           <packagedElement xmi:type="uml:Actor" xmi:id="_3aOVgNk6Ee6NV6nLpjk7jA" name="IoT SIM Card Provider"/>
           <packagedElement xmi:type="uml:Actor" xmi:id="_8h39ENlAEe6c0MSyQZhveg" name="Telecommunication Law"/>
@@ -375,4 +441,7 @@
   <SYSMODProfile:Risk xmi:id="_tZgokDJdEe-vnrdk_DuPIQ" base_NamedElement="_tZezYDJdEe-vnrdk_DuPIQ" base_Class="_tZezYDJdEe-vnrdk_DuPIQ" kind="technical"/>
   <SYSMODProfile:Risk xmi:id="_8FD3FTJdEe-vnrdk_DuPIQ" base_NamedElement="_8FD3ADJdEe-vnrdk_DuPIQ" text="The device gets damaged because of environmental impacts" base_Class="_8FD3ADJdEe-vnrdk_DuPIQ" kind="technical"/>
   <SYSMODProfile:Risk xmi:id="_WUOSkDJeEe-vnrdk_DuPIQ" base_NamedElement="_WUMdYDJeEe-vnrdk_DuPIQ" base_Class="_WUMdYDJeEe-vnrdk_DuPIQ" kind="technical"/>
+  <Blocks:Block xmi:id="_uLpqgDP6Ee-QTcVSo3wIMQ" base_Class="_uLggkDP6Ee-QTcVSo3wIMQ"/>
+  <PortsAndFlows:ItemFlow xmi:id="_c--w4DP_Ee-QTcVSo3wIMQ" base_InformationFlow="_c-7tkDP_Ee-QTcVSo3wIMQ"/>
+  <Blocks:ValueType xmi:id="_1JyvEDP_Ee-QTcVSo3wIMQ" base_DataType="_1JudoDP_Ee-QTcVSo3wIMQ"/>
 </xmi:XMI>
