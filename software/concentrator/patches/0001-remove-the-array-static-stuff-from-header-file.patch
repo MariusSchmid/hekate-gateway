@@ -1,0 +1,25 @@
+From 1ae3019a6e7ad951112b51abf2818d8c1f055083 Mon Sep 17 00:00:00 2001
+From: Marius <mafloschmid@aol.com>
+Date: Mon, 14 Aug 2023 12:12:11 +0200
+Subject: [PATCH] remove the array static stuff from header file
+
+---
+ libloragw/inc/loragw_hal.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libloragw/inc/loragw_hal.h b/libloragw/inc/loragw_hal.h
+index 6e153a3..fccd784 100644
+--- a/libloragw/inc/loragw_hal.h
++++ b/libloragw/inc/loragw_hal.h
+@@ -583,7 +583,7 @@ int lgw_spectral_scan_get_status(lgw_spectral_scan_status_t * status);
+ @param values ar array containing the results of the scan for each power levels
+ @return LGW_HAL_ERROR id the operation failed, LGW_HAL_SUCCESS else
+ */
+-int lgw_spectral_scan_get_results(int16_t levels_dbm[static LGW_SPECTRAL_SCAN_RESULT_SIZE], uint16_t results[static LGW_SPECTRAL_SCAN_RESULT_SIZE]);
++int lgw_spectral_scan_get_results(int16_t levels_dbm[LGW_SPECTRAL_SCAN_RESULT_SIZE], uint16_t results[LGW_SPECTRAL_SCAN_RESULT_SIZE]);
+ 
+ /**
+ @brief Abort the current scan
+-- 
+2.30.0.windows.1
+
