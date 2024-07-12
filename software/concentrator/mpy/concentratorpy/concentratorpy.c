@@ -1,8 +1,27 @@
 // Include MicroPython API.
 #include "py/runtime.h"
 
+#include "concentrator.h"
 // Used to get the time in the Timer class example.
 #include "py/mphal.h"
+static mp_obj_t c_sample_callback_obj;
+
+static mp_obj_t c_sample_set_callback(mp_obj_t callback_obj) {
+    // MP_STATE_PORT(c_sample_callback_obj) = callback_obj;
+    c_sample_callback_obj = callback_obj;
+    // mp_call_function_1(c_sample_callback_obj,NULL);
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(c_sample_set_callback_obj, c_sample_set_callback);
+
+
+static mp_obj_t c_sample_call_callback(void) {
+    // return mp_call_function_1(c_sample_callback_obj, NULL);
+    return mp_call_function_0(c_sample_callback_obj);
+    // return mp_call_function_1(MP_STATE_PORT(c_sample_callback_obj), obj);
+}
+
+static MP_DEFINE_CONST_FUN_OBJ_0(c_sample_call_callback_obj, c_sample_call_callback);
 
 // This is the function which will be called from Python as cexample.add_ints(a, b).
 static mp_obj_t example_add_ints(mp_obj_t a_obj, mp_obj_t b_obj) {
@@ -13,6 +32,7 @@ static mp_obj_t example_add_ints(mp_obj_t a_obj, mp_obj_t b_obj) {
     // Calculate the addition and convert to MicroPython object.
     return mp_obj_new_int(a + b);
 }
+
 // Define a Python reference to the function above.
 static MP_DEFINE_CONST_FUN_OBJ_2(example_add_ints_obj, example_add_ints);
 
@@ -74,17 +94,19 @@ MP_DEFINE_CONST_OBJ_TYPE(
 // All identifiers and strings are written as MP_QSTR_xxx and will be
 // optimized to word-sized integers by the build system (interned strings).
 static const mp_rom_map_elem_t example_module_globals_table[] = {
-    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_cexample) },
+    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_concentrator) },
+    { MP_ROM_QSTR(MP_QSTR_set_callback), MP_ROM_PTR(&c_sample_set_callback_obj) },
+    { MP_ROM_QSTR(MP_QSTR_call_callback), MP_ROM_PTR(&c_sample_call_callback_obj) },
     { MP_ROM_QSTR(MP_QSTR_add_ints), MP_ROM_PTR(&example_add_ints_obj) },
     { MP_ROM_QSTR(MP_QSTR_Timer),    MP_ROM_PTR(&example_type_Timer) },
 };
 static MP_DEFINE_CONST_DICT(example_module_globals, example_module_globals_table);
 
 // Define module object.
-const mp_obj_module_t example_user_cmodule = {
+const mp_obj_module_t concentrator_cmodule = {
     .base = { &mp_type_module },
     .globals = (mp_obj_dict_t *)&example_module_globals,
 };
 
 // Register the module to make it available in Python.
-MP_REGISTER_MODULE(MP_QSTR_cexample, example_user_cmodule);
+MP_REGISTER_MODULE(MP_QSTR_concentrator, concentrator_cmodule);

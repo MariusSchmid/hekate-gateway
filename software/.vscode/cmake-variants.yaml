@@ -1,0 +1,10 @@
+buildType:
+  default: debug
+  choices:
+
+    debug:
+      short: debug
+      long: debug with example
+      buildType: Debug
+      settings:
+        ENABLE_EXAMPLE: ON

@@ -8,4 +8,4 @@ cd sx1302_hal && git checkout V2.1.0
 
 ## needs to be patched
 cd concentrator/external/sx1302_hal/V2.1.0/sx1302_hal
-git am ../../../../patches/0001-remove-the-array-static-stuff-from-header-file.patch
+git apply ../../../../patches/disable_warning_as_error.patch

@@ -66,10 +66,13 @@ target_include_directories(concentrator
 )
 
 
-add_executable(concentrator_example "")
-target_sources(concentrator_example 
-    PRIVATE 
-    example/main.c
-)
-
-target_link_libraries(concentrator_example PRIVATE concentrator)
+option(ENABLE_EXAMPLE "Build example code" OFF)
+message(STATUS "ENABLE_EXAMPLE: ${ENABLE_EXAMPLE}")
+    if(ENABLE_EXAMPLE)
+    add_executable(concentrator_example "")
+    target_sources(concentrator_example 
+        PRIVATE 
+        example/main.c
+    )
+    target_link_libraries(concentrator_example PRIVATE concentrator)
+endif()

@@ -14,7 +14,8 @@
 				"twxs.cmake",
 				"ms-python.python",
 				"ms-vscode.cpptools",
-				"akiramiyakoda.cppincludeguard"
+				"akiramiyakoda.cppincludeguard",
+				"ms-vscode.cpptools-extension-pack"
 			]
 		}
 	}
