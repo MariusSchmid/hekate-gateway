@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "spi_custom_init.h": "c",
+        "stdint.h": "c",
+        "concentrator.h": "c",
+        "concentrator_types.h": "c",
+        "spi.h": "c"
+    },
+    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
+    "cmake.ignoreCMakeListsMissing": false
+}
