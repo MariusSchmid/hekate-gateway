@@ -6,7 +6,9 @@
         "concentrator_types.h": "c",
         "spi.h": "c",
         "stdlib.h": "c",
-        "concentrator_spi.h": "c"
+        "concentrator_spi.h": "c",
+        "binary_info.h": "c",
+        "*.var": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
     "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/pico_dev",

@@ -7,14 +7,14 @@ bool concentrator_spi_init(concentrator_spi_if_t spi_if)
     return true;
 }
 
-bool concentrator_spi_write_read_burst(SPI_handle_t spi_handle, uint8_t *tx_buffer, uint32_t tx_buffer_size, uint8_t *rx_buffer, uint32_t rx_buffersize)
+bool concentrator_spi_write_read_burst(SPI_handle_t spi_handle, uint8_t *command, uint32_t command_size, uint8_t *rx_buffer, uint32_t rx_buffersize)
 {
-    return false;
+    return this_spi_if.spi_write_read_burst(spi_handle, command, command_size, rx_buffer, rx_buffersize);
 }
 
-bool concentrator_spi_write_burst(SPI_handle_t spi_handle, uint8_t *tx_buffer, uint32_t tx_buffer_size, const uint8_t *rx_buffer, uint32_t rx_buffersize)
+bool concentrator_spi_write_burst(SPI_handle_t spi_handle, uint8_t *command, uint32_t command_size, const uint8_t *tx_data, uint32_t tx_data_size)
 {
-    return false;
+    return this_spi_if.spi_write_burst(spi_handle, command, command_size, tx_data, tx_data_size);
 }
 
 bool concentrator_spi_enable(SPI_handle_t spi_handle)
