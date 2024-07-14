@@ -8,6 +8,7 @@
 		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 		"dockerfile": "../Dockerfile"
 	},
+	"runArgs": ["--privileged"],
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -15,7 +16,12 @@
 				"ms-python.python",
 				"ms-vscode.cpptools",
 				"akiramiyakoda.cppincludeguard",
-				"ms-vscode.cpptools-extension-pack"
+				"ms-vscode.cpptools-extension-pack",
+				"ms-vscode.cmake-tools",
+				"mcu-debug.peripheral-viewer",
+				"mcu-debug.rtos-views",
+				"mcu-debug.debug-tracker-vscode",
+				"marus25.cortex-debug"
 			]
 		}
 	}

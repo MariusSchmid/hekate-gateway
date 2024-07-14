@@ -4,8 +4,14 @@
         "stdint.h": "c",
         "concentrator.h": "c",
         "concentrator_types.h": "c",
-        "spi.h": "c"
+        "spi.h": "c",
+        "stdlib.h": "c",
+        "concentrator_spi.h": "c"
     },
-    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
-    "cmake.ignoreCMakeListsMissing": false
+    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
+    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/pico_dev",
+    "cmake.ignoreCMakeListsMissing": false,
+    "cmake.configureOnOpen": true,
+    "cortex-debug.gdbPath": "arm-none-eabi-gdb",
+    "cortex-debug.openocdPath": "openocd",
 }

@@ -7,4 +7,4 @@ buildType:
       long: debug with example
       buildType: Debug
       settings:
-        ENABLE_EXAMPLE: ON
+        ENABLE_EXAMPLE: OFF

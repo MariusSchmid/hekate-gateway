@@ -28,7 +28,7 @@ License: Revised BSD License, see LICENSE.TXT file include in the project
 #include "loragw_aux.h"
 #include "sx1250_spi.h"
 
-#include "spi.h"
+#include "concentrator_spi.h"
 #include "spi_custom_init.h"
 
 /* -------------------------------------------------------------------------- */
@@ -90,7 +90,7 @@ int sx1250_spi_w(void *com_target, uint8_t spi_mux_target, sx1250_op_code_t op_c
     }
     command_size = cmd_size + size;
 
-    if (!(spi_write_read(spi_handle, out_buf, in_buf, command_size)))
+    if (!(concentrator_spi_write_read(spi_handle, out_buf, in_buf, command_size)))
     {
         return LGW_SPI_ERROR;
     }
@@ -168,7 +168,7 @@ int sx1250_spi_r(void *com_target, uint8_t spi_mux_target, sx1250_op_code_t op_c
     }
     command_size = cmd_size + size;
 
-    if (!(spi_write_read(spi_handle, out_buf, in_buf, command_size)))
+    if (!(concentrator_spi_write_read(spi_handle, out_buf, in_buf, command_size)))
     {
         return LGW_SPI_ERROR;
     }

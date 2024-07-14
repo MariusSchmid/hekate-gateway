@@ -39,7 +39,7 @@ target_sources(concentrator PRIVATE
     ${_SOURCE_ROOT_PATH}/src/loragw_ad5338r.c
 
     src/concentrator.c
-    src/spi.c
+    src/concentrator_spi.c
     src/lora_config.c
     src/wait.c
 )

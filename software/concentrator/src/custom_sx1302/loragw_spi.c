@@ -25,7 +25,7 @@ License: Revised BSD License, see LICENSE.TXT file include in the project
 #include <fcntl.h>  /* open */
 #include <string.h> /* memset */
 
-#include "spi.h"
+#include "concentrator_spi.h"
 // #include "spi_custom_init.h"
 
 #include "loragw_spi.h"
@@ -78,11 +78,11 @@ int lgw_spi_open(const char *com_path, void **com_target_ptr)
     CHECK_NULL(com_path);
     CHECK_NULL(com_target_ptr);
 
-    if (!(spi_get_handle(&this_spi)))
+    if (!(concentrator_spi_get_handle(&this_spi)))
     {
         return LGW_SPI_ERROR;
     }
-    if (!(spi_enable(this_spi)))
+    if (!(concentrator_spi_enable(this_spi)))
     {
         return LGW_SPI_ERROR;
     }
@@ -100,7 +100,7 @@ int lgw_spi_close(void *com_target)
     /* check input variables */
     CHECK_NULL(com_target);
 
-    if (!(spi_disable(this_spi)))
+    if (!(concentrator_spi_disable(this_spi)))
     {
         return LGW_SPI_ERROR;
     }
@@ -148,7 +148,7 @@ int lgw_spi_w(void *com_target, uint8_t spi_mux_target, uint16_t address, uint8_
     out_buf[3] = data;
     command_size = 4;
 
-    if (!(spi_write_read(this_spi, out_buf, in_buf, command_size)))
+    if (!(concentrator_spi_write_read(this_spi, out_buf, in_buf, command_size)))
     {
         return LGW_SPI_ERROR;
     }
@@ -220,7 +220,7 @@ int lgw_spi_r(void *com_target, uint8_t spi_mux_target, uint16_t address, uint8_
     out_buf[4] = 0x00;
     command_size = 5;
 
-    if (!(spi_write_read(this_spi, out_buf, in_buf, command_size)))
+    if (!(concentrator_spi_write_read(this_spi, out_buf, in_buf, command_size)))
     {
         return LGW_SPI_ERROR;
     }
@@ -325,7 +325,7 @@ int lgw_spi_wb(void *com_target, uint8_t spi_mux_target, uint16_t address, const
     {
         chunk_size = (size_to_do < LGW_BURST_CHUNK) ? size_to_do : LGW_BURST_CHUNK;
         offset = i * LGW_BURST_CHUNK;
-        if (!(spi_write_burst(this_spi, command, command_size, data + offset, chunk_size)))
+        if (!(concentrator_spi_write_burst(this_spi, command, command_size, data + offset, chunk_size)))
         {
             return LGW_SPI_ERROR;
         }
@@ -448,7 +448,7 @@ int lgw_spi_rb(void *com_target, uint8_t spi_mux_target, uint16_t address, uint8
         // k[1].len = chunk_size;
         // byte_transfered += (ioctl(spi_device, SPI_IOC_MESSAGE(2), &k) - k[0].len);
         // if (!(spi_write_read(this_spi, read_buffer, data + offset, chunk_size)))
-        if (!(spi_write_read_burst(this_spi, command, command_size, data + offset, chunk_size)))
+        if (!(concentrator_spi_write_read_burst(this_spi, command, command_size, data + offset, chunk_size)))
         {
             return LGW_SPI_ERROR;
         }

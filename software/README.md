@@ -2,14 +2,9 @@
 # getting started
 Dev Docker container are used
 
-
-
 # git submodules
-
-## init all submodules
 git submodule init 
 git submodule update
-
 
 
 # MicroPython
@@ -37,16 +32,11 @@ cd external/micropython
 make -C mpy-cross
 ~~~
 
-## run micropython
-~~~
-./external/micropython/ports/unix/build-standard/micropython
-import hekate
-hekate.init()
-~~~
 
-
-
-# need to build for
-unix # normal cmake
-mpy unix #shell script
-mpy rp2 #shell script
+# RP2 debugging
+## Pass USB device to WSL / Dev Container
+* install https://github.com/dorssel/usbipd-win/releases
+* in ADMIN CMD:
+    * list all usb devices: usbipd list
+    * usbipd bind --busid 6-2
+    * usbipd attach --wsl --busid 6-2
