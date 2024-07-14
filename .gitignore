@@ -10,3 +10,4 @@ electronics/hekate_pcb/fp-info-cache
 /ttn-config/tc.*
 electronics/hekate_pcb/~hekate_pcb.kicad_pcb.lck
 electronics/hekate_pcb/~hekate_pcb.kicad_sch.lck
+software/pico_dev/Password.cmake

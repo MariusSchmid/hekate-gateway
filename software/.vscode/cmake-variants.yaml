@@ -8,3 +8,4 @@ buildType:
       buildType: Debug
       settings:
         ENABLE_EXAMPLE: OFF
+        PICO_BOARD: pico_w
