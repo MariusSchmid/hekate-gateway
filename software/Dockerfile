@@ -10,6 +10,10 @@ RUN apk add --no-cache python3 py3-pip
 
 RUN apk add gdb cmake gcc make g++ git bash
 
+# git config
+RUN git config --global user.email "mafloschmid@aol.com"
+RUN git config --global user.name "Marius Schmid"
+
 #micropython unix
 RUN apk add libffi-dev libbsd-dev
 
@@ -33,3 +37,5 @@ RUN cd /home/dev/openocd/ && ./bootstrap
 RUN cd /home/dev/openocd/ && ./configure --enable-picoprobe
 RUN cd /home/dev/openocd/ && make -j4
 RUN cd /home/dev/openocd/ && make install
+
+
