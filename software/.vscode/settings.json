@@ -8,7 +8,9 @@
         "stdlib.h": "c",
         "concentrator_spi.h": "c",
         "binary_info.h": "c",
-        "*.var": "c"
+        "*.var": "c",
+        "loragw_hal.h": "c",
+        "lora_config.h": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
     "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/pico_dev",

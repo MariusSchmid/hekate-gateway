@@ -230,7 +230,7 @@
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R2"
-			(at 2.5 0 90)
+			(at -2.298 0 90)
 			(layer "F.SilkS")
 			(uuid "563b8682-135b-48d0-ba94-49ce03766770")
 			(effects
@@ -685,7 +685,7 @@
 			(uuid "dac06796-7602-4e9c-a89c-c3805ff0b3f2")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 180)
+			(at -0.2055 -2.16 180)
 			(layer "F.Fab")
 			(uuid "37e16ef2-b568-4687-8ffd-0051e575c85c")
 			(effects
@@ -743,7 +743,7 @@
 			)
 		)
 		(property "Value" "UART_DEBUG"
-			(at 0 7.41 90)
+			(at 4.064 2.779 180)
 			(layer "F.Fab")
 			(uuid "02c4f1e8-f090-4842-916f-72e744988ab0")
 			(effects
@@ -1270,7 +1270,7 @@
 			(uuid "347ea6dc-afa3-480f-be4e-4eaa539f1c79")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 180)
+			(at 0 2.472 180)
 			(layer "F.Fab")
 			(uuid "b73f4d03-1242-46fc-b3bb-9fcb24c44ac3")
 			(effects
@@ -1656,7 +1656,7 @@
 			)
 		)
 		(property "Value" "100nF"
-			(at 0.35 -1.1 90)
+			(at -0.794 -1.568 90)
 			(layer "F.Fab")
 			(uuid "f2a46738-48d8-4973-9354-87e1a7fdb9ff")
 			(effects
@@ -1866,7 +1866,7 @@
 			)
 		)
 		(property "Value" "4.7K"
-			(at -2.35 -0.05 90)
+			(at -3.34 -0.014 90)
 			(layer "F.Fab")
 			(uuid "97b64778-baae-4e10-9cfb-b610eefa2b22")
 			(effects
@@ -2286,7 +2286,7 @@
 			)
 		)
 		(property "Value" "Conn_01x20"
-			(at 0 50.59 -90)
+			(at 0.142 5.616 0)
 			(layer "F.Fab")
 			(uuid "42375249-5e2c-41cb-a484-7277295ac98f")
 			(effects
@@ -2748,7 +2748,7 @@
 			)
 		)
 		(property "Value" "BC817"
-			(at 0 2.4 90)
+			(at 2.89 -2.972 180)
 			(layer "F.Fab")
 			(uuid "60883b1d-c9f5-4898-b0ef-035eefdba573")
 			(effects
@@ -3000,7 +3000,7 @@
 			)
 		)
 		(property "Value" "22R"
-			(at 0 1.43 90)
+			(at -3.402 -0.098 90)
 			(layer "F.Fab")
 			(uuid "780039da-70e6-4979-b842-2b59adfab80a")
 			(effects
@@ -3630,7 +3630,7 @@
 			)
 		)
 		(property "Value" "100nF"
-			(at 0 1.43 0)
+			(at -0.38 3.19 -90)
 			(layer "F.Fab")
 			(uuid "8841a084-fe84-4716-b0c2-53f668ec64be")
 			(effects
@@ -5340,7 +5340,7 @@
 			)
 		)
 		(property "Value" "4.7µF"
-			(at 0 1.43 90)
+			(at 0 1.452 90)
 			(layer "F.Fab")
 			(uuid "f0b83026-44e9-489f-90e7-2a361f6e0318")
 			(effects
@@ -5550,7 +5550,7 @@
 			)
 		)
 		(property "Value" "56 R"
-			(at 0 1.43 0)
+			(at -4.696 0.036 0)
 			(layer "F.Fab")
 			(uuid "29aaee87-6ca6-4526-bb81-512c6350d439")
 			(effects
@@ -5760,7 +5760,7 @@
 			)
 		)
 		(property "Value" "Conn_01x20"
-			(at 0 50.59 -90)
+			(at -0.254 5.362 0)
 			(layer "F.Fab")
 			(uuid "d2a6b4a1-542c-4fdc-b4ef-382c0f933b4b")
 			(effects
@@ -6222,7 +6222,7 @@
 			)
 		)
 		(property "Value" "47K"
-			(at -0.1 1.6 0)
+			(at 0.072 1.754 0)
 			(layer "F.Fab")
 			(uuid "3b0f786a-faf9-4b89-9f37-82cb29c87a87")
 			(effects
@@ -6432,7 +6432,7 @@
 			)
 		)
 		(property "Value" "SUPPLY_SELECT"
-			(at 5.334 2.144 0)
+			(at -4.572 4.049 0)
 			(layer "F.Fab")
 			(uuid "1a2dc7ea-d75e-43a9-bd8c-40855098f6d3")
 			(effects
@@ -6707,8 +6707,9 @@
 			)
 		)
 		(property "Value" "Conn_Coaxial"
-			(at 0 -3.302 90)
+			(at 3.344 13.406 180)
 			(layer "F.Fab")
+			(hide yes)
 			(uuid "d7da773c-37c7-461f-b694-c29587c1c0ae")
 			(effects
 				(font
@@ -7089,7 +7090,7 @@
 			)
 		)
 		(property "Value" "C"
-			(at 0 1.16 0)
+			(at 1.33 -0.01 0)
 			(layer "F.Fab")
 			(uuid "535357cf-88c5-4b81-bbfa-3d1e785ff3a1")
 			(effects
@@ -7765,7 +7766,7 @@
 			(uuid "eda50097-0c4b-4fd3-b211-02d63cc383a3")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 90)
+			(at 0 -1.746 90)
 			(layer "F.Fab")
 			(uuid "e9cc9588-2aa4-4621-aac7-7f23c425afc4")
 			(effects
@@ -8033,7 +8034,7 @@
 			)
 		)
 		(property "Value" "D_Schottky"
-			(at 0 2.1 0)
+			(at -5.969 -0.254 0)
 			(layer "F.Fab")
 			(uuid "99482be9-bd23-4663-aa9d-d11530b036d2")
 			(effects
@@ -8325,7 +8326,7 @@
 			)
 		)
 		(property "Value" "4.7K"
-			(at 2.6 0.15 0)
+			(at 3.484 0.15 0)
 			(layer "F.Fab")
 			(uuid "e8142364-9482-4e8f-937f-ed773a655644")
 			(effects
@@ -8535,7 +8536,7 @@
 			)
 		)
 		(property "Value" "22pF"
-			(at 0 1.43 90)
+			(at 3.656 -0.13 90)
 			(layer "F.Fab")
 			(uuid "de2386c6-ec48-44d6-889f-8a3d58c782ab")
 			(effects
@@ -8745,7 +8746,7 @@
 			)
 		)
 		(property "Value" "AP7361C-33SPR-13 "
-			(at 0 3.4 0)
+			(at 0.7 3.336 0)
 			(layer "F.Fab")
 			(uuid "c8409795-3239-4176-83e9-db226efac9ac")
 			(effects
@@ -9749,7 +9750,7 @@
 			)
 		)
 		(property "Value" "C"
-			(at 0.5 0 0)
+			(at 1.584 0 0)
 			(layer "F.Fab")
 			(uuid "09183989-d1a3-42ee-a7cc-45436bb874e9")
 			(effects
@@ -9959,7 +9960,7 @@
 			)
 		)
 		(property "Value" "4.7µF"
-			(at 0 1.43 90)
+			(at 2.935 -0.198 180)
 			(layer "F.Fab")
 			(uuid "8d71f011-184e-4677-b286-88784522bdc1")
 			(effects
@@ -13178,7 +13179,7 @@
 			)
 		)
 		(property "Value" "Conn_01x20"
-			(at 0 50.59 -90)
+			(at 0.142 5.108 0)
 			(layer "F.Fab")
 			(uuid "07600cf2-de3f-4772-ba9c-70de64b9c15d")
 			(effects
@@ -13920,7 +13921,7 @@
 			)
 		)
 		(property "Value" "4.7µF"
-			(at 0 1.43 90)
+			(at 2.656 -0.032 180)
 			(layer "F.Fab")
 			(uuid "7879743c-afa3-4afe-8495-17ceb49fa3e9")
 			(effects
@@ -14130,7 +14131,7 @@
 			)
 		)
 		(property "Value" "SIM_UART2"
-			(at 0 7.41 0)
+			(at -4.088 2.419 90)
 			(layer "F.Fab")
 			(uuid "51d51d62-2be5-403e-a518-8d41d1414153")
 			(effects
@@ -14405,7 +14406,7 @@
 			)
 		)
 		(property "Value" "EXT_SUPPLY"
-			(at -0.381 9.144 180)
+			(at -4.064 4.572 180)
 			(layer "F.Fab")
 			(uuid "33700ad3-25c8-4736-9545-20eea2f1dbc3")
 			(effects
@@ -15299,7 +15300,7 @@
 			)
 		)
 		(property "Value" "Conn_01x20"
-			(at 0 50.59 -90)
+			(at 0 4.6 0)
 			(layer "F.Fab")
 			(uuid "7eaea51f-46b9-4886-ad2a-5d289912be46")
 			(effects
@@ -15973,6 +15974,7 @@
 		(property "Value" "Conn_Coaxial"
 			(at 0 -3.302 90)
 			(layer "F.Fab")
+			(hide yes)
 			(uuid "345b1eab-af82-4fdd-9bb4-81d71cf72c2e")
 			(effects
 				(font
@@ -16277,7 +16279,7 @@
 			(uuid "b6bb8f98-cd52-4b93-99cc-9e6e20e2d00d")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 3.5 90)
+			(at -3.412 -0.056 180)
 			(layer "F.Fab")
 			(uuid "6fc72afb-706d-4f19-8a50-04f2c5d12183")
 			(effects
@@ -16563,7 +16565,7 @@
 			)
 		)
 		(property "Value" "BC817"
-			(at 0 2.4 0)
+			(at -0.2125 4.614 0)
 			(layer "F.Fab")
 			(uuid "0c5461e9-f094-4c40-b145-481666a5e808")
 			(effects
@@ -16815,7 +16817,7 @@
 			)
 		)
 		(property "Value" "Current"
-			(at 3.048 0.894 180)
+			(at -4.572 1.021 180)
 			(layer "F.Fab")
 			(uuid "c900f510-ed88-477b-9c35-ba9a7c3c2045")
 			(effects

@@ -21,8 +21,25 @@ struct SPI_handle_s
     uint8_t fd;
 } spi_handle_internal;
 
-static bool received_msg_cb()
+static bool received_msg_cb(lora_rx_packet_t *rx_packet)
 {
+    printf("  count_us: %u\n", rx_packet->count_us);
+    printf("  size:     %u\n", rx_packet->size);
+    printf("  chan:     %u\n", rx_packet->if_chain);
+    printf("  status:   0x%02X\n", rx_packet->status);
+    printf("  datr:     %u\n", rx_packet->datarate);
+    printf("  codr:     %u\n", rx_packet->coderate);
+    printf("  rf_chain  %u\n", rx_packet->rf_chain);
+    printf("  freq_hz   %u\n", rx_packet->freq_hz);
+    printf("  snr_avg:  %.1f\n", rx_packet->snr);
+    printf("  rssi_chan:%.1f\n", rx_packet->rssic);
+    printf("  rssi_sig :%.1f\n", rx_packet->rssis);
+    printf("  crc:      0x%04X\n", rx_packet->crc);
+    for (int j = 0; j < rx_packet->size; j++)
+    {
+        printf("%02X ", rx_packet->payload[j]);
+    }
+    printf("\n");
     return true;
 }
 
@@ -34,7 +51,9 @@ static bool spi_write_read(SPI_handle_t spi_handle, uint8_t *tx_buffer, uint8_t 
 {
     uint8_t num_bytes = 0;
     gpio_put(SPI_LORA_CS, false);
+    sleep_ms(2);
     num_bytes = spi_write_read_blocking(SPI_INSTANCE, tx_buffer, rx_buffer, buffersize);
+    sleep_ms(2);
     gpio_put(SPI_LORA_CS, true);
     return true;
 }
@@ -43,9 +62,10 @@ static bool spi_write_read_burst(SPI_handle_t spi_handle, uint8_t *command, uint
 {
     uint8_t num_bytes = 0;
     gpio_put(SPI_LORA_CS, false);
+    sleep_ms(2);
     num_bytes = spi_write_blocking(SPI_INSTANCE, command, command_size);
     num_bytes = spi_read_blocking(SPI_INSTANCE, 0x00, rx_buffer, rx_buffersize);
-
+    sleep_ms(2);
     gpio_put(SPI_LORA_CS, true);
     return true;
 }
@@ -53,8 +73,10 @@ static bool spi_write_burst(SPI_handle_t spi_handle, uint8_t *command, uint32_t 
 {
     uint8_t num_bytes = 0;
     gpio_put(SPI_LORA_CS, false);
+    sleep_ms(2);
     num_bytes = spi_write_blocking(SPI_INSTANCE, command, command_size);
     num_bytes = spi_write_blocking(SPI_INSTANCE, tx_buffer, tx_buffersize);
+    sleep_ms(2);
     gpio_put(SPI_LORA_CS, true);
 }
 
@@ -80,7 +102,7 @@ static bool init_spi()
 #warning spi/bme280_spi example requires a board with SPI pins
 #endif
 
-    spi_init(SPI_INSTANCE, 1000 * 1000);
+    spi_init(SPI_INSTANCE, 100 * 1000);
     // spi_init(SPI_INSTANCE, 500 * 1000);
     gpio_set_function(SPI_LORA_CLK, GPIO_FUNC_SPI);
     gpio_set_function(SPI_LORA_MOSI, GPIO_FUNC_SPI);
@@ -101,8 +123,9 @@ int main()
     gpio_set_dir(lora_en_pin, GPIO_OUT);
 
     gpio_put(lora_en_pin, false);
-    sleep_ms(10);
+    sleep_ms(100);
     gpio_put(lora_en_pin, true);
+    sleep_ms(100);
 
     // Initialize chosen serial port
     stdio_init_all();
@@ -123,17 +146,28 @@ int main()
         printf("Failed: concentrator_init\r\n");
     }
 
-    concentrator_start(received_msg_cb);
+    if (!concentrator_start())
+    {
+        printf("Failed: concentrator_init\r\n");
+    }
 
-    // Loop forever
+    uint32_t packets_received = 0;
     while (true)
     {
+        if (!concentrator_receive(received_msg_cb, &packets_received))
+        {
+            printf("Failed: concentrator_init\r\n");
+        }
 
+        if (packets_received == 0)
+        {
+            sleep_ms(10);
+        }
         // Blink LED
-        printf("Blinking!\r\n");
+        // printf("Blinking!\r\n");
         // gpio_put(lora_en_pin, true);
         // sleep_ms(1000);
         // gpio_put(lora_en_pin, false);
-        sleep_ms(1000);
+        // sleep_ms(1000);
     }
 }
