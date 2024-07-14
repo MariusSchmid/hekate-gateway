@@ -28,6 +28,7 @@ RUN ln -s /usr/bin/gdb-multiarch /usr/bin/arm-none-eabi-gdb
 # pico sdk
 RUN mkdir /home/dev
 RUN cd /home/dev && git clone https://github.com/raspberrypi/pico-sdk.git
+RUN cd /home/dev && git submodule update --init
 
 
 #build openocd
