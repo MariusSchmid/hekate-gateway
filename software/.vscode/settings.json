@@ -10,12 +10,16 @@
         "binary_info.h": "c",
         "*.var": "c",
         "loragw_hal.h": "c",
-        "lora_config.h": "c"
+        "lora_config.h": "c",
+        "stdio.h": "c",
+        "cstdint": "c",
+        "cstdio": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
-    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/pico_dev",
+    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application",
     "cmake.ignoreCMakeListsMissing": false,
     "cmake.configureOnOpen": true,
     "cortex-debug.gdbPath": "arm-none-eabi-gdb",
     "cortex-debug.openocdPath": "openocd",
+    "cortex-debug.variableUseNaturalFormat": true,
 }

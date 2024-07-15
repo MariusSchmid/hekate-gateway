@@ -21,7 +21,7 @@ set(PICO_SDK_PATH /home/dev/pico-sdk/)
 # note: this must happen before project()
 include(pico_sdk_import.cmake)
 
-project(my_project)
+project(application)
 
 # initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -30,8 +30,9 @@ pico_sdk_init()
 
 set(CMAKE_BUILD_TYPE Debug)
 # rest of your project
-add_executable(hello_world
-    hello_world.c
+add_executable(application
+    main.c
+    task_concentrator.c
 )
 
 
@@ -40,19 +41,19 @@ add_executable(hello_world
 add_subdirectory(../concentrator concentrator)
 
 # Add pico_stdlib library which aggregates commonly used features
-target_link_libraries(hello_world pico_stdlib concentrator hardware_spi pico_cyw43_arch_lwip_poll)
+target_link_libraries(application pico_stdlib concentrator hardware_spi pico_cyw43_arch_lwip_poll)
 
-target_include_directories(hello_world PRIVATE .)
+target_include_directories(application PRIVATE .)
 
 # enable usb output, disable uart output
-pico_enable_stdio_usb(hello_world 1)
-pico_enable_stdio_uart(hello_world 0)
+pico_enable_stdio_usb(application 1)
+pico_enable_stdio_uart(application 0)
 
 # create map/bin/hex/uf2 file in addition to ELF.
-pico_add_extra_outputs(hello_world)
+pico_add_extra_outputs(application)
 
 
-target_compile_definitions(hello_world PRIVATE
+target_compile_definitions(application PRIVATE
         WIFI_SSID=\"${WIFI_SSID}\"
         WIFI_PASSWORD=\"${WIFI_PASSWORD}\"
         )

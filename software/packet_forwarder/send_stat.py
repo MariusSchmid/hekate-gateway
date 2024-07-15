@@ -20,7 +20,8 @@ header =[
 
 header.extend(mac_bytes)
 
-date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+date =  "2024-07-15 00:00:00 UTC"
+# date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 status_string =  '{"stat":{"time":"","rxnb":1,"rxok":1,"rxfw":1,"ackr":100.0,"dwnb":0,"txnb":0}}'
 
 status_json = json.loads(status_string)
@@ -35,7 +36,9 @@ print(bytes(message))
 
 
 
-UDP_IP = "eu1.cloud.thethings.network"
+# UDP_IP = "eu1.cloud.thethings.network"
+# UDP_IP = "192.168.0.113"
+UDP_IP = "52.212.223.226"
 UDP_PORT = 1700
 
 print("UDP target IP: %s" % UDP_IP)
