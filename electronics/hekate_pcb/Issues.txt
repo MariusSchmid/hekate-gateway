@@ -1,0 +1,2 @@
+* UART is not connected for printf, USB UART can be used
+* SIM7020 is to high, collides with SIM7020E

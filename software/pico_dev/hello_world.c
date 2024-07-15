@@ -168,6 +168,7 @@ void run_udp_beacon()
 int main()
 {
 
+    stdio_init_all();
     if (cyw43_arch_init())
     {
         printf("failed to initialise\n");

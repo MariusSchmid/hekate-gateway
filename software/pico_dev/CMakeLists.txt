@@ -26,11 +26,16 @@ project(my_project)
 # initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+
+
 set(CMAKE_BUILD_TYPE Debug)
 # rest of your project
 add_executable(hello_world
     hello_world.c
 )
+
+
+
 
 add_subdirectory(../concentrator concentrator)
 
@@ -38,6 +43,10 @@ add_subdirectory(../concentrator concentrator)
 target_link_libraries(hello_world pico_stdlib concentrator hardware_spi pico_cyw43_arch_lwip_poll)
 
 target_include_directories(hello_world PRIVATE .)
+
+# enable usb output, disable uart output
+pico_enable_stdio_usb(hello_world 1)
+pico_enable_stdio_uart(hello_world 0)
 
 # create map/bin/hex/uf2 file in addition to ELF.
 pico_add_extra_outputs(hello_world)
