@@ -13,7 +13,16 @@
         "lora_config.h": "c",
         "stdio.h": "c",
         "cstdint": "c",
-        "cstdio": "c"
+        "cstdio": "c",
+        "task.h": "c",
+        "exception.h": "c",
+        "sio.h": "c",
+        "gateway_task.h": "c",
+        "packet_forwarder_task.h": "c",
+        "cyw43_arch.h": "c",
+        "tcpip.h": "c",
+        "lwip_freertos.h": "c",
+        "freertos.h": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
     "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application",
@@ -21,5 +30,5 @@
     "cmake.configureOnOpen": true,
     "cortex-debug.gdbPath": "arm-none-eabi-gdb",
     "cortex-debug.openocdPath": "openocd",
-    "cortex-debug.variableUseNaturalFormat": true,
+    "cortex-debug.variableUseNaturalFormat": false,
 }

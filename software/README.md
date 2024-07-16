@@ -3,8 +3,9 @@
 Dev Docker container are used
 
 # git submodules
-git submodule init 
-git submodule update
+
+git submodule add https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+git submodule update --init --recursive
 
 
 # MicroPython

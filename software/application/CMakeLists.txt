@@ -32,7 +32,8 @@ set(CMAKE_BUILD_TYPE Debug)
 # rest of your project
 add_executable(application
     main.c
-    task_concentrator.c
+    gateway_task.c
+    packet_forwarder_task.c
 )
 
 
@@ -40,8 +41,24 @@ add_executable(application
 
 add_subdirectory(../concentrator concentrator)
 
+set(FREERTOS_CFG_PATH ${CMAKE_CURRENT_LIST_DIR}/config)
+add_subdirectory(../external/freertos freertos)
+
+# set(FREERTOS_KERNEL_PATH ../external/freertos/FreeRTOS-Kernel)
+# include(FreeRTOS_Kernel_import.cmake)
+
+
+
 # Add pico_stdlib library which aggregates commonly used features
-target_link_libraries(application pico_stdlib concentrator hardware_spi pico_cyw43_arch_lwip_poll)
+target_link_libraries(application PRIVATE 
+    pico_stdlib 
+    # pico_cyw43_arch_lwip_threadsafe_background 
+    # pico_cyw43_arch_lwip_sys_freertos 
+    pico_cyw43_arch_lwip_poll
+    hardware_spi 
+    concentrator 
+    FreeRTOS
+)
 
 target_include_directories(application PRIVATE .)
 

@@ -14,7 +14,7 @@
 #define LWIP_SOCKET                 0
 #endif
 #if PICO_CYW43_ARCH_POLL
-#define MEM_LIBC_MALLOC             1
+#define MEM_LIBC_MALLOC             0
 #else
 // MEM_LIBC_MALLOC is incompatible with non polling versions
 #define MEM_LIBC_MALLOC             0
@@ -86,5 +86,21 @@
 #define PPP_DEBUG                   LWIP_DBG_OFF
 #define SLIP_DEBUG                  LWIP_DBG_OFF
 #define DHCP_DEBUG                  LWIP_DBG_OFF
+
+
+#if !NO_SYS
+#define TCPIP_THREAD_STACKSIZE 1024
+#define DEFAULT_THREAD_STACKSIZE 1024
+#define DEFAULT_RAW_RECVMBOX_SIZE 8
+#define TCPIP_MBOX_SIZE 8
+#define LWIP_TIMEVAL_PRIVATE 0
+
+// not necessary, can be done either way
+#define LWIP_TCPIP_CORE_LOCKING_INPUT 1
+
+// ping_thread sets socket receive timeout, so enable this feature
+#define LWIP_SO_RCVTIMEO 1
+#endif
+
 
 #endif /* __LWIPOPTS_H__ */

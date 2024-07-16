@@ -1,22 +1,25 @@
-#include <stdio.h>
-
+#include "gateway_task.h"
 #include "concentrator.h"
 #include "concentrator_types.h"
+
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
 
-#include "task_concentrator.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
+#include <stdio.h>
 
 #define LORA_EN_PIN 18
 #define SPI_LORA_CLK 2
 #define SPI_LORA_MOSI 3
 #define SPI_LORA_MISO 4
 #define SPI_LORA_CS 5
-
 #define SPI_INSTANCE spi0
 
 static concentrator_spi_if_t spi_if;
+
 struct SPI_handle_s
 {
     uint8_t fd;
@@ -114,7 +117,7 @@ static bool init_spi()
     bi_decl(bi_3pins_with_func(SPI_LORA_MISO, SPI_LORA_MOSI, SPI_LORA_CLK, GPIO_FUNC_SPI));
 }
 
-void task_concentrator_start(void)
+static void gateway_task(void * pvParameters)
 {
     const uint lora_en_pin = LORA_EN_PIN;
 
@@ -143,12 +146,12 @@ void task_concentrator_start(void)
 
     if (!concentrator_init(spi_if))
     {
-        printf("Failed: concentrator_init\r\n");
+        printf("Failed: concentrator_init \r\n");
     }
 
     if (!concentrator_start())
     {
-        printf("Failed: concentrator_init\r\n");
+        printf("Failed: concentrator_start \r\n");
     }
 
     uint32_t packets_received = 0;
@@ -156,14 +159,14 @@ void task_concentrator_start(void)
     {
         if (!concentrator_receive(received_msg_cb, &packets_received))
         {
-            printf("Failed: concentrator_init\r\n");
+            printf("Failed: concentrator_receive \r\n");
         }
 
         if (packets_received == 0)
         {
             sleep_ms(10);
         }
-        
+
         // Blink LED
         // printf("Blinking!\r\n");
         // gpio_put(lora_en_pin, true);
@@ -171,4 +174,14 @@ void task_concentrator_start(void)
         // gpio_put(lora_en_pin, false);
         // sleep_ms(1000);
     }
+}
+
+void gateway_task_init(void)
+{
+    BaseType_t ret = xTaskCreate(gateway_task,
+                                 "GW_TASK",
+                                 128,
+                                 NULL,
+                                 1,
+                                 NULL);
 }
