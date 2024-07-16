@@ -19,8 +19,8 @@ int main()
 
     stdio_init_all();
 
-    // gateway_task_init();
-    packet_forwarder_task_init();
+    gateway_task_init();
+    // packet_forwarder_task_init();
 
     /*Start FreeRTOS Scheduler*/
     vTaskStartScheduler();

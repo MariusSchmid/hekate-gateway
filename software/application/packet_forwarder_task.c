@@ -5,8 +5,11 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 
 #define HEADER_SIZE 12
+
+static SemaphoreHandle_t send_status_sem;
 
 static uint32_t net_mac_h = 0xA84041FD;
 static uint32_t net_mac_l = 0xFEEFBE63;
@@ -74,29 +77,34 @@ static void sending_task(void *pvParameters)
     ipaddr_aton(BEACON_TARGET, &addr);
     while (1)
     {
-        send_status_packet();
+        if (uxSemaphoreGetCount(send_status_sem) > 0)
+        {
+            xSemaphoreTake(send_status_sem, 0);
+            send_status_packet();
+        }
         cyw43_arch_poll();
-        vTaskDelay(pdTICKS_TO_MS(BEACON_INTERVAL_MS));
+        vTaskDelay(pdTICKS_TO_MS(1));
     }
     cyw43_arch_deinit();
 }
 
 static void status_task(void *pvParameters)
 {
-    // put something in status queue
     while (1)
     {
-
-        vTaskDelay(pdTICKS_TO_MS(10));
+        xSemaphoreGive(send_status_sem);
+        vTaskDelay(pdTICKS_TO_MS(BEACON_INTERVAL_MS));
     }
 }
 
 void packet_forwarder_task_init(void)
 {
 
+    send_status_sem = xSemaphoreCreateBinary();
+
     TaskHandle_t sending_task_handle;
     TaskHandle_t status_task_handle;
-    // data_sending_task(NULL);
+
     BaseType_t ret = xTaskCreate(sending_task,
                                  "PFW_TASK",
                                  1024 * 16,

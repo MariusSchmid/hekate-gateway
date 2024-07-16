@@ -117,11 +117,11 @@ static bool init_spi()
     bi_decl(bi_3pins_with_func(SPI_LORA_MISO, SPI_LORA_MOSI, SPI_LORA_CLK, GPIO_FUNC_SPI));
 }
 
-static void gateway_task(void * pvParameters)
+static void gateway_task(void *pvParameters)
 {
     const uint lora_en_pin = LORA_EN_PIN;
 
-    // Initialize LED pin
+    // Initialize LoRa enable pin
     gpio_init(lora_en_pin);
     gpio_set_dir(lora_en_pin, GPIO_OUT);
 
@@ -129,9 +129,6 @@ static void gateway_task(void * pvParameters)
     sleep_ms(100);
     gpio_put(lora_en_pin, true);
     sleep_ms(100);
-
-    // Initialize chosen serial port
-    stdio_init_all();
 
     init_spi();
 
@@ -164,23 +161,17 @@ static void gateway_task(void * pvParameters)
 
         if (packets_received == 0)
         {
-            sleep_ms(10);
+            vTaskDelay(10);
         }
-
-        // Blink LED
-        // printf("Blinking!\r\n");
-        // gpio_put(lora_en_pin, true);
-        // sleep_ms(1000);
-        // gpio_put(lora_en_pin, false);
-        // sleep_ms(1000);
     }
 }
 
 void gateway_task_init(void)
 {
+
     BaseType_t ret = xTaskCreate(gateway_task,
                                  "GW_TASK",
-                                 128,
+                                 1024 * 8,
                                  NULL,
                                  1,
                                  NULL);
