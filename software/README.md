@@ -38,9 +38,9 @@ make -C mpy-cross
 ## Pass USB device to WSL / Dev Container
 * install https://github.com/dorssel/usbipd-win/releases
 * in ADMIN CMD:
-    * list all usb devices: usbipd list
+    * usbipd list
     * usbipd bind --busid 5-2
-    * usbipd attach --wsl --busid 5-2
+    * usbipd attach --wsl --busid 6-2
 
 
 

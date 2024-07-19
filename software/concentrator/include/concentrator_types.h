@@ -57,7 +57,7 @@ typedef struct gateway_config_s
 
 typedef struct gateway_stats_s
 {
-
+    uint64_t time;
 } gateway_stats_t;
 
 #define ENSURE(val) \
@@ -67,6 +67,5 @@ typedef struct gateway_stats_s
 #define ENSURE_RET(val, ret) \
     if (!val)                \
         return ret;
-
 
 #endif /* F1CAD709_63B5_43D2_9191_D94B8FDF2D24 */

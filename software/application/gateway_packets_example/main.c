@@ -18,10 +18,13 @@ int main(int argc, char const *argv[])
     uint32_t packet_size = 0;
     semtech_packet_create_stat(stat_packet, sizeof(stat_packet), &packet_size);
 
-    // for (size_t i = 0; i < packet_size; i++)
-    // {
-    //     printf("%c", stat_packet[i]);
-    // }
+    for (size_t i = 0; i < packet_size; i++)
+    {
+        printf("%c", stat_packet[i]);
+    }
+    printf("\n");
+    printf("\n");
+    printf("\n");
     lora_rx_packet.bandwidth = 0;
     lora_rx_packet.modulation = 0x10; // LORA
     lora_rx_packet.datarate = 7;
@@ -37,6 +40,8 @@ int main(int argc, char const *argv[])
     {
         printf("%c", rx_packet[i]);
     }
+
+    
 
     return 0;
 }

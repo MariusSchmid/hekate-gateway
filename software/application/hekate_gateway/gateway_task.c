@@ -1,6 +1,8 @@
 #include "gateway_task.h"
 #include "concentrator.h"
 #include "concentrator_types.h"
+#include "packet_forwarder_task.h"
+
 
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
@@ -44,6 +46,8 @@ static bool received_msg_cb(lora_rx_packet_t *rx_packet)
         printf("%02X ", rx_packet->payload[j]);
     }
     printf("\n");
+
+    packet_forwarder_task_send_upstream(rx_packet);
     return true;
 }
 

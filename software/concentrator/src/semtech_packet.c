@@ -5,15 +5,26 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <math.h>
+#include <time.h> /* time, clock_gettime, strftime, gmtime */
 #include "loragw_hal.h"
 #include "base64.h"
 
 static gateway_config_t this_gateway_config;
 static gateway_stats_t this_gateway_stats;
 
+static time_t t;
+static char stat_timestamp[24];
+
 #define PROTOCOL_VERSION 2
 #define PUSH_DATA 0
 #define HEADER_SIZE 12
+
+#define RXPK_ENTRY_VAL(x, y)                                          \
+    sprintf_size = snprintf(msg + msg_cnt, max_size - msg_cnt, x, y); \
+    msg_cnt += sprintf_size
+#define RXPK_ENTRY(x)                                              \
+    sprintf_size = snprintf(msg + msg_cnt, max_size - msg_cnt, x); \
+    msg_cnt += sprintf_size
 
 static void set_packet_header(char *msg, uint32_t max_size, uint32_t *msg_size)
 {
@@ -39,21 +50,19 @@ static void set_packet_header(char *msg, uint32_t max_size, uint32_t *msg_size)
     *msg_size += HEADER_SIZE;
 }
 
-static void create_stat_message(char *msg, uint32_t max_size, uint32_t *msg_size)
+static void create_stat_message(char *msg, uint32_t max_size, uint32_t *msg_size, gateway_stats_t *gateway_stats)
 {
     ENSURE(msg);
     ENSURE(msg_size);
+    ENSURE(gateway_stats);
+    // t = time(NULL);
+    // t = time(NULL);
+    strftime(stat_timestamp, sizeof stat_timestamp, "%F %T %Z", gmtime(&gateway_stats->time));
 
+    // uint32_t stats_msg_size = snprintf(msg, max_size, "{\"stat\": {\"time\": \"%s\", \"rxnb\": 1, \"rxok\": 1, \"rxfw\": 1, \"ackr\": 100.0, \"dwnb\": 0, \"txnb\": 0}}", stat_timestamp);
     uint32_t stats_msg_size = snprintf(msg, max_size, "{\"stat\": {\"time\": \"2024-07-16 00:00:00 UTC\", \"rxnb\": 1, \"rxok\": 1, \"rxfw\": 1, \"ackr\": 100.0, \"dwnb\": 0, \"txnb\": 0}}");
     *msg_size += stats_msg_size;
 }
-
-#define RXPK_ENTRY_VAL(x, y)                                          \
-    sprintf_size = snprintf(msg + msg_cnt, max_size - msg_cnt, x, y); \
-    msg_cnt += sprintf_size
-#define RXPK_ENTRY(x)                                              \
-    sprintf_size = snprintf(msg + msg_cnt, max_size - msg_cnt, x); \
-    msg_cnt += sprintf_size
 
 static void create_rxpk_message(char *msg, uint32_t max_size, uint32_t *msg_size, lora_rx_packet_t *lora_rx_packet)
 {
@@ -185,8 +194,7 @@ static void create_rxpk_message(char *msg, uint32_t max_size, uint32_t *msg_size
 
     RXPK_ENTRY("\"data\":\"");
 
-
-    int32_t nr_encoded = bin_to_b64(lora_rx_packet->payload,lora_rx_packet->size,msg + msg_cnt,max_size - msg_cnt);
+    int32_t nr_encoded = bin_to_b64(lora_rx_packet->payload, lora_rx_packet->size, msg + msg_cnt, max_size - msg_cnt);
     msg_cnt += nr_encoded;
 
     RXPK_ENTRY("\"");
@@ -211,13 +219,13 @@ bool semtech_packet_create_rxpk(char *message, uint32_t max_size, uint32_t *msg_
     return true;
 }
 
-bool semtech_packet_create_stat(char *message, uint32_t max_size, uint32_t *msg_size)
+bool semtech_packet_create_stat(char *message, uint32_t max_size, uint32_t *msg_size, gateway_stats_t *gateway_stats)
 {
     ENSURE_RET(message, false);
     ENSURE_RET(msg_size, false);
 
     set_packet_header(message, max_size, msg_size);
-    create_stat_message(message + (*msg_size), max_size - (*msg_size), msg_size);
+    create_stat_message(message + (*msg_size), max_size - (*msg_size), msg_size, gateway_stats);
 
     return true;
 }

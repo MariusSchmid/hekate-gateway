@@ -13,14 +13,19 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
     printf("vApplicationStackOverflowHook");
 }
-
+#include "tusb.h"
 int main()
 {
 
-    stdio_init_all();
+    // stdio_init_all();
+    stdio_usb_init();
 
-    gateway_task_init();
-    // packet_forwarder_task_init();
+    while (!tud_cdc_connected()) {
+      printf(".");
+      sleep_ms(500);
+    }
+    // gateway_task_init();
+    packet_forwarder_task_init();
 
     /*Start FreeRTOS Scheduler*/
     vTaskStartScheduler();
