@@ -6,6 +6,7 @@ project(concentrator)
 add_library(concentrator STATIC )
 
 set(_SOURCE_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/external/sx1302_hal/V2.1.0/sx1302_hal/libloragw)
+set(_LIBTOOLS_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/external/sx1302_hal/V2.1.0/sx1302_hal/libtools)
 set(_CUSTOM_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/src/custom_sx1302)
 
 target_sources(concentrator PRIVATE
@@ -38,10 +39,14 @@ target_sources(concentrator PRIVATE
     ${_SOURCE_ROOT_PATH}/src/loragw_sx1302_rx.c 
     ${_SOURCE_ROOT_PATH}/src/loragw_ad5338r.c
 
+
+    ${_LIBTOOLS_ROOT_PATH}/src/base64.c
+
     src/concentrator.c
     src/concentrator_spi.c
     src/lora_config.c
     src/wait.c
+    src/semtech_packet.c
 )
 
 # target_compile_options(sx1302_hal PRIVATE -Os)
@@ -61,6 +66,7 @@ target_include_directories(concentrator
     ${CMAKE_CURRENT_LIST_DIR}/include
     PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src
+    ${_LIBTOOLS_ROOT_PATH}/inc
     ${_SOURCE_ROOT_PATH}/inc
     ${_CUSTOM_ROOT_PATH}
 )

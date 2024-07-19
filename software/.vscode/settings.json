@@ -22,10 +22,12 @@
         "cyw43_arch.h": "c",
         "tcpip.h": "c",
         "lwip_freertos.h": "c",
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "semtech_packets.h": "c",
+        "semtech_packet.h": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
-    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application",
+    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application/gateway_packets_example",
     "cmake.ignoreCMakeListsMissing": false,
     "cmake.configureOnOpen": true,
     "cortex-debug.gdbPath": "arm-none-eabi-gdb",
