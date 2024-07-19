@@ -35,6 +35,7 @@ add_executable(hekate_gateway
     main.c
     gateway_task.c
     packet_forwarder_task.c
+    time_ntp.c
 )
 
 
@@ -48,7 +49,7 @@ add_subdirectory(../../external/freertos freertos)
 # set(FREERTOS_KERNEL_PATH ../external/freertos/FreeRTOS-Kernel)
 # include(FreeRTOS_Kernel_import.cmake)
 
-
+# add_compile_definitions(PICO_HEAP_SIZE=0x1000)
 
 # Add pico_stdlib library which aggregates commonly used features
 target_link_libraries(hekate_gateway PRIVATE 

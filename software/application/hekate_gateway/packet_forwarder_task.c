@@ -1,11 +1,9 @@
 #include "packet_forwarder_task.h"
 #include "semtech_packet.h"
+#include "time_ntp.h"
 
 #include "pico/stdlib.h"
 #include "pico/cyw43_arch.h"
-#include "lwip/dns.h"
-#include "lwip/pbuf.h"
-#include "lwip/udp.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -19,194 +17,101 @@ static uint64_t mac = 0xA84041FDFEEFBE63;
 static gateway_config_t gateway_config;
 static gateway_stats_t gateway_stats;
 
-static char stat_packet[265];
+static char stat_packet[512];
+char rx_packet[1024];
 
-typedef struct NTP_T_
-{
-    ip_addr_t ntp_server_address;
-    bool dns_request_sent;
-    struct udp_pcb *ntp_pcb;
-    absolute_time_t ntp_test_time;
-    alarm_id_t ntp_resend_alarm;
-} NTP_T;
-
-#define NTP_SERVER "pool.ntp.org"
-#define NTP_MSG_LEN 48
-#define NTP_PORT 123
-#define NTP_DELTA 2208988800 // seconds between 1 Jan 1900 and 1 Jan 1970
-#define NTP_TEST_TIME (30 * 1000)
-#define NTP_RESEND_TIME (10 * 1000)
-
-static bool time_set = false;
-
-// Called with results of operation
-static void ntp_result(NTP_T *state, int status, time_t *result)
-{
-    if (status == 0 && result)
-    {
-        struct tm *utc = gmtime(result);
-        gateway_stats.time = *result;
-        printf("got ntp response: %02d/%02d/%04d %02d:%02d:%02d\n", utc->tm_mday, utc->tm_mon + 1, utc->tm_year + 1900,
-               utc->tm_hour, utc->tm_min, utc->tm_sec);
-        time_set = true;
-    }
-
-    if (state->ntp_resend_alarm > 0)
-    {
-        cancel_alarm(state->ntp_resend_alarm);
-        state->ntp_resend_alarm = 0;
-    }
-    state->ntp_test_time = make_timeout_time_ms(NTP_TEST_TIME);
-    state->dns_request_sent = false;
-}
-
-// NTP data received
-static void ntp_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port)
-{
-    NTP_T *state = (NTP_T *)arg;
-    uint8_t mode = pbuf_get_at(p, 0) & 0x7;
-    uint8_t stratum = pbuf_get_at(p, 1);
-
-    // Check the result
-    if (ip_addr_cmp(addr, &state->ntp_server_address) && port == NTP_PORT && p->tot_len == NTP_MSG_LEN &&
-        mode == 0x4 && stratum != 0)
-    {
-        uint8_t seconds_buf[4] = {0};
-        pbuf_copy_partial(p, seconds_buf, sizeof(seconds_buf), 40);
-        uint32_t seconds_since_1900 = seconds_buf[0] << 24 | seconds_buf[1] << 16 | seconds_buf[2] << 8 | seconds_buf[3];
-        uint32_t seconds_since_1970 = seconds_since_1900 - NTP_DELTA;
-        time_t epoch = seconds_since_1970;
-        ntp_result(state, 0, &epoch);
-    }
-    else
-    {
-        printf("invalid ntp response\n");
-        ntp_result(state, -1, NULL);
-    }
-    pbuf_free(p);
-}
-
-static int64_t ntp_failed_handler(alarm_id_t id, void *user_data);
-
-// Perform initialisation
-static NTP_T *ntp_init(void)
-{
-    NTP_T *state = (NTP_T *)calloc(1, sizeof(NTP_T));
-    if (!state)
-    {
-        printf("failed to allocate state\n");
-        return NULL;
-    }
-    state->ntp_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
-    if (!state->ntp_pcb)
-    {
-        printf("failed to create pcb\n");
-        free(state);
-        return NULL;
-    }
-    udp_recv(state->ntp_pcb, ntp_recv, state);
-    return state;
-}
-
-// Make an NTP request
-static void ntp_request(NTP_T *state)
-{
-    // cyw43_arch_lwip_begin/end should be used around calls into lwIP to ensure correct locking.
-    // You can omit them if you are in a callback from lwIP. Note that when using pico_cyw_arch_poll
-    // these calls are a no-op and can be omitted, but it is a good practice to use them in
-    // case you switch the cyw43_arch type later.
-    cyw43_arch_lwip_begin();
-    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, NTP_MSG_LEN, PBUF_RAM);
-    uint8_t *req = (uint8_t *)p->payload;
-    memset(req, 0, NTP_MSG_LEN);
-    req[0] = 0x1b;
-    udp_sendto(state->ntp_pcb, p, &state->ntp_server_address, NTP_PORT);
-    pbuf_free(p);
-    cyw43_arch_lwip_end();
-}
-
-static void ntp_dns_found(const char *hostname, const ip_addr_t *ipaddr, void *arg)
-{
-    NTP_T *state = (NTP_T *)arg;
-    if (ipaddr)
-    {
-        state->ntp_server_address = *ipaddr;
-        printf("ntp address %s\n", ipaddr_ntoa(ipaddr));
-        ntp_request(state);
-    }
-    else
-    {
-        printf("ntp dns request failed\n");
-        ntp_result(state, -1, NULL);
-    }
-}
-
-static void get_ntp_time()
-{
-    NTP_T *state = ntp_init();
-    if (!state)
-        return;
-    if (absolute_time_diff_us(get_absolute_time(), state->ntp_test_time) < 0 && !state->dns_request_sent)
-    {
-        // Set alarm in case udp requests are lost
-        state->ntp_resend_alarm = add_alarm_in_ms(NTP_RESEND_TIME, ntp_failed_handler, state, true);
-
-        // cyw43_arch_lwip_begin/end should be used around calls into lwIP to ensure correct locking.
-        // You can omit them if you are in a callback from lwIP. Note that when using pico_cyw_arch_poll
-        // these calls are a no-op and can be omitted, but it is a good practice to use them in
-        // case you switch the cyw43_arch type later.
-        cyw43_arch_lwip_begin();
-        int err = dns_gethostbyname(NTP_SERVER, &state->ntp_server_address, ntp_dns_found, state);
-        cyw43_arch_lwip_end();
-
-        state->dns_request_sent = true;
-        if (err == ERR_OK)
-        {
-            ntp_request(state); // Cached result
-        }
-        else if (err != ERR_INPROGRESS)
-        { // ERR_INPROGRESS means expect a callback
-            printf("dns request failed\n");
-            ntp_result(state, -1, NULL);
-        }
-    }
-}
-
-static int64_t ntp_failed_handler(alarm_id_t id, void *user_data)
-{
-    NTP_T *state = (NTP_T *)user_data;
-    printf("ntp request failed\n");
-    ntp_result(state, -1, NULL);
-    return 0;
-}
-
-struct udp_pcb *pcb;
+static struct udp_pcb *pcb_rxpt;
+static struct udp_pcb *pcb_status;
 static ip_addr_t addr;
+
+static volatile bool time_set = false;
+
 static void send_status_packet()
 {
     uint32_t packet_size = 0;
 
+    gateway_stats.time = time(NULL);
     semtech_packet_create_stat(stat_packet, sizeof(stat_packet), &packet_size, &gateway_stats);
-    char data_to_send[BEACON_MSG_LEN_MAX];
-    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, packet_size + 1, PBUF_RAM);
+
+    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, packet_size, PBUF_RAM);
     memcpy(p->payload, stat_packet, packet_size);
-    p->tot_len = p->tot_len - 1;
-    err_t er = udp_sendto(pcb, p, &addr, UDP_PORT);
+    err_t er = udp_sendto(pcb_status, p, &addr, UDP_PORT);
     pbuf_free(p);
     if (er != ERR_OK)
     {
-        printf("Failed to send UDP packet! error=%d", er);
+        printf("Failed to send send_status_packet packet! error=%d", er);
+    }
+    else
+    {
+        printf("status: %s \n", &stat_packet[12]);
+    }
+}
+// #define PKT_SIZE 128
+// #define PKT_SIZE 256 + 128
+// uint8_t tmp_pkg[PKT_SIZE] = {0};
+
+static void send_lora_package(lora_rx_packet_t *packet)
+{
+    uint32_t packet_size = 0;
+    // uint32_t packet_size = PKT_SIZE;
+
+    semtech_packet_create_rxpk(rx_packet, sizeof(rx_packet), &packet_size, packet);
+
+    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, packet_size, PBUF_RAM);
+    // for (size_t i = 0; i < PKT_SIZE; i++)
+    // {
+    //     tmp_pkg[i] = i;
+    // }
+
+    // memcpy(p->payload, tmp_pkg, packet_size);
+    memcpy(p->payload, rx_packet, packet_size);
+    err_t er = udp_sendto(pcb_rxpt, p, &addr, UDP_PORT);
+    pbuf_free(p);
+    if (er != ERR_OK)
+    {
+        printf("Failed to send_lora_package! lora_package error=%d", er);
+    }
+    else
+    {
+        printf("message: %s \n", &rx_packet[12]);
     }
 }
 
+#define QUEUE_LENGTH 16
+static QueueHandle_t lora_rx_packet_queue;
 void packet_forwarder_task_send_upstream(lora_rx_packet_t *packet)
 {
+    static int once = true;
+    once = false;
+    if (xQueueSend(lora_rx_packet_queue,
+                   (void *)packet,
+                   (TickType_t)0) != pdPASS)
+    {
+        printf("fail to add something to queue :lora_rx_packet_queue");
+    }
+    else
+    {
+        printf("packet_forwarder_task_send_upstream triggered");
+    }
+}
+
+static void time_set_cb()
+{
+    time_set = true;
 }
 
 static void sending_task(void *pvParameters)
 {
     gateway_config.mac_address = mac;
     semtech_packet_init(gateway_config);
+
+    lora_rx_packet_queue = xQueueCreate(QUEUE_LENGTH,
+                                        sizeof(lora_rx_packet_t));
+
+    if (lora_rx_packet_queue == NULL)
+    {
+        printf("fail: lora_rx_packet_queue = xQueueCreate()\n");
+    }
 
     if (cyw43_arch_init())
     {
@@ -224,25 +129,52 @@ static void sending_task(void *pvParameters)
         printf("Connected.\n");
     }
 
-    // get time
-    printf("Get NTP Time.\n");
-    get_ntp_time();
+    // get timepbuf_alloc
+    // printf("Get NTP Time.\n");
+    time_npt_set_time(time_set_cb);
 
     static int wait_ms = 0;
-    pcb = udp_new();
+    pcb_status = udp_new();
+    if (pcb_status == NULL)
+    {
+        printf("error creating pcb_status.\n");
+    }
+    else
+    {
+        printf("udp_new pcb_status ok.\n");
+    }
+    pcb_rxpt = udp_new();
+    if (pcb_rxpt == NULL)
+    {
+        printf("error creating pcb_rxpt.\n");
+    }
+    else
+    {
+        printf("pcb_rxpt pcb_status ok.\n");
+    }
     ipaddr_aton(BEACON_TARGET, &addr);
+
+    lora_rx_packet_t lora_rx_packet;
+    int i = 1;
     while (1)
     {
         if (uxSemaphoreGetCount(send_status_sem) > 0)
         {
             xSemaphoreTake(send_status_sem, 0);
-            if (time_set)
-            {
-                send_status_packet();
-            }
+            send_status_packet();
         }
-
+        if (xQueueReceive(lora_rx_packet_queue, &(lora_rx_packet), 0) == pdPASS)
+        {
+            send_lora_package(&lora_rx_packet);
+        }
+        // if (i++ % 5000 == 0)
+        // {
+        //     send_lora_package(&lora_rx_packet);
+        // }
+        // absolute_time_t wait_time;
+        // wait_time._private_us_since_boot 1000;
         cyw43_arch_poll();
+        // cyw43_arch_wait_for_work_until(100);
         vTaskDelay(pdTICKS_TO_MS(1));
     }
     cyw43_arch_deinit();
@@ -252,11 +184,17 @@ static void status_task(void *pvParameters)
 {
     while (1)
     {
-        xSemaphoreGive(send_status_sem);
+        if (time_set)
+        {
+            xSemaphoreGive(send_status_sem);
+        }
         vTaskDelay(pdTICKS_TO_MS(BEACON_INTERVAL_MS));
     }
 }
-
+#define TASK_STACK_SIZE 1024 * 8
+StaticTask_t xTaskBuffer;
+StackType_t xStack[TASK_STACK_SIZE];
+TaskHandle_t xHandle = NULL;
 void packet_forwarder_task_init(void)
 {
 
@@ -265,17 +203,37 @@ void packet_forwarder_task_init(void)
     TaskHandle_t sending_task_handle;
     TaskHandle_t status_task_handle;
 
+#if 1
     BaseType_t ret = xTaskCreate(sending_task,
                                  "PFW_TASK",
-                                 1024 * 32,
+                                 1024 * 8,
                                  NULL,
                                  1,
                                  &sending_task_handle);
 
-    ret = xTaskCreate(status_task,
-                      "STATUS_TASK",
-                      128,
-                      NULL,
-                      1,
-                      &status_task_handle);
+    if (ret != pdPASS)
+    {
+        printf("error creating sending_task.\n");
+    }
+#else
+    xHandle = xTaskCreateStatic(sending_task,
+                                "PFW_TASK",
+                                TASK_STACK_SIZE,
+                                NULL,
+                                1,
+                                xStack,
+                                &xTaskBuffer);
+
+#endif
+
+    BaseType_t ret2 = xTaskCreate(status_task,
+                                  "STATUS_TASK",
+                                  128,
+                                  NULL,
+                                  1,
+                                  &status_task_handle);
+    if (ret2 != pdPASS)
+    {
+        printf("error creating status_task.\n");
+    }
 }

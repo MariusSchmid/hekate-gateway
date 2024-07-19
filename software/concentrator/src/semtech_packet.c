@@ -55,12 +55,10 @@ static void create_stat_message(char *msg, uint32_t max_size, uint32_t *msg_size
     ENSURE(msg);
     ENSURE(msg_size);
     ENSURE(gateway_stats);
-    // t = time(NULL);
-    // t = time(NULL);
     strftime(stat_timestamp, sizeof stat_timestamp, "%F %T %Z", gmtime(&gateway_stats->time));
 
-    // uint32_t stats_msg_size = snprintf(msg, max_size, "{\"stat\": {\"time\": \"%s\", \"rxnb\": 1, \"rxok\": 1, \"rxfw\": 1, \"ackr\": 100.0, \"dwnb\": 0, \"txnb\": 0}}", stat_timestamp);
-    uint32_t stats_msg_size = snprintf(msg, max_size, "{\"stat\": {\"time\": \"2024-07-16 00:00:00 UTC\", \"rxnb\": 1, \"rxok\": 1, \"rxfw\": 1, \"ackr\": 100.0, \"dwnb\": 0, \"txnb\": 0}}");
+    uint32_t stats_msg_size = snprintf(msg, max_size, "{\"stat\": {\"time\": \"%s\", \"rxnb\": 1, \"rxok\": 1, \"rxfw\": 1, \"ackr\": 100.0, \"dwnb\": 0, \"txnb\": 0}}", stat_timestamp);
+    // uint32_t stats_msg_size = snprintf(msg, max_size, "{\"stat\": {\"time\": \"2024-07-16 00:00:00 UTC\", \"rxnb\": 1, \"rxok\": 1, \"rxfw\": 1, \"ackr\": 100.0, \"dwnb\": 0, \"txnb\": 0}}");
     *msg_size += stats_msg_size;
 }
 
@@ -87,7 +85,7 @@ static void create_rxpk_message(char *msg, uint32_t max_size, uint32_t *msg_size
     // \"data\":\"QM/t4QEAAQABuws7394jsn9mmjw2X2l/U4oUscI=\"\
     // }]}");
 
-    RXPK_ENTRY("{\"rxpk\":[");
+    RXPK_ENTRY("{\"rxpk\":[{");
     RXPK_ENTRY_VAL("\"tmst\":%" PRIu32 ",", lora_rx_packet->count_us);
     RXPK_ENTRY_VAL("\"ftime\":%" PRIu32 ",", lora_rx_packet->ftime);
     RXPK_ENTRY_VAL("\"chan\":%" PRIu8 ",", lora_rx_packet->if_chain);
@@ -149,16 +147,16 @@ static void create_rxpk_message(char *msg, uint32_t max_size, uint32_t *msg_size
         switch (lora_rx_packet->bandwidth)
         {
         case BW_125KHZ:
-            RXPK_ENTRY("BW125\"");
+            RXPK_ENTRY("BW125\",");
             break;
         case BW_250KHZ:
-            RXPK_ENTRY("BW250\"");
+            RXPK_ENTRY("BW250\",");
             break;
         case BW_500KHZ:
-            RXPK_ENTRY("BW500\"");
+            RXPK_ENTRY("BW500\",");
             break;
         default:
-            RXPK_ENTRY("BW?\"");
+            RXPK_ENTRY("BW?\",");
             break;
         }
 
@@ -186,7 +184,7 @@ static void create_rxpk_message(char *msg, uint32_t max_size, uint32_t *msg_size
 
         RXPK_ENTRY_VAL("\"rssis\":%.0f,", roundf(lora_rx_packet->rssis));
         RXPK_ENTRY_VAL("\"lsnr\":%.1f,", roundf(lora_rx_packet->snr));
-        RXPK_ENTRY_VAL("\"foff\":" PRIu32 ",", roundf(lora_rx_packet->freq_offset));
+        RXPK_ENTRY_VAL("\"foff\":%" PRId32 ",", lora_rx_packet->freq_offset);
     }
 
     RXPK_ENTRY_VAL("\"rssi\":%.0f,", roundf(lora_rx_packet->rssic));

@@ -52,9 +52,9 @@ target_sources(concentrator PRIVATE
 # target_compile_options(sx1302_hal PRIVATE -Os)
 target_compile_definitions(concentrator 
     PRIVATE 
-    DEBUG_COM=1
-    DEBUG_REG=1
-    DEBUG_HAL=1
+    DEBUG_COM=0
+    DEBUG_REG=0
+    DEBUG_HAL=0
     )
 
 # target_link_libraries(sx1302_hal PRIVATE platform)

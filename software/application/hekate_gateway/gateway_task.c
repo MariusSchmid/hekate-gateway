@@ -165,10 +165,11 @@ static void gateway_task(void *pvParameters)
 
         if (packets_received == 0)
         {
-            vTaskDelay(10);
+            vTaskDelay(pdTICKS_TO_MS(10));
         }
     }
 }
+
 
 void gateway_task_init(void)
 {

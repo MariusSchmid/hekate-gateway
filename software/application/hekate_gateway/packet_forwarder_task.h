@@ -4,10 +4,10 @@
 #include "concentrator_types.h"
 
 #define UDP_PORT 1700
-#define BEACON_MSG_LEN_MAX 256
+#define BEACON_MSG_LEN_MAX 1024
 // #define BEACON_TARGET "192.168.0.113"
 #define BEACON_TARGET "52.212.223.226"
-#define BEACON_INTERVAL_MS 5000
+#define BEACON_INTERVAL_MS 10000
 
 
 /**

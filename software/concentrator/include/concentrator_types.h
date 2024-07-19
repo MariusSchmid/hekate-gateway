@@ -25,6 +25,9 @@ typedef struct concentrator_spi_if
     spi_write_burst_fptr_t spi_write_burst;
 } concentrator_spi_if_t;
 
+
+
+
 typedef struct lora_rx_packet_s
 {
     uint32_t freq_hz; /*!> central frequency of the IF chain */

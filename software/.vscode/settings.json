@@ -25,7 +25,12 @@
         "freertos.h": "c",
         "semtech_packets.h": "c",
         "semtech_packet.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "string.h": "c",
+        "semphr.h": "c",
+        "pbuf.h": "c",
+        "udp.h": "c",
+        "tusb.h": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
 
