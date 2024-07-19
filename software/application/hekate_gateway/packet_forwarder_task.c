@@ -46,24 +46,14 @@ static void send_status_packet()
         printf("status: %s \n", &stat_packet[12]);
     }
 }
-// #define PKT_SIZE 128
-// #define PKT_SIZE 256 + 128
-// uint8_t tmp_pkg[PKT_SIZE] = {0};
 
 static void send_lora_package(lora_rx_packet_t *packet)
 {
     uint32_t packet_size = 0;
-    // uint32_t packet_size = PKT_SIZE;
 
     semtech_packet_create_rxpk(rx_packet, sizeof(rx_packet), &packet_size, packet);
 
     struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, packet_size, PBUF_RAM);
-    // for (size_t i = 0; i < PKT_SIZE; i++)
-    // {
-    //     tmp_pkg[i] = i;
-    // }
-
-    // memcpy(p->payload, tmp_pkg, packet_size);
     memcpy(p->payload, rx_packet, packet_size);
     err_t er = udp_sendto(pcb_rxpt, p, &addr, UDP_PORT);
     pbuf_free(p);
@@ -104,9 +94,6 @@ static void sending_task(void *pvParameters)
 {
     gateway_config.mac_address = mac;
     semtech_packet_init(gateway_config);
-
-    lora_rx_packet_queue = xQueueCreate(QUEUE_LENGTH,
-                                        sizeof(lora_rx_packet_t));
 
     if (lora_rx_packet_queue == NULL)
     {
@@ -167,14 +154,7 @@ static void sending_task(void *pvParameters)
         {
             send_lora_package(&lora_rx_packet);
         }
-        // if (i++ % 5000 == 0)
-        // {
-        //     send_lora_package(&lora_rx_packet);
-        // }
-        // absolute_time_t wait_time;
-        // wait_time._private_us_since_boot 1000;
         cyw43_arch_poll();
-        // cyw43_arch_wait_for_work_until(100);
         vTaskDelay(pdTICKS_TO_MS(1));
     }
     cyw43_arch_deinit();
@@ -191,19 +171,17 @@ static void status_task(void *pvParameters)
         vTaskDelay(pdTICKS_TO_MS(BEACON_INTERVAL_MS));
     }
 }
-#define TASK_STACK_SIZE 1024 * 8
-StaticTask_t xTaskBuffer;
-StackType_t xStack[TASK_STACK_SIZE];
-TaskHandle_t xHandle = NULL;
+
 void packet_forwarder_task_init(void)
 {
 
     send_status_sem = xSemaphoreCreateBinary();
 
+    lora_rx_packet_queue = xQueueCreate(QUEUE_LENGTH, sizeof(lora_rx_packet_t));
+
     TaskHandle_t sending_task_handle;
     TaskHandle_t status_task_handle;
 
-#if 1
     BaseType_t ret = xTaskCreate(sending_task,
                                  "PFW_TASK",
                                  1024 * 8,
@@ -215,24 +193,14 @@ void packet_forwarder_task_init(void)
     {
         printf("error creating sending_task.\n");
     }
-#else
-    xHandle = xTaskCreateStatic(sending_task,
-                                "PFW_TASK",
-                                TASK_STACK_SIZE,
-                                NULL,
-                                1,
-                                xStack,
-                                &xTaskBuffer);
 
-#endif
-
-    BaseType_t ret2 = xTaskCreate(status_task,
-                                  "STATUS_TASK",
-                                  128,
-                                  NULL,
-                                  1,
-                                  &status_task_handle);
-    if (ret2 != pdPASS)
+    ret = xTaskCreate(status_task,
+                      "STATUS_TASK",
+                      128,
+                      NULL,
+                      1,
+                      &status_task_handle);
+    if (ret != pdPASS)
     {
         printf("error creating status_task.\n");
     }
