@@ -12,6 +12,8 @@
 #include <time.h>
 #include <sys/time.h>
 
+#include "log.h"
+
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
     printf("vApplicationStackOverflowHook");
@@ -39,6 +41,6 @@ int main()
     while (1)
     {
         sleep_ms(10);
-        printf("FreeRTOS issue");
+        log_error("unexpected FreeRTOS Error");
     }
 }

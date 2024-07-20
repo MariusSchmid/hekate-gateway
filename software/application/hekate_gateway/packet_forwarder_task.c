@@ -8,6 +8,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "log.h"
 
 #define HEADER_SIZE 12
 
@@ -39,11 +40,11 @@ static void send_status_packet()
     pbuf_free(p);
     if (er != ERR_OK)
     {
-        printf("Failed to send send_status_packet packet! error=%d", er);
+        log_error("Failed to send send_status_packet packet! error=%d", er);
     }
     else
     {
-        printf("status: %s \n", &stat_packet[12]);
+        log_info("sending: %s", &stat_packet[12]);
     }
 }
 
@@ -59,11 +60,11 @@ static void send_lora_package(lora_rx_packet_t *packet)
     pbuf_free(p);
     if (er != ERR_OK)
     {
-        printf("Failed to send_lora_package! lora_package error=%d", er);
+        log_error("Failed to send_lora_package! lora_package error=%d", er);
     }
     else
     {
-        printf("message: %s \n", &rx_packet[12]);
+        log_info("sending: %s", &rx_packet[12]);
     }
 }
 
@@ -77,11 +78,11 @@ void packet_forwarder_task_send_upstream(lora_rx_packet_t *packet)
                    (void *)packet,
                    (TickType_t)0) != pdPASS)
     {
-        printf("fail to add something to queue :lora_rx_packet_queue");
+        log_error("fail to add something to queue :lora_rx_packet_queue");
     }
     else
     {
-        printf("packet_forwarder_task_send_upstream triggered");
+        log_info("Lora Packet recieved from conentrator");
     }
 }
 
@@ -92,57 +93,63 @@ static void time_set_cb()
 
 static void sending_task(void *pvParameters)
 {
-    gateway_config.mac_address = mac;
+
     semtech_packet_init(gateway_config);
 
-    if (lora_rx_packet_queue == NULL)
-    {
-        printf("fail: lora_rx_packet_queue = xQueueCreate()\n");
-    }
-
+    log_info("Initialize  cyw43_arch");
     if (cyw43_arch_init())
     {
-        printf("fail: cyw43_arch_init\n");
+        log_error("fail: cyw43_arch_init");
     }
+
     cyw43_arch_enable_sta_mode();
 
-    printf("Connecting to Wi-Fi...\n");
+    log_info("Connecting to Wi-Fi %s", WIFI_SSID);
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000))
     {
-        printf("fail cyw43_arch_wifi_connect_timeout_ms\n");
+        log_error("fail cyw43_arch_wifi_connect_timeout_ms");
     }
     else
     {
-        printf("Connected.\n");
+        log_info("WiFi connected");
     }
 
-    // get timepbuf_alloc
-    // printf("Get NTP Time.\n");
+
+    log_info("start to get NTP Time");
     time_npt_set_time(time_set_cb);
 
     static int wait_ms = 0;
     pcb_status = udp_new();
     if (pcb_status == NULL)
     {
-        printf("error creating pcb_status.\n");
+        log_error("udp_new failed: pcb_status");
     }
     else
     {
-        printf("udp_new pcb_status ok.\n");
+        log_info("udp_new for pcb_status successful");
     }
     pcb_rxpt = udp_new();
     if (pcb_rxpt == NULL)
     {
-        printf("error creating pcb_rxpt.\n");
+        log_error("udp_new failed: pcb_rxpt");
     }
     else
     {
-        printf("pcb_rxpt pcb_status ok.\n");
+        log_info("udp_new for pcb_rxpt successful");
     }
-    ipaddr_aton(BEACON_TARGET, &addr);
 
+    if (!ipaddr_aton(LORA_LNS_IP, &addr))
+    {
+        log_error("can not convert %s into ip address", LORA_LNS_IP);
+    }
+    else
+    {
+        log_info("LORA_LNS_IP: %s", LORA_LNS_IP);
+    }
+
+    log_info("sending_task started");
     lora_rx_packet_t lora_rx_packet;
-    int i = 1;
+
     while (1)
     {
         if (uxSemaphoreGetCount(send_status_sem) > 0)
@@ -166,18 +173,34 @@ static void status_task(void *pvParameters)
     {
         if (time_set)
         {
-            xSemaphoreGive(send_status_sem);
+            if (pdTRUE != xSemaphoreGive(send_status_sem))
+            {
+                log_error("xSemaphoreGive failed: send_status_sem");
+            }
         }
-        vTaskDelay(pdTICKS_TO_MS(BEACON_INTERVAL_MS));
+        vTaskDelay(pdTICKS_TO_MS(STATUS_INTERVAL_MS));
     }
 }
 
+static void init_gateway_config()
+{
+    gateway_config.mac_address = mac;
+}
 void packet_forwarder_task_init(void)
 {
+    init_gateway_config();
 
     send_status_sem = xSemaphoreCreateBinary();
+    if (!send_status_sem)
+    {
+        log_error("xSemaphoreCreateBinary failed");
+    }
 
     lora_rx_packet_queue = xQueueCreate(QUEUE_LENGTH, sizeof(lora_rx_packet_t));
+    if (!lora_rx_packet_queue)
+    {
+        log_error("xSemaphoreCreateBinary failed");
+    }
 
     TaskHandle_t sending_task_handle;
     TaskHandle_t status_task_handle;
@@ -191,7 +214,7 @@ void packet_forwarder_task_init(void)
 
     if (ret != pdPASS)
     {
-        printf("error creating sending_task.\n");
+        log_error("xTaskCreate failed: sending_task");
     }
 
     ret = xTaskCreate(status_task,
@@ -202,6 +225,6 @@ void packet_forwarder_task_init(void)
                       &status_task_handle);
     if (ret != pdPASS)
     {
-        printf("error creating status_task.\n");
+        log_error("xTaskCreate failed: status_task");
     }
 }

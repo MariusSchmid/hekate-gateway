@@ -7,6 +7,8 @@
 #include "pico/stdlib.h"
 #include "pico/cyw43_arch.h"
 
+#include "log.h"
+
 #define NTP_SERVER "pool.ntp.org"
 #define NTP_MSG_LEN 48
 #define NTP_PORT 123
@@ -27,8 +29,6 @@ typedef struct NTP_T_
 
 static time_set_cb_t this_time_set_cb;
 
-
-
 // Called with results of operation
 static void ntp_result(NTP_T *state, int status, time_t *result)
 {
@@ -42,8 +42,8 @@ static void ntp_result(NTP_T *state, int status, time_t *result)
         settimeofday(&now, NULL);
         this_time_set_cb();
         struct tm *utc = gmtime(result);
-        printf("got ntp response: %02d/%02d/%04d %02d:%02d:%02d\n", utc->tm_mday, utc->tm_mon + 1, utc->tm_year + 1900,
-               utc->tm_hour, utc->tm_min, utc->tm_sec);
+        log_info("ntp response: %02d/%02d/%04d %02d:%02d:%02d\n", utc->tm_mday, utc->tm_mon + 1, utc->tm_year + 1900,
+                 utc->tm_hour, utc->tm_min, utc->tm_sec);
         time_set = true;
     }
 
@@ -76,7 +76,7 @@ static void ntp_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_ad
     }
     else
     {
-        printf("invalid ntp response\n");
+        log_error("invalid ntp response\n");
         ntp_result(state, -1, NULL);
     }
     pbuf_free(p);
@@ -90,13 +90,13 @@ static NTP_T *ntp_init(void)
     NTP_T *state = (NTP_T *)calloc(1, sizeof(NTP_T));
     if (!state)
     {
-        printf("failed to allocate state\n");
+        log_error("failed to allocate state\n");
         return NULL;
     }
     state->ntp_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
     if (!state->ntp_pcb)
     {
-        printf("failed to create pcb\n");
+        log_error("failed to create pcb\n");
         free(state);
         return NULL;
     }
@@ -127,12 +127,12 @@ static void ntp_dns_found(const char *hostname, const ip_addr_t *ipaddr, void *a
     if (ipaddr)
     {
         state->ntp_server_address = *ipaddr;
-        printf("ntp address %s\n", ipaddr_ntoa(ipaddr));
+        log_info("ntp server address: %s\n", ipaddr_ntoa(ipaddr));
         ntp_request(state);
     }
     else
     {
-        printf("ntp dns request failed\n");
+        log_error("ntp dns request failed\n");
         ntp_result(state, -1, NULL);
     }
 }
@@ -162,7 +162,7 @@ static void get_ntp_time()
         }
         else if (err != ERR_INPROGRESS)
         { // ERR_INPROGRESS means expect a callback
-            printf("dns request failed\n");
+            log_error("dns request failed\n");
             ntp_result(state, -1, NULL);
         }
     }
@@ -171,11 +171,10 @@ static void get_ntp_time()
 static int64_t ntp_failed_handler(alarm_id_t id, void *user_data)
 {
     NTP_T *state = (NTP_T *)user_data;
-    printf("ntp request failed\n");
+    log_error("ntp request failed\n");
     ntp_result(state, -1, NULL);
     return 0;
 }
-
 
 void time_npt_set_time(time_set_cb_t time_set_cb)
 {

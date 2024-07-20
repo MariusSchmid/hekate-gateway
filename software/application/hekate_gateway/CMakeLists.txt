@@ -45,6 +45,7 @@ add_subdirectory(../../concentrator concentrator)
 
 set(FREERTOS_CFG_PATH ${CMAKE_CURRENT_LIST_DIR}/config)
 add_subdirectory(../../external/freertos freertos)
+add_subdirectory(../../external/log_c logc)
 
 # set(FREERTOS_KERNEL_PATH ../external/freertos/FreeRTOS-Kernel)
 # include(FreeRTOS_Kernel_import.cmake)
@@ -60,6 +61,7 @@ target_link_libraries(hekate_gateway PRIVATE
     hardware_spi 
     concentrator 
     FreeRTOS
+    logc
 )
 
 target_include_directories(hekate_gateway PRIVATE .)

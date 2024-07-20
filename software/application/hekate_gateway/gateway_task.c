@@ -3,13 +3,13 @@
 #include "concentrator_types.h"
 #include "packet_forwarder_task.h"
 
-
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "log.h"
 
 #include <stdio.h>
 
@@ -29,23 +29,31 @@ struct SPI_handle_s
 
 static bool received_msg_cb(lora_rx_packet_t *rx_packet)
 {
-    printf("  count_us: %u\n", rx_packet->count_us);
-    printf("  size:     %u\n", rx_packet->size);
-    printf("  chan:     %u\n", rx_packet->if_chain);
-    printf("  status:   0x%02X\n", rx_packet->status);
-    printf("  datr:     %u\n", rx_packet->datarate);
-    printf("  codr:     %u\n", rx_packet->coderate);
-    printf("  rf_chain  %u\n", rx_packet->rf_chain);
-    printf("  freq_hz   %u\n", rx_packet->freq_hz);
-    printf("  snr_avg:  %.1f\n", rx_packet->snr);
-    printf("  rssi_chan:%.1f\n", rx_packet->rssic);
-    printf("  rssi_sig :%.1f\n", rx_packet->rssis);
-    printf("  crc:      0x%04X\n", rx_packet->crc);
+    char payload_debug_string[256];
+
+    log_info("Lora Packet received: ");
+    log_info("  count_us: %u", rx_packet->count_us);
+    log_info("  size:     %u", rx_packet->size);
+    log_info("  chan:     %u", rx_packet->if_chain);
+    log_info("  status:   0x%02X", rx_packet->status);
+    log_info("  datr:     %u", rx_packet->datarate);
+    log_info("  codr:     %u", rx_packet->coderate);
+    log_info("  rf_chain  %u", rx_packet->rf_chain);
+    log_info("  freq_hz   %u", rx_packet->freq_hz);
+    log_info("  snr_avg:  %.1f", rx_packet->snr);
+    log_info("  rssi_chan:%.1f", rx_packet->rssic);
+    log_info("  rssi_sig :%.1f", rx_packet->rssis);
+    log_info("  crc:      0x%04X", rx_packet->crc);
+
+#if 0
     for (int j = 0; j < rx_packet->size; j++)
     {
-        printf("%02X ", rx_packet->payload[j]);
+        char hex[3];
+        snprintf(hex,"%02X",3, rx_packet->payload[j]);
+        strcat(payload_debug_string,hex);
     }
-    printf("\n");
+    log_info("%s",payload_debug_string);
+#endif
 
     packet_forwarder_task_send_upstream(rx_packet);
     return true;
@@ -147,12 +155,12 @@ static void gateway_task(void *pvParameters)
 
     if (!concentrator_init(spi_if))
     {
-        printf("Failed: concentrator_init \r\n");
+        log_error("Failed: concentrator_init \r\n");
     }
 
     if (!concentrator_start())
     {
-        printf("Failed: concentrator_start \r\n");
+        log_error("Failed: concentrator_start \r\n");
     }
 
     uint32_t packets_received = 0;
@@ -160,7 +168,7 @@ static void gateway_task(void *pvParameters)
     {
         if (!concentrator_receive(received_msg_cb, &packets_received))
         {
-            printf("Failed: concentrator_receive \r\n");
+            log_error("Failed: concentrator_receive \r\n");
         }
 
         if (packets_received == 0)
@@ -169,7 +177,6 @@ static void gateway_task(void *pvParameters)
         }
     }
 }
-
 
 void gateway_task_init(void)
 {
@@ -180,4 +187,8 @@ void gateway_task_init(void)
                                  NULL,
                                  1,
                                  NULL);
+    if (ret != pdPASS)
+    {
+        log_error("xTaskCreate failed: sending_task");
+    }
 }
