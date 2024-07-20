@@ -42,7 +42,7 @@ static void ntp_result(NTP_T *state, int status, time_t *result)
         settimeofday(&now, NULL);
         this_time_set_cb();
         struct tm *utc = gmtime(result);
-        log_info("ntp response: %02d/%02d/%04d %02d:%02d:%02d\n", utc->tm_mday, utc->tm_mon + 1, utc->tm_year + 1900,
+        log_info("ntp response: %02d/%02d/%04d %02d:%02d:%02d", utc->tm_mday, utc->tm_mon + 1, utc->tm_year + 1900,
                  utc->tm_hour, utc->tm_min, utc->tm_sec);
         time_set = true;
     }
@@ -76,7 +76,7 @@ static void ntp_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_ad
     }
     else
     {
-        log_error("invalid ntp response\n");
+        log_error("invalid ntp response");
         ntp_result(state, -1, NULL);
     }
     pbuf_free(p);
@@ -90,13 +90,13 @@ static NTP_T *ntp_init(void)
     NTP_T *state = (NTP_T *)calloc(1, sizeof(NTP_T));
     if (!state)
     {
-        log_error("failed to allocate state\n");
+        log_error("failed to allocate state");
         return NULL;
     }
     state->ntp_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
     if (!state->ntp_pcb)
     {
-        log_error("failed to create pcb\n");
+        log_error("failed to create pcb");
         free(state);
         return NULL;
     }
@@ -127,12 +127,12 @@ static void ntp_dns_found(const char *hostname, const ip_addr_t *ipaddr, void *a
     if (ipaddr)
     {
         state->ntp_server_address = *ipaddr;
-        log_info("ntp server address: %s\n", ipaddr_ntoa(ipaddr));
+        log_info("ntp server address: %s", ipaddr_ntoa(ipaddr));
         ntp_request(state);
     }
     else
     {
-        log_error("ntp dns request failed\n");
+        log_error("ntp dns request failed");
         ntp_result(state, -1, NULL);
     }
 }
@@ -162,7 +162,7 @@ static void get_ntp_time()
         }
         else if (err != ERR_INPROGRESS)
         { // ERR_INPROGRESS means expect a callback
-            log_error("dns request failed\n");
+            log_error("dns request failed");
             ntp_result(state, -1, NULL);
         }
     }
@@ -171,7 +171,7 @@ static void get_ntp_time()
 static int64_t ntp_failed_handler(alarm_id_t id, void *user_data)
 {
     NTP_T *state = (NTP_T *)user_data;
-    log_error("ntp request failed\n");
+    log_error("ntp request failed");
     ntp_result(state, -1, NULL);
     return 0;
 }

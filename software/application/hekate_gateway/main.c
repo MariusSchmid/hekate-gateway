@@ -14,18 +14,25 @@
 
 #include "log.h"
 
+#define WAIT_FOR_CDC 0   /* Wait for USB serial connectivity before continue*/
+#define ENABLE_GW_TASK 0 /* Start Gatway Task*/
+#define ENABLE_PKT_FWD 0 /* Start Packet forwarder task*/
+
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
-    printf("vApplicationStackOverflowHook");
+    log_error("vApplicationStackOverflowHook");
 }
 
 int main()
 {
 
     // stdio_init_all();
-    stdio_usb_init();
+    if (!stdio_usb_init())
+    {
+        log_error("failed: stdio_usb_init()");
+    }
 
-#if 0
+#if (WAIT_FOR_CDC == 1)
     while (!tud_cdc_connected())
     {
         printf(".");
@@ -33,9 +40,13 @@ int main()
     }
 #endif
 
+#if (ENABLE_PKT_FWD == 1)
     packet_forwarder_task_init();
-    gateway_task_init();
+#endif
 
+#if (ENABLE_GW_TASK == 1)
+    gateway_task_init();
+#endif
     /*Start FreeRTOS Scheduler*/
     vTaskStartScheduler();
     while (1)
