@@ -40,3 +40,5 @@ RUN cd /home/dev/openocd/ && make -j4
 RUN cd /home/dev/openocd/ && make install
 
 
+#mark the repo as safe
+RUN git config --global --add safe.directory '*'
