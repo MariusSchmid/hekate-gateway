@@ -23,11 +23,6 @@ add_executable(sim7020e
 
 add_subdirectory(../../external/log_c logc)
 
-# set(FREERTOS_KERNEL_PATH ../external/freertos/FreeRTOS-Kernel)
-# include(FreeRTOS_Kernel_import.cmake)
-
-# add_compile_definitions(PICO_HEAP_SIZE=0x1000)
-
 # Add pico_stdlib library which aggregates commonly used features
 target_link_libraries(sim7020e PRIVATE 
     pico_stdlib 

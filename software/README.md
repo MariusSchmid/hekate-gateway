@@ -40,9 +40,6 @@ make -C mpy-cross
 * install https://github.com/dorssel/usbipd-win/releases
 * in ADMIN CMD:
     * usbipd list
-    * usbipd bind --busid 5-2
-    * usbipd attach --wsl --busid 6-2
+    * usbipd bind --hardware-id  2e8a:000c 
+    * usbipd attach --hardware-id  2e8a:000c 
 
-
-
-# 

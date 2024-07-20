@@ -36,6 +36,7 @@ add_executable(hekate_gateway
     gateway_task.c
     packet_forwarder_task.c
     time_ntp.c
+    sim7020_task.c
 )
 
 

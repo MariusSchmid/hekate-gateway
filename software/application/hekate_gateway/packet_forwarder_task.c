@@ -199,7 +199,7 @@ void packet_forwarder_task_init(void)
     lora_rx_packet_queue = xQueueCreate(QUEUE_LENGTH, sizeof(lora_rx_packet_t));
     if (!lora_rx_packet_queue)
     {
-        log_error("xSemaphoreCreateBinary failed");
+        log_error("create lora_rx_packet_queue failed");
     }
 
     TaskHandle_t sending_task_handle;
