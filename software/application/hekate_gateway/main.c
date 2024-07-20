@@ -15,7 +15,7 @@
 
 #include "log.h"
 
-#define WAIT_FOR_CDC 0       /* Wait for USB serial connectivity before continue*/
+#define WAIT_FOR_CDC 0      /* Wait for USB serial connectivity before continue*/
 #define ENABLE_GW_TASK 0      /* Start Gatway Task*/
 #define ENABLE_SIM7020_TASK 1 /* Start Packet forwarder task*/
 #define ENABLE_PKT_FWD 0      /* Start Packet forwarder task*/
@@ -28,8 +28,8 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 int main()
 {
 
-    // stdio_init_all();
-    if (!stdio_usb_init())
+
+    if (!stdio_init_all())
     {
         log_error("failed: stdio_usb_init()");
     }

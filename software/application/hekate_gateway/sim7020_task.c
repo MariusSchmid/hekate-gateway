@@ -6,12 +6,15 @@
 #include "log.h"
 
 #include <string.h>
+#include <stdlib.h>
+#include <sys/time.h>
 
 #include "hardware/uart.h"
 #include "hardware/irq.h"
 #include "pico/stdlib.h"
+// #include "pico/stdlib.h"
 
-#define PRINT_RAW_RCV_UART 1
+#define PRINT_RAW_RCV_UART 0
 
 #define UART_ID uart1
 #define UART_TX_PIN 8
@@ -54,9 +57,9 @@ static void put_response_to_queue()
     }
 }
 
-bool wait_for_resp(uint32_t timeout_ms, char *expected_result)
+bool wait_for_resp(uint32_t timeout_ms, char *expected_result, uart_response_t *uart_response)
 {
-    uart_response_t uart_response;
+
     uint32_t timeout_cnt = 0;
     while (true)
     {
@@ -64,14 +67,13 @@ bool wait_for_resp(uint32_t timeout_ms, char *expected_result)
         {
             return false;
         }
-        if (xQueueReceive(uart_rx_packet_queue, &(uart_response), pdTICKS_TO_MS(100)) == pdPASS)
+        if (xQueueReceive(uart_rx_packet_queue, uart_response, pdTICKS_TO_MS(100)) == pdPASS)
         {
 
-            if (strstr(uart_response.response, expected_result) != NULL)
+            if (strstr(uart_response->response, expected_result) != NULL)
             {
                 return true;
             }
-            log_info(uart_response.response);
         }
         timeout_cnt += 100;
     }
@@ -164,7 +166,7 @@ static void enable_sim_module()
     sleep_ms(1000);
 }
 
-static bool send_cmd_check_recv(char *cmd, char *expected_result, uint32_t timeout)
+static bool send_cmd_get_recv(char *cmd, char *expected_result, uint32_t timeout, uart_response_t *uart_response)
 {
     BaseType_t res = xQueueReset(uart_rx_packet_queue);
     if (res != pdPASS)
@@ -172,12 +174,18 @@ static bool send_cmd_check_recv(char *cmd, char *expected_result, uint32_t timeo
         log_error("fail to reset queue: uart_rx_packet_queue");
     }
     uart_puts(UART_ID, cmd);
-    if (!wait_for_resp(timeout, expected_result))
+    if (!wait_for_resp(timeout, expected_result, uart_response))
     {
         log_error("%s not found in response for %s", expected_result, cmd);
         return false;
     }
+    log_info("%s%s", cmd, uart_response->response);
     return true;
+}
+static bool send_cmd_check_recv(char *cmd, char *expected_result, uint32_t timeout)
+{
+    uart_response_t uart_response;
+    send_cmd_get_recv(cmd, expected_result, timeout, &uart_response);
 }
 
 static void set_apn()
@@ -187,7 +195,56 @@ static void set_apn()
     send_cmd_check_recv("AT+CFUN=1\r\n", "READY", 10000);
 }
 
-static void ntp_example()
+static bool parse_ntp_string(char *ntp_string, struct tm *time)
+{
+    char search_string[] = "+CCLK: ";
+    ntp_string = strstr(ntp_string, search_string);
+    if (!ntp_string)
+    {
+        return false;
+    }
+    ntp_string = ntp_string + sizeof(search_string) - 1;
+    log_info("parse %s", ntp_string);
+
+    if (strlen(ntp_string) <= 16)
+    {
+        return false;
+    }
+    char year_str[2];
+    year_str[0] = ntp_string[0];
+    year_str[1] = ntp_string[1];
+
+    char month_str[2];
+    month_str[0] = ntp_string[3];
+    month_str[1] = ntp_string[4];
+
+    char day_str[2];
+    day_str[0] = ntp_string[6];
+    day_str[1] = ntp_string[7];
+
+    char hour_str[2];
+    hour_str[0] = ntp_string[9];
+    hour_str[1] = ntp_string[10];
+
+    char minute_str[2];
+    minute_str[0] = ntp_string[12];
+    minute_str[1] = ntp_string[13];
+
+    char second_str[2];
+    second_str[0] = ntp_string[15];
+    second_str[1] = ntp_string[16];
+
+    time->tm_year = strtol(year_str, NULL, 0) + 100;
+    time->tm_mon = strtol(month_str, NULL, 0) - 1;
+    time->tm_mday = strtol(day_str, NULL, 0);
+    time->tm_hour = strtol(hour_str, NULL, 0);
+    time->tm_min = strtol(minute_str, NULL, 0);
+    time->tm_sec = strtol(second_str, NULL, 0);
+
+    return true;
+}
+
+static void set_time_ntp()
 {
     send_cmd_check_recv("AT\r\n", "OK", 1000);
     send_cmd_check_recv("AT+CMEE=2\r\n", "OK", 1000); // extended error report
@@ -201,13 +258,33 @@ static void ntp_example()
 #else
     send_cmd_check_recv("AT+CSNTPSTART=\"pool.ntp.org\",\"+48\"\r\n", "+CSNTP:", 20000);
 #endif
+    // send_cmd_check_recv("AT+CCLK?\r\n", "+CCLK:", 5000);
+    uart_response_t uart_response;
+    if (!send_cmd_get_recv("AT+CCLK?\r\n", "+CCLK:", 5000, &uart_response))
+    {
+        log_error("can not get ntp time");
+    }
+    else
+    {
+        struct tm time;
+        if (!parse_ntp_string(uart_response.response, &time))
+        {
+            log_error("can parse ntp time: %s", uart_response.response);
+        }
+        else
+        {
+            struct timeval now = {0};
+            now.tv_sec = mktime(&time);
+            settimeofday(&now, NULL);
+        }
+    }
 
-    send_cmd_check_recv("AT+CCLK?\r\n", "+CCLK:", 5000);
     send_cmd_check_recv("AT+CSNTPSTOP\r\n", "OK", 5000);
 }
 
 static void sim7020_task(void *pvParameters)
 {
+
     memset(&current_response, 0, sizeof(current_response));
     log_info("sim7020_task started");
     sim_uart_init();
@@ -216,9 +293,15 @@ static void sim7020_task(void *pvParameters)
     log_info("sim gpio initialized");
     enable_sim_module();
     log_info("sim enabled");
-    ntp_example();
+    set_time_ntp();
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    log_info("time: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    
     while (true)
     {
+        log_info("Wait");
+
         vTaskDelay(pdTICKS_TO_MS(1000));
     }
 }

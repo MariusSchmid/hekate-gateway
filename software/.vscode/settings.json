@@ -39,7 +39,9 @@
         "string_view": "c",
         "format": "c",
         "initializer_list": "c",
-        "span": "c"
+        "span": "c",
+        "functional": "c",
+        "time_ntp.h": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
 
