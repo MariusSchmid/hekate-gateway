@@ -1,0 +1,69 @@
+<mxfile host="Electron" modified="2024-07-21T12:10:18.579Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.4 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="mOQv1BccrPfMLbDanPSh" version="24.6.4" type="device">
+  <diagram name="Seite-1" id="DYLhW8Z8MLLLwBlx-rCb">
+    <mxGraphModel dx="2074" dy="1196" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Omsy3I-KTBqaoCX-oPgT-3" target="Omsy3I-KTBqaoCX-oPgT-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-3" value="udp_send()" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="160" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-4" value="udp_queue" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="145" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-7" value="read" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="Omsy3I-KTBqaoCX-oPgT-6" target="Omsy3I-KTBqaoCX-oPgT-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Omsy3I-KTBqaoCX-oPgT-6" target="Omsy3I-KTBqaoCX-oPgT-11" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-6" value="udp_send_task" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="350" y="145" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Omsy3I-KTBqaoCX-oPgT-8" target="Omsy3I-KTBqaoCX-oPgT-11" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="Omsy3I-KTBqaoCX-oPgT-8" target="Omsy3I-KTBqaoCX-oPgT-20" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-8" value="ntp_task" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="260" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-11" value="uart_send" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="350" y="260" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-18" value="put" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Omsy3I-KTBqaoCX-oPgT-12" target="Omsy3I-KTBqaoCX-oPgT-19" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="422.5" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-12" value="uart_recv ISR" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="362.5" y="390" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-21" value="\n \r recived" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Omsy3I-KTBqaoCX-oPgT-19" target="Omsy3I-KTBqaoCX-oPgT-20" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-19" value="single message buffer" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="362.5" y="510" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-20" value="uart answer queue" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="362.5" y="620" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Omsy3I-KTBqaoCX-oPgT-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.004;entryY=0.617;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="Omsy3I-KTBqaoCX-oPgT-6" target="Omsy3I-KTBqaoCX-oPgT-20" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="175" />
+              <mxPoint x="630" y="657" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

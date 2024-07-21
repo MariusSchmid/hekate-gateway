@@ -1,19 +1,26 @@
 cmake_minimum_required(VERSION 3.13)
 
-include(Password.cmake)
-if(DEFINED ENV{WIFI_PWD})
-    message(STATUS "WIFI-PWD: $ENV{WIFI_PWD}")
-    set(WIFI_PASSWORD $ENV{WIFI_PWD})
-else()
-    message(FATAL_ERROR "WIFI PWD not set")
+
+
+option(INTERNET_WIFI "Use WiFi for Internet connection" OFF)
+
+if(INTERNET_WIFI)
+    include(Password.cmake)
+    if(DEFINED ENV{WIFI_PWD})
+        message(STATUS "WIFI-PWD: $ENV{WIFI_PWD}")
+        set(WIFI_PASSWORD $ENV{WIFI_PWD})
+    else()
+        message(FATAL_ERROR "WIFI PWD not set")
+    endif()
+        
+    if(DEFINED ENV{WIFI_SSID})
+        message(STATUS "WIFI_SSID: $ENV{WIFI_SSID}")
+        set(WIFI_SSID $ENV{WIFI_SSID})
+    else()
+        message(FATAL_ERROR "WIFI_SSID not set")
+    endif()
 endif()
-    
-if(DEFINED ENV{WIFI_SSID})
-    message(STATUS "WIFI_SSID: $ENV{WIFI_SSID}")
-    set(WIFI_SSID $ENV{WIFI_SSID})
-else()
-    message(FATAL_ERROR "WIFI_SSID not set")
-endif()
+
 
 
 set(PICO_SDK_PATH /home/dev/pico-sdk/)
