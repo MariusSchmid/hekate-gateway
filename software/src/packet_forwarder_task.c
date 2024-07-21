@@ -1,14 +1,14 @@
 #include "packet_forwarder_task.h"
 #include "semtech_packet.h"
-#include "time_ntp.h"
-
+#include "internet_task_if.h"
 #include "pico/stdlib.h"
-#include "pico/cyw43_arch.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
 #include "log.h"
+
+#include <sys/time.h>
 
 #define HEADER_SIZE 12
 
@@ -21,26 +21,15 @@ static gateway_stats_t gateway_stats;
 static char stat_packet[512];
 char rx_packet[1024];
 
-static struct udp_pcb *pcb_rxpt;
-static struct udp_pcb *pcb_status;
-static ip_addr_t addr;
-
-static volatile bool time_set = false;
-
 static void send_status_packet()
 {
     uint32_t packet_size = 0;
 
     gateway_stats.time = time(NULL);
     semtech_packet_create_stat(stat_packet, sizeof(stat_packet), &packet_size, &gateway_stats);
-
-    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, packet_size, PBUF_RAM);
-    memcpy(p->payload, stat_packet, packet_size);
-    err_t er = udp_sendto(pcb_status, p, &addr, UDP_PORT);
-    pbuf_free(p);
-    if (er != ERR_OK)
+    if (!internet_task_send_udp(stat_packet, packet_size, LORA_LNS_IP, UDP_PORT))
     {
-        log_error("Failed to send send_status_packet packet! error=%d", er);
+        log_error("internet_task_send_udp");
     }
     else
     {
@@ -54,13 +43,9 @@ static void send_lora_package(lora_rx_packet_t *packet)
 
     semtech_packet_create_rxpk(rx_packet, sizeof(rx_packet), &packet_size, packet);
 
-    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, packet_size, PBUF_RAM);
-    memcpy(p->payload, rx_packet, packet_size);
-    err_t er = udp_sendto(pcb_rxpt, p, &addr, UDP_PORT);
-    pbuf_free(p);
-    if (er != ERR_OK)
+    if (!internet_task_send_udp(stat_packet, packet_size, LORA_LNS_IP, UDP_PORT))
     {
-        log_error("Failed to send_lora_package! lora_package error=%d", er);
+        log_error("internet_task_send_udp");
     }
     else
     {
@@ -86,66 +71,10 @@ void packet_forwarder_task_send_upstream(lora_rx_packet_t *packet)
     }
 }
 
-static void time_set_cb()
-{
-    time_set = true;
-}
-
 static void sending_task(void *pvParameters)
 {
 
     semtech_packet_init(gateway_config);
-
-    log_info("Initialize  cyw43_arch");
-    if (cyw43_arch_init())
-    {
-        log_error("fail: cyw43_arch_init");
-    }
-
-    cyw43_arch_enable_sta_mode();
-
-    log_info("Connecting to Wi-Fi %s", WIFI_SSID);
-    if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000))
-    {
-        log_error("fail cyw43_arch_wifi_connect_timeout_ms");
-    }
-    else
-    {
-        log_info("WiFi connected");
-    }
-
-
-    log_info("start to get NTP Time");
-    time_npt_set_time(time_set_cb);
-
-    static int wait_ms = 0;
-    pcb_status = udp_new();
-    if (pcb_status == NULL)
-    {
-        log_error("udp_new failed: pcb_status");
-    }
-    else
-    {
-        log_info("udp_new for pcb_status successful");
-    }
-    pcb_rxpt = udp_new();
-    if (pcb_rxpt == NULL)
-    {
-        log_error("udp_new failed: pcb_rxpt");
-    }
-    else
-    {
-        log_info("udp_new for pcb_rxpt successful");
-    }
-
-    if (!ipaddr_aton(LORA_LNS_IP, &addr))
-    {
-        log_error("can not convert %s into ip address", LORA_LNS_IP);
-    }
-    else
-    {
-        log_info("LORA_LNS_IP: %s", LORA_LNS_IP);
-    }
 
     log_info("sending_task started");
     lora_rx_packet_t lora_rx_packet;
@@ -161,14 +90,23 @@ static void sending_task(void *pvParameters)
         {
             send_lora_package(&lora_rx_packet);
         }
-        cyw43_arch_poll();
         vTaskDelay(pdTICKS_TO_MS(1));
     }
-    cyw43_arch_deinit();
+}
+
+static bool time_set = false;
+static bool set_time_callback(struct tm time)
+{
+    struct timeval now = {0};
+    now.tv_sec = mktime(&time);
+    settimeofday(&now, NULL);
+    time_set = true;
+    return true;
 }
 
 static void status_task(void *pvParameters)
 {
+    internet_task_register_time_callback(set_time_callback);
     while (1)
     {
         if (time_set)
@@ -188,6 +126,8 @@ static void init_gateway_config()
 }
 void packet_forwarder_task_init(void)
 {
+
+#if 1
     init_gateway_config();
 
     send_status_sem = xSemaphoreCreateBinary();
@@ -227,4 +167,5 @@ void packet_forwarder_task_init(void)
     {
         log_error("xTaskCreate failed: status_task");
     }
+#endif
 }

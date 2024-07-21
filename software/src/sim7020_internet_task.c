@@ -34,6 +34,8 @@ const uint sim_pwr_key = SIM_PWR_PIN;
 const uint sim_en_key = SIM_EN_PIN;
 const uint sim_reset_key = SIM_RESET_PIN;
 
+static set_time_callback_t this_time_callback;
+
 #define MAX_UART_RESPONSE 128
 typedef struct uart_response_s
 {
@@ -274,9 +276,10 @@ static void set_time_ntp()
         }
         else
         {
-            struct timeval now = {0};
-            now.tv_sec = mktime(&time);
-            settimeofday(&now, NULL);
+            if (this_time_callback != NULL)
+            {
+                this_time_callback(time);
+            }
         }
     }
 
@@ -295,14 +298,10 @@ static void sim7020_task(void *pvParameters)
     enable_sim_module();
     log_info("sim enabled");
     set_time_ntp();
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    log_info("time: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-    
+
     while (true)
     {
         log_info("Wait");
-
         vTaskDelay(pdTICKS_TO_MS(1000));
     }
 }
@@ -319,8 +318,16 @@ static void sim7020_task_responses(void *pvParameters)
     }
 }
 
-bool internet_task_register_timer_callback(set_timer_callback_t callback){
-    
+bool internet_task_register_time_callback(set_time_callback_t time_callback)
+{
+    ENSURE_RET(time_callback, false);
+    this_time_callback = time_callback;
+}
+
+bool internet_task_trigger_get_time(void)
+{
+    set_time_ntp();
+    return true;
 }
 
 bool internet_task_init(void)

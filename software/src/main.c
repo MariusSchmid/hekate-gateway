@@ -15,7 +15,7 @@
 
 #include "log.h"
 
-#define WAIT_FOR_CDC 0      /* Wait for USB serial connectivity before continue*/
+#define WAIT_FOR_CDC 1      /* Wait for USB serial connectivity before continue*/
 #define ENABLE_GW_TASK 0      /* Start Gatway Task*/
 #define ENABLE_PKT_FWD 1      /* Start Packet forwarder task*/
 

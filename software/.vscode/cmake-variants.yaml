@@ -7,5 +7,5 @@ buildType:
       buildType: Debug
       settings:
         PICO_BOARD: pico_w
-        INTERNET_WIFI: OFF
-        INTERNET_SIM: ON
+        INTERNET_WIFI: ON
+        INTERNET_SIM: OFF

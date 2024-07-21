@@ -43,7 +43,11 @@
         "functional": "c",
         "time_ntp.h": "c",
         "internet_task_if.h": "c",
-        "hekate_utils.h": "c"
+        "hekate_utils.h": "c",
+        "internet": "c",
+        "system_error": "c",
+        "compare": "c",
+        "executor": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
     "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/",

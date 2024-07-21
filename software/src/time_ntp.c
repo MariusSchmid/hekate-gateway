@@ -16,8 +16,6 @@
 #define NTP_TEST_TIME (30 * 1000)
 #define NTP_RESEND_TIME (10 * 1000)
 
-static bool time_set = false;
-
 typedef struct NTP_T_
 {
     ip_addr_t ntp_server_address;
@@ -28,7 +26,7 @@ typedef struct NTP_T_
 } NTP_T;
 
 static time_set_cb_t this_time_set_cb;
-
+struct tm utc_time;
 // Called with results of operation
 static void ntp_result(NTP_T *state, int status, time_t *result)
 {
@@ -36,15 +34,11 @@ static void ntp_result(NTP_T *state, int status, time_t *result)
     {
         struct timeval now;
         int rc;
-
-        now.tv_sec = *result;
-        now.tv_usec = 0;
-        settimeofday(&now, NULL);
-        this_time_set_cb();
         struct tm *utc = gmtime(result);
+        memcpy(&utc_time, utc, sizeof(struct tm));
+        this_time_set_cb(utc_time);
         log_info("ntp response: %02d/%02d/%04d %02d:%02d:%02d", utc->tm_mday, utc->tm_mon + 1, utc->tm_year + 1900,
                  utc->tm_hour, utc->tm_min, utc->tm_sec);
-        time_set = true;
     }
 
     if (state->ntp_resend_alarm > 0)
