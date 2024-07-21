@@ -43,3 +43,11 @@ make -C mpy-cross
     * usbipd bind --hardware-id  2e8a:000c 
     * usbipd attach --hardware-id  2e8a:000c 
 
+
+# environment variables
+~~~
+wsl
+vi .profile
+export WIFI_PWD=xyz
+export WIFI_SSID=xyz
+~~~
