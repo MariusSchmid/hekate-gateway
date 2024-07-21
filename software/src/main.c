@@ -2,7 +2,7 @@
 
 #include "gateway_task.h"
 #include "packet_forwarder_task.h"
-#include "sim7020_task.h"
+#include "internet_task_if.h"
 
 #include "pico/stdlib.h"
 #include "FreeRTOS.h"
@@ -17,8 +17,7 @@
 
 #define WAIT_FOR_CDC 0      /* Wait for USB serial connectivity before continue*/
 #define ENABLE_GW_TASK 0      /* Start Gatway Task*/
-#define ENABLE_SIM7020_TASK 1 /* Start Packet forwarder task*/
-#define ENABLE_PKT_FWD 0      /* Start Packet forwarder task*/
+#define ENABLE_PKT_FWD 1      /* Start Packet forwarder task*/
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
@@ -42,6 +41,10 @@ int main()
     }
 #endif
 
+#if (INTERNET_WIFI == 1 || INTERNET_SIM )
+    internet_task_init();
+#endif
+
 #if (ENABLE_PKT_FWD == 1)
     packet_forwarder_task_init();
 #endif
@@ -50,9 +53,7 @@ int main()
     gateway_task_init();
 #endif
 
-#if (ENABLE_SIM7020_TASK == 1)
-    sim7020_task_init();
-#endif
+
     /*Start FreeRTOS Scheduler*/
     vTaskStartScheduler();
     while (1)

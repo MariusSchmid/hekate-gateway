@@ -8,6 +8,7 @@
 #include <time.h> /* time, clock_gettime, strftime, gmtime */
 #include "loragw_hal.h"
 #include "base64.h"
+#include "hekate_utils.h"
 
 static gateway_config_t this_gateway_config;
 static gateway_stats_t this_gateway_stats;

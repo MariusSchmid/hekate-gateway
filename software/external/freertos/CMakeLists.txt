@@ -14,7 +14,6 @@ add_library(FreeRTOS STATIC
     ${FREERTOS_SRC_DIRECTORY}/portable/ThirdParty/GCC/RP2040/port.c
 )
 
-message(STATUS "${PICO_SDK_PATH}/src/boards/include/boards/")
 target_include_directories(FreeRTOS PUBLIC
     ${FREERTOS_CFG_DIRECTORY}/
     ${FREERTOS_SRC_DIRECTORY}/include

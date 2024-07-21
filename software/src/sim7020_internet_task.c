@@ -1,4 +1,5 @@
-#include "sim7020_task.h"
+#include "internet_task_if.h"
+#include "hekate_utils.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -318,7 +319,11 @@ static void sim7020_task_responses(void *pvParameters)
     }
 }
 
-bool sim7020_task_init(void)
+bool internet_task_register_timer_callback(set_timer_callback_t callback){
+    
+}
+
+bool internet_task_init(void)
 {
 
     uart_rx_packet_queue = xQueueCreate(QUEUE_LENGTH, sizeof(uart_response_t));

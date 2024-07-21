@@ -1,8 +1,0 @@
-#ifndef DC6B87D6_33BD_4985_BFAA_78A678B36C4C
-#define DC6B87D6_33BD_4985_BFAA_78A678B36C4C
-
-#include <stdbool.h>
-
-bool sim7020_task_init(void);
-
-#endif /* DC6B87D6_33BD_4985_BFAA_78A678B36C4C */

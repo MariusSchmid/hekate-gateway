@@ -41,11 +41,14 @@
         "initializer_list": "c",
         "span": "c",
         "functional": "c",
-        "time_ntp.h": "c"
+        "time_ntp.h": "c",
+        "internet_task_if.h": "c",
+        "hekate_utils.h": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
+    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/",
 
-    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application/hekate_gateway",
+    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application/hekate_gateway",
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application/gateway_packets_example",
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application/SIM7020",
     "cmake.ignoreCMakeListsMissing": false,

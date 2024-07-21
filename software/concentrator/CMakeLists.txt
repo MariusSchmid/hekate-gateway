@@ -9,6 +9,7 @@ set(_SOURCE_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/external/sx1302_hal/V2.1.0/sx130
 set(_LIBTOOLS_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/external/sx1302_hal/V2.1.0/sx1302_hal/libtools)
 set(_CUSTOM_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/src/custom_sx1302)
 
+
 target_sources(concentrator PRIVATE
 
     ${_CUSTOM_ROOT_PATH}/loragw_hal.c 
@@ -82,3 +83,5 @@ message(STATUS "ENABLE_EXAMPLE: ${ENABLE_EXAMPLE}")
     )
     target_link_libraries(concentrator_example PRIVATE concentrator)
 endif()
+
+target_link_libraries(concentrator hekate_utils)

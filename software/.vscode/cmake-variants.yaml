@@ -1,11 +1,11 @@
 buildType:
   default: debug
   choices:
-
     debug:
       short: debug
       long: debug with example
       buildType: Debug
       settings:
-        ENABLE_EXAMPLE: OFF
         PICO_BOARD: pico_w
+        INTERNET_WIFI: OFF
+        INTERNET_SIM: ON
