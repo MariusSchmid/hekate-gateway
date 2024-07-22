@@ -16,7 +16,7 @@
 #define NTP_TEST_TIME (30 * 1000)
 #define NTP_RESEND_TIME (10 * 1000)
 
-typedef struct NTP_T_
+typedef struct NTP_T_ 
 {
     ip_addr_t ntp_server_address;
     bool dns_request_sent;

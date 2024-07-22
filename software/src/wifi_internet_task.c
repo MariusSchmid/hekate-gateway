@@ -14,6 +14,8 @@
 static SemaphoreHandle_t wifi_init_done_sem;
 static volatile bool time_set = false;
 
+uint8_t some_data[1024] = {1};
+
 static struct udp_pcb *pcb_rxpt;
 static struct udp_pcb *pcb_status;
 
@@ -49,7 +51,6 @@ static void time_set_cb(struct tm time)
 
 static void wifi_task(void *pvParameters)
 {
-    log_info("Initialize  cyw43_arch");
     if (cyw43_arch_init())
     {
         log_error("fail: cyw43_arch_init");
@@ -129,24 +130,30 @@ bool internet_task_trigger_get_time(void)
     return true;
 }
 
+#define WIFI_TASK_STACK_SIZE_WORDS 1024 * 8
+StackType_t wifi_task_stack[WIFI_TASK_STACK_SIZE_WORDS];
+StaticTask_t xTaskBuffer;
 bool internet_task_init(void)
 {
-    BaseType_t ret = xTaskCreate(wifi_task,
-                                 "WIFI_TASK",
-                                 1024 * 8,
-                                 NULL,
-                                 1,
-                                 NULL);
+
+    TaskHandle_t wifi_task_handle = xTaskCreateStatic(wifi_task,
+                                                      "WIFI_TASK",
+                                                      WIFI_TASK_STACK_SIZE_WORDS,
+                                                      NULL,
+                                                      1,
+                                                      wifi_task_stack,
+                                                      &xTaskBuffer
+
+    );
+    if (wifi_task_handle == NULL)
+    {
+        log_error("xTaskCreate failed: wifi_task");
+        return false;
+    }
 
     wifi_init_done_sem = xSemaphoreCreateBinary();
     if (!wifi_init_done_sem)
     {
         log_error("xSemaphoreCreateBinary failed: wifi_init_done_sem");
-    }
-
-    if (ret != pdPASS)
-    {
-        log_error("xTaskCreate failed: sending_task");
-        return false;
     }
 }

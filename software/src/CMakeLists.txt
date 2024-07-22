@@ -89,4 +89,7 @@ target_compile_definitions(hekate_gateway PRIVATE
         WIFI_PASSWORD=\"${WIFI_PASSWORD}\"
         $<$<BOOL:${INTERNET_SIM}>:INTERNET_SIM>
         $<$<BOOL:${INTERNET_WIFI}>:INTERNET_WIFI>
+        --print-memory-usage 
         )
+
+

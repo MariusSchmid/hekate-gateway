@@ -27,6 +27,10 @@ if(INTERNET_WIFI)
 endif()
 
 
+
+
+
+
 # initialize the Raspberry Pi Pico SDK
 set(PICO_SDK_PATH /home/dev/pico-sdk/)
 include(src/pico_sdk_import.cmake)
@@ -41,6 +45,8 @@ set(FREERTOS_CFG_PATH ${CMAKE_CURRENT_LIST_DIR}/src/config)
 add_subdirectory(external/freertos)
 add_subdirectory(external/log_c)
 
+#print memory usage
+add_link_options(-Wl,--print-memory-usage)
 
 set(CMAKE_BUILD_TYPE Debug)
 # rest of your project
@@ -52,6 +58,8 @@ add_executable(hekate_gateway
     $<$<BOOL:${INTERNET_SIM}>:src/sim7020_internet_task.c>
     $<$<BOOL:${INTERNET_WIFI}>:src/wifi_internet_task.c>
 )
+
+
 
 # Add pico_stdlib library which aggregates commonly used features
 target_link_libraries(hekate_gateway PRIVATE 
@@ -83,3 +91,4 @@ target_compile_definitions(hekate_gateway PRIVATE
         $<$<BOOL:${INTERNET_SIM}>:INTERNET_SIM>
         $<$<BOOL:${INTERNET_WIFI}>:INTERNET_WIFI>
         )
+
