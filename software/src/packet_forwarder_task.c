@@ -1,6 +1,7 @@
 #include "packet_forwarder_task.h"
 #include "semtech_packet.h"
 #include "internet_task_if.h"
+#include "free_rtos_memory.h"
 #include "pico/stdlib.h"
 
 #include "FreeRTOS.h"
@@ -18,6 +19,21 @@ static uint64_t mac = 0xA84041FDFEEFBE63;
 
 static gateway_config_t gateway_config;
 static gateway_stats_t gateway_stats;
+
+static TaskHandle_t forwarding_task_handle;
+#define FORWARDING_TASK_STACK_SIZE_WORDS 1024
+static StackType_t forwarding_task_stack[FORWARDING_TASK_STACK_SIZE_WORDS];
+static StaticTask_t forwarding_task_buffer;
+
+static TaskHandle_t status_task_handle;
+#define STATUS_TASK_STACK_SIZE_WORDS 1024
+static StackType_t status_task_stack[STATUS_TASK_STACK_SIZE_WORDS];
+static StaticTask_t status_task_buffer;
+
+static TaskHandle_t set_time_task_handle;
+#define SET_TIME_TASK_STACK_SIZE_WORDS 1024
+static StackType_t set_time_task_stack[SET_TIME_TASK_STACK_SIZE_WORDS];
+static StaticTask_t set_time_task_buffer;
 
 static char stat_packet[512];
 char rx_packet[1024];
@@ -62,7 +78,9 @@ static void send_lora_package(lora_rx_packet_t *packet)
     }
 }
 
-#define QUEUE_LENGTH 16
+#define QUEUE_LENGTH 64
+static StaticQueue_t lora_rx_packet_static_queue;
+static uint8_t lora_rx_packet_queue_storage_area[QUEUE_LENGTH * sizeof(lora_rx_packet_t)];
 static QueueHandle_t lora_rx_packet_queue;
 void packet_forwarder_task_send_upstream(lora_rx_packet_t *packet)
 {
@@ -80,12 +98,12 @@ void packet_forwarder_task_send_upstream(lora_rx_packet_t *packet)
     }
 }
 
-static void sending_task(void *pvParameters)
+static void forwarding_task(void *pvParameters)
 {
 
     semtech_packet_init(gateway_config);
 
-    log_info("sending_task started");
+    log_info("forwarding_task started");
     lora_rx_packet_t lora_rx_packet;
 
     while (1)
@@ -104,6 +122,7 @@ static void sending_task(void *pvParameters)
 }
 
 static bool time_set = false;
+
 static bool set_time_callback(struct tm time)
 {
     struct timeval now = {0};
@@ -153,6 +172,15 @@ static void init_gateway_config()
 {
     gateway_config.mac_address = mac;
 }
+
+
+void packet_forwarder_print_task_stats(void)
+{
+    free_rtos_memory_print_usage(forwarding_task_handle, "forwarding_task", FORWARDING_TASK_STACK_SIZE_WORDS * sizeof(UBaseType_t));
+    free_rtos_memory_print_usage(status_task_handle, "status_task", STATUS_TASK_STACK_SIZE_WORDS * sizeof(UBaseType_t));
+    free_rtos_memory_print_usage(set_time_task_handle, "set_time_task", SET_TIME_TASK_STACK_SIZE_WORDS * sizeof(UBaseType_t));
+}
+
 void packet_forwarder_task_init(void)
 {
 
@@ -171,45 +199,44 @@ void packet_forwarder_task_init(void)
         log_error("xSemaphoreCreateMutex failed: time_mutex");
     }
 
-    lora_rx_packet_queue = xQueueCreate(QUEUE_LENGTH, sizeof(lora_rx_packet_t));
+    lora_rx_packet_queue = xQueueCreateStatic(QUEUE_LENGTH, sizeof(lora_rx_packet_t), lora_rx_packet_queue_storage_area, &lora_rx_packet_static_queue);
     if (!lora_rx_packet_queue)
     {
         log_error("create lora_rx_packet_queue failed");
     }
 
-    TaskHandle_t sending_task_handle;
-    TaskHandle_t status_task_handle;
-    TaskHandle_t set_time_task_handle;
+    forwarding_task_handle = xTaskCreateStatic(forwarding_task,
+                                               "PFW_TASK",
+                                               FORWARDING_TASK_STACK_SIZE_WORDS,
+                                               NULL,
+                                               1,
+                                               forwarding_task_stack,
+                                               &forwarding_task_buffer);
 
-    BaseType_t ret = xTaskCreate(sending_task,
-                                 "PFW_TASK",
-                                 1024 * 8,
-                                 NULL,
-                                 1,
-                                 &sending_task_handle);
-
-    if (ret != pdPASS)
+    if (forwarding_task_handle == NULL)
     {
-        log_error("xTaskCreate failed: sending_task");
+        log_error("xTaskCreate failed: forwarding_task");
     }
 
-    ret = xTaskCreate(status_task,
-                      "STATUS_TASK",
-                      128,
-                      NULL,
-                      1,
-                      &status_task_handle);
-    if (ret != pdPASS)
+    TaskHandle_t status_task_handle = xTaskCreateStatic(status_task,
+                                                        "STATUS_TASK",
+                                                        STATUS_TASK_STACK_SIZE_WORDS,
+                                                        NULL,
+                                                        1,
+                                                        status_task_stack,
+                                                        &status_task_buffer);
+    if (status_task_handle == NULL)
     {
         log_error("xTaskCreate failed: status_task");
     }
-    ret = xTaskCreate(set_time_task,
-                      "STATUS_TASK",
-                      1024 * 8,
-                      NULL,
-                      1,
-                      &set_time_task_handle);
-    if (ret != pdPASS)
+    TaskHandle_t set_time_task_handle = xTaskCreateStatic(set_time_task,
+                                                          "SET_TIME_TASK",
+                                                          SET_TIME_TASK_STACK_SIZE_WORDS,
+                                                          NULL,
+                                                          1,
+                                                          set_time_task_stack,
+                                                          &set_time_task_buffer);
+    if (set_time_task_handle == NULL)
     {
         log_error("xTaskCreate failed: status_task");
     }

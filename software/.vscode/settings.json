@@ -47,7 +47,8 @@
         "internet": "c",
         "system_error": "c",
         "compare": "c",
-        "executor": "c"
+        "executor": "c",
+        "free_rtos_memory.h": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
     "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/",

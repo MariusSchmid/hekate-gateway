@@ -1,6 +1,7 @@
 #include "internet_task_if.h"
 #include "hekate_utils.h"
 #include "time_ntp.h"
+#include "free_rtos_memory.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -14,10 +15,13 @@
 static SemaphoreHandle_t wifi_init_done_sem;
 static volatile bool time_set = false;
 
-uint8_t some_data[1024] = {1};
-
 static struct udp_pcb *pcb_rxpt;
 static struct udp_pcb *pcb_status;
+
+TaskHandle_t wifi_task_handle;
+#define WIFI_TASK_STACK_SIZE_WORDS 1024
+StackType_t wifi_task_stack[WIFI_TASK_STACK_SIZE_WORDS];
+StaticTask_t wifi_task_buffer;
 
 static set_time_callback_t this_time_callback;
 
@@ -130,21 +134,21 @@ bool internet_task_trigger_get_time(void)
     return true;
 }
 
-#define WIFI_TASK_STACK_SIZE_WORDS 1024 * 8
-StackType_t wifi_task_stack[WIFI_TASK_STACK_SIZE_WORDS];
-StaticTask_t xTaskBuffer;
+void internet_task_print_task_stats(void)
+{
+    free_rtos_memory_print_usage(wifi_task_handle, "wifi_task", WIFI_TASK_STACK_SIZE_WORDS * sizeof(UBaseType_t));
+}
+
 bool internet_task_init(void)
 {
 
-    TaskHandle_t wifi_task_handle = xTaskCreateStatic(wifi_task,
+    wifi_task_handle = xTaskCreateStatic(wifi_task,
                                                       "WIFI_TASK",
                                                       WIFI_TASK_STACK_SIZE_WORDS,
                                                       NULL,
                                                       1,
                                                       wifi_task_stack,
-                                                      &xTaskBuffer
-
-    );
+                                                      &wifi_task_buffer);
     if (wifi_task_handle == NULL)
     {
         log_error("xTaskCreate failed: wifi_task");

@@ -46,6 +46,7 @@ add_executable(hekate_gateway
     gateway_task.c
     packet_forwarder_task.c
     time_ntp.c
+    free_rtos_memory.c
     $<$<BOOL:${INTERNET_SIM}>:sim7020_internet_task.c>
     $<$<BOOL:${INTERNET_WIFI}>:wifi_internet_task.c>
 )

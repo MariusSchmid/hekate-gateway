@@ -15,66 +15,47 @@
 
 #include "log.h"
 
-#define WAIT_FOR_CDC 1   /* Wait for USB serial connectivity before continue*/
-#define ENABLE_GW_TASK 0 /* Start Gatway Task*/
-#define ENABLE_PKT_FWD 1 /* Start Packet forwarder task*/
+#define WAIT_FOR_CDC 1        /* Wait for USB serial connectivity before continue*/
+#define ENABLE_GW_TASK 0      /* Start Gatway Task*/
+#define ENABLE_PKT_FWD 1      /* Start Packet forwarder task*/
+#define ENABLE_MEMORY_STATS 1 /* print memory stats */
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
     log_error("vApplicationStackOverflowHook");
 }
 
-/* configSUPPORT_STATIC_ALLOCATION is set to 1, so the application must provide an
-implementation of vApplicationGetIdleTaskMemory() to provide the memory that is
-used by the Idle task. */
-void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
-                                   StackType_t **ppxIdleTaskStackBuffer,
-                                   configSTACK_DEPTH_TYPE *puxIdleTaskStackSize)
+#define MEMORY_STATS_STACK_SIZE_WORDS 1024
+StackType_t memory_stats_task_stack[MEMORY_STATS_STACK_SIZE_WORDS];
+StaticTask_t memory_stats_stack_buffer;
+
+void stats_task(void *pvParameters)
 {
-    /* If the buffers to be provided to the Idle task are declared inside this
-    function then they must be declared static - otherwise they will be allocated on
-    the stack and so not exists after this function exits. */
-    static StaticTask_t xIdleTaskTCB;
-    static StackType_t uxIdleTaskStack[configMINIMAL_STACK_SIZE];
+    while (1)
+    {
 
-    /* Pass out a pointer to the StaticTask_t structure in which the Idle task's
-    state will be stored. */
-    *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;
-
-    /* Pass out the array that will be used as the Idle task's stack. */
-    *ppxIdleTaskStackBuffer = uxIdleTaskStack;
-
-    /* Pass out the size of the array pointed to by *ppxIdleTaskStackBuffer.
-    Note that, as the array is necessarily of type StackType_t,
-    configMINIMAL_STACK_SIZE is specified in words, not bytes. */
-    *puxIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+        packet_forwarder_print_task_stats();
+        internet_task_print_task_stats();
+        vTaskDelay(pdTICKS_TO_MS(5000));
+    }
 }
-/*-----------------------------------------------------------*/
 
-/* configSUPPORT_STATIC_ALLOCATION and configUSE_TIMERS are both set to 1, so the
-application must provide an implementation of vApplicationGetTimerTaskMemory()
-to provide the memory that is used by the Timer service task. */
-void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer,
-                                    StackType_t **ppxTimerTaskStackBuffer,
-                                    configSTACK_DEPTH_TYPE *puxTimerTaskStackSize)
+static void stats_task_init()
 {
-    /* If the buffers to be provided to the Timer task are declared inside this
-    function then they must be declared static - otherwise they will be allocated on
-    the stack and so not exists after this function exits. */
-    static StaticTask_t xTimerTaskTCB;
-    static StackType_t uxTimerTaskStack[configTIMER_TASK_STACK_DEPTH];
+    TaskHandle_t stats_task_handle = xTaskCreateStatic(stats_task,
+                                                       "STATS_TASK",
+                                                       MEMORY_STATS_STACK_SIZE_WORDS,
+                                                       NULL,
+                                                       1,
+                                                       memory_stats_task_stack,
+                                                       &memory_stats_stack_buffer
 
-    /* Pass out a pointer to the StaticTask_t structure in which the Timer
-    task's state will be stored. */
-    *ppxTimerTaskTCBBuffer = &xTimerTaskTCB;
-
-    /* Pass out the array that will be used as the Timer task's stack. */
-    *ppxTimerTaskStackBuffer = uxTimerTaskStack;
-
-    /* Pass out the size of the array pointed to by *ppxTimerTaskStackBuffer.
-    Note that, as the array is necessarily of type StackType_t,
-    configTIMER_TASK_STACK_DEPTH is specified in words, not bytes. */
-    *puxTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
+    );
+    if (stats_task_handle == NULL)
+    {
+        log_error("xTaskCreate failed: wifi_task");
+        return;
+    }
 }
 
 int main()
@@ -102,6 +83,10 @@ int main()
 
 #if (ENABLE_GW_TASK == 1)
     gateway_task_init();
+#endif
+
+#if ENABLE_MEMORY_STATS == 1
+    stats_task_init();
 #endif
 
     /*Start FreeRTOS Scheduler*/

@@ -11,4 +11,6 @@ bool internet_task_send_udp(uint8_t *message, uint32_t size, const char *dst_ip,
 bool internet_task_register_time_callback(set_time_callback_t time_callback);
 bool internet_task_trigger_get_time(void);
 
+void internet_task_print_task_stats(void);
+
 #endif /* AB0FE73E_DB3E_4E6A_9797_3182CC25FD6A */
