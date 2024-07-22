@@ -43,7 +43,7 @@ typedef struct uart_response_s
     uint32_t size;
 } uart_response_t;
 
-static uart_response_t current_response;
+static uart_response_t current_uart_response = {0};
 
 #define QUEUE_LENGTH 32
 #define PKT_SIZE MAX_UART_RESPONSE
@@ -53,7 +53,7 @@ static void put_response_to_queue()
 {
 
     if (xQueueSendFromISR(uart_rx_packet_queue,
-                          (void *)&current_response,
+                          (void *)&current_uart_response,
                           (TickType_t)0) != pdPASS)
     {
         log_error("fail to add something to queue :lora_rx_packet_queue");
@@ -98,13 +98,13 @@ void on_uart_rx()
             log_error("uart recv overflow");
             uart_cnt = 0;
         }
-        current_response.response[uart_cnt] = ch;
+        current_uart_response.response[uart_cnt] = ch;
         if (ch == '\n')
         {
-            current_response.response[uart_cnt] = '\0';
-            current_response.size = uart_cnt;
+            current_uart_response.response[uart_cnt] = '\0';
+            current_uart_response.size = uart_cnt;
             put_response_to_queue();
-            memset(&current_response, 0, sizeof(current_response));
+            memset(&current_uart_response, 0, sizeof(current_uart_response));
             uart_cnt = 0;
         }
         else
@@ -289,7 +289,7 @@ static void set_time_ntp()
 static void sim7020_task(void *pvParameters)
 {
 
-    memset(&current_response, 0, sizeof(current_response));
+    memset(&current_uart_response, 0, sizeof(current_uart_response));
     log_info("sim7020_task started");
     sim_uart_init();
     log_info("sim uart initialized");
@@ -316,6 +316,11 @@ static void sim7020_task_responses(void *pvParameters)
             log_info(uart_response.response);
         }
     }
+}
+
+bool internet_task_send_udp(uint8_t *message, uint32_t size, const char *dst_ip, uint16_t port)
+{
+    return true;
 }
 
 bool internet_task_register_time_callback(set_time_callback_t time_callback)

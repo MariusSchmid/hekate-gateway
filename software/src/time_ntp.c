@@ -37,8 +37,6 @@ static void ntp_result(NTP_T *state, int status, time_t *result)
         struct tm *utc = gmtime(result);
         memcpy(&utc_time, utc, sizeof(struct tm));
         this_time_set_cb(utc_time);
-        log_info("ntp response: %02d/%02d/%04d %02d:%02d:%02d", utc->tm_mday, utc->tm_mon + 1, utc->tm_year + 1900,
-                 utc->tm_hour, utc->tm_min, utc->tm_sec);
     }
 
     if (state->ntp_resend_alarm > 0)
@@ -78,7 +76,7 @@ static void ntp_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_ad
 
 static int64_t ntp_failed_handler(alarm_id_t id, void *user_data);
 
-// Perform initialisation
+
 static NTP_T *ntp_init(void)
 {
     NTP_T *state = (NTP_T *)calloc(1, sizeof(NTP_T));
@@ -98,7 +96,7 @@ static NTP_T *ntp_init(void)
     return state;
 }
 
-// Make an NTP request
+
 static void ntp_request(NTP_T *state)
 {
     // cyw43_arch_lwip_begin/end should be used around calls into lwIP to ensure correct locking.
@@ -140,11 +138,6 @@ static void get_ntp_time()
     {
         // Set alarm in case udp requests are lost
         state->ntp_resend_alarm = add_alarm_in_ms(NTP_RESEND_TIME, ntp_failed_handler, state, true);
-
-        // cyw43_arch_lwip_begin/end should be used around calls into lwIP to ensure correct locking.
-        // You can omit them if you are in a callback from lwIP. Note that when using pico_cyw_arch_poll
-        // these calls are a no-op and can be omitted, but it is a good practice to use them in
-        // case you switch the cyw43_arch type later.
         cyw43_arch_lwip_begin();
         int err = dns_gethostbyname(NTP_SERVER, &state->ntp_server_address, ntp_dns_found, state);
         cyw43_arch_lwip_end();

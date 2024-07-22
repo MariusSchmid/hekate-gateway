@@ -13,6 +13,7 @@
 #define HEADER_SIZE 12
 
 static SemaphoreHandle_t send_status_sem;
+static SemaphoreHandle_t time_mutex;
 static uint64_t mac = 0xA84041FDFEEFBE63;
 
 static gateway_config_t gateway_config;
@@ -25,7 +26,15 @@ static void send_status_packet()
 {
     uint32_t packet_size = 0;
 
-    gateway_stats.time = time(NULL);
+    if (xSemaphoreTake(time_mutex, 100) == pdTRUE)
+    {
+        gateway_stats.time = time(NULL);
+        xSemaphoreGive(time_mutex);
+    }
+    else
+    {
+        log_error("cant get time_mutex");
+    }
     semtech_packet_create_stat(stat_packet, sizeof(stat_packet), &packet_size, &gateway_stats);
     if (!internet_task_send_udp(stat_packet, packet_size, LORA_LNS_IP, UDP_PORT))
     {
@@ -98,15 +107,25 @@ static bool time_set = false;
 static bool set_time_callback(struct tm time)
 {
     struct timeval now = {0};
-    now.tv_sec = mktime(&time);
-    settimeofday(&now, NULL);
-    time_set = true;
+    if (xSemaphoreTake(time_mutex, 100) == pdTRUE)
+    {
+        log_info("set time: %02d/%02d/%04d %02d:%02d:%02d", time.tm_mday, time.tm_mon + 1, time.tm_year + 1900,
+                 time.tm_hour, time.tm_min, time.tm_sec);
+        now.tv_sec = mktime(&time);
+        settimeofday(&now, NULL);
+        time_set = true;
+        xSemaphoreGive(time_mutex);
+    }
+    else
+    {
+        log_error("Can not get time_mutex");
+        return false;
+    }
     return true;
 }
 
 static void status_task(void *pvParameters)
 {
-    internet_task_register_time_callback(set_time_callback);
     while (1)
     {
         if (time_set)
@@ -117,6 +136,16 @@ static void status_task(void *pvParameters)
             }
         }
         vTaskDelay(pdTICKS_TO_MS(STATUS_INTERVAL_MS));
+    }
+}
+
+static void set_time_task(void *pvParameters)
+{
+    internet_task_register_time_callback(set_time_callback);
+    while (1)
+    {
+        internet_task_trigger_get_time();
+        vTaskDelay(pdTICKS_TO_MS(TIME_INTERVAL_S * 1000));
     }
 }
 
@@ -133,7 +162,13 @@ void packet_forwarder_task_init(void)
     send_status_sem = xSemaphoreCreateBinary();
     if (!send_status_sem)
     {
-        log_error("xSemaphoreCreateBinary failed");
+        log_error("xSemaphoreCreateBinary failed: send_status_sem");
+    }
+
+    time_mutex = xSemaphoreCreateMutex();
+    if (!send_status_sem)
+    {
+        log_error("xSemaphoreCreateMutex failed: time_mutex");
     }
 
     lora_rx_packet_queue = xQueueCreate(QUEUE_LENGTH, sizeof(lora_rx_packet_t));
@@ -144,6 +179,7 @@ void packet_forwarder_task_init(void)
 
     TaskHandle_t sending_task_handle;
     TaskHandle_t status_task_handle;
+    TaskHandle_t set_time_task_handle;
 
     BaseType_t ret = xTaskCreate(sending_task,
                                  "PFW_TASK",
@@ -163,6 +199,16 @@ void packet_forwarder_task_init(void)
                       NULL,
                       1,
                       &status_task_handle);
+    if (ret != pdPASS)
+    {
+        log_error("xTaskCreate failed: status_task");
+    }
+    ret = xTaskCreate(set_time_task,
+                      "STATUS_TASK",
+                      1024 * 8,
+                      NULL,
+                      1,
+                      &set_time_task_handle);
     if (ret != pdPASS)
     {
         log_error("xTaskCreate failed: status_task");

@@ -8,6 +8,7 @@
 // #define LORA_LNS_IP "192.168.0.113"
 #define LORA_LNS_IP "52.212.223.226"
 #define STATUS_INTERVAL_MS 10000
+#define TIME_INTERVAL_S 60
 
 
 /**

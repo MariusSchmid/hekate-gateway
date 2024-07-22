@@ -4,9 +4,14 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 #include "log.h"
 
 #include "pico/cyw43_arch.h"
+
+#define WIFI_TIMEOUT_CONNECT_MS 30000
+
+static SemaphoreHandle_t wifi_init_done_sem;
 static volatile bool time_set = false;
 
 static struct udp_pcb *pcb_rxpt;
@@ -52,8 +57,10 @@ static void wifi_task(void *pvParameters)
     cyw43_arch_enable_sta_mode();
 
     log_info("Connecting to Wi-Fi %s", WIFI_SSID);
+#if SHOW_WIFI_PASSWORD
     log_info("Connecting to Wi-Fi Password %s", WIFI_PASSWORD);
-    if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000))
+#endif
+    if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, WIFI_TIMEOUT_CONNECT_MS))
     {
         log_error("fail cyw43_arch_wifi_connect_timeout_ms");
     }
@@ -61,8 +68,9 @@ static void wifi_task(void *pvParameters)
     {
         log_info("WiFi connected");
     }
+
     log_info("start to get NTP Time");
-    time_npt_set_time(time_set_cb);
+    // time_npt_set_time(time_set_cb);
     pcb_status = udp_new();
     if (pcb_status == NULL)
     {
@@ -81,6 +89,7 @@ static void wifi_task(void *pvParameters)
     {
         log_info("udp_new for pcb_rxpt successful");
     }
+    xSemaphoreGive(wifi_init_done_sem);
     while (1)
     {
         cyw43_arch_poll();
@@ -97,7 +106,26 @@ bool internet_task_register_time_callback(set_time_callback_t time_callback)
 
 bool internet_task_trigger_get_time(void)
 {
-    time_npt_set_time(time_set_cb);
+    static bool wifi_initialized = false;
+
+    if (!wifi_initialized)
+    {
+        if (xSemaphoreTake(wifi_init_done_sem, WIFI_TIMEOUT_CONNECT_MS) == pdTRUE)
+        {
+            wifi_initialized = true;
+            time_npt_set_time(time_set_cb);
+        }
+        else
+        {
+            log_error("failed to take wifi_init_done_sem");
+            return false;
+        }
+    }
+    else
+    {
+        time_npt_set_time(time_set_cb);
+    }
+
     return true;
 }
 
@@ -109,6 +137,13 @@ bool internet_task_init(void)
                                  NULL,
                                  1,
                                  NULL);
+
+    wifi_init_done_sem = xSemaphoreCreateBinary();
+    if (!wifi_init_done_sem)
+    {
+        log_error("xSemaphoreCreateBinary failed: wifi_init_done_sem");
+    }
+
     if (ret != pdPASS)
     {
         log_error("xTaskCreate failed: sending_task");
