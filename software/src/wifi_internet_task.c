@@ -143,12 +143,12 @@ bool internet_task_init(void)
 {
 
     wifi_task_handle = xTaskCreateStatic(wifi_task,
-                                                      "WIFI_TASK",
-                                                      WIFI_TASK_STACK_SIZE_WORDS,
-                                                      NULL,
-                                                      1,
-                                                      wifi_task_stack,
-                                                      &wifi_task_buffer);
+                                         "WIFI_TASK",
+                                         WIFI_TASK_STACK_SIZE_WORDS,
+                                         NULL,
+                                         1,
+                                         wifi_task_stack,
+                                         &wifi_task_buffer);
     if (wifi_task_handle == NULL)
     {
         log_error("xTaskCreate failed: wifi_task");

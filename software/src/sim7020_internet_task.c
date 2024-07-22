@@ -1,10 +1,12 @@
 #include "internet_task_if.h"
 #include "hekate_utils.h"
+#include "free_rtos_memory.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "log.h"
+#include "semphr.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -45,9 +47,17 @@ typedef struct uart_response_s
 
 static uart_response_t current_uart_response = {0};
 
-#define QUEUE_LENGTH 32
+#define UART_RX_QUEUE_LENGTH 32
 #define PKT_SIZE MAX_UART_RESPONSE
 static QueueHandle_t uart_rx_packet_queue;
+
+static SemaphoreHandle_t sim_init_done_sem;
+static SemaphoreHandle_t sim_mutex;
+
+TaskHandle_t sim7020_task_handle;
+#define SIM7020_TASK_STACK_SIZE_WORDS 1024
+StackType_t sim7020_task_stack[SIM7020_TASK_STACK_SIZE_WORDS];
+StaticTask_t sim7020_task_buffer;
 
 static void put_response_to_queue()
 {
@@ -90,7 +100,7 @@ void on_uart_rx()
     while (uart_is_readable(UART_ID))
     {
         uint8_t ch = uart_getc(UART_ID);
-#if PRINT_RAW_RCV_UART == 1
+#if PRINT_RAW_RCV_UART == 0
         printf("%c", ch);
 #endif
         if (uart_cnt >= MAX_UART_RESPONSE)
@@ -162,11 +172,12 @@ static void sim_gpio_init()
 
 static void enable_sim_module()
 {
-
+    uart_response_t uart_response;
     gpio_put(sim_pwr_key, true); // press power key
     sleep_ms(2000);
     gpio_put(sim_pwr_key, false); // release power key
-    sleep_ms(1000);
+    // wait_for_resp(10000, "OK", &uart_response);
+    sleep_ms(5000);
 }
 
 static bool send_cmd_get_recv(char *cmd, char *expected_result, uint32_t timeout, uart_response_t *uart_response)
@@ -176,6 +187,7 @@ static bool send_cmd_get_recv(char *cmd, char *expected_result, uint32_t timeout
     {
         log_error("fail to reset queue: uart_rx_packet_queue");
     }
+    printf("S: %s \n", cmd);
     uart_puts(UART_ID, cmd);
     if (!wait_for_resp(timeout, expected_result, uart_response))
     {
@@ -194,7 +206,7 @@ static bool send_cmd_check_recv(char *cmd, char *expected_result, uint32_t timeo
 static void set_apn()
 {
     send_cmd_check_recv("AT+CFUN=0\r\n", "READY", 10000);
-    send_cmd_check_recv("AT*MCGDEFCONT=\"IP\",\"iot.1nce.net\"\r\n", "OK", 10000);
+    send_cmd_check_recv("AT*MCGDEFCONT=\"IP\",\"iot.1nce.net\"\r\n", "OK", 10000); // set apn settings
     send_cmd_check_recv("AT+CFUN=1\r\n", "READY", 10000);
 }
 
@@ -247,14 +259,8 @@ static bool parse_ntp_string(char *ntp_string, struct tm *time)
     return true;
 }
 
-static void set_time_ntp()
+static void get_time_ntp()
 {
-    send_cmd_check_recv("AT\r\n", "OK", 1000);
-    send_cmd_check_recv("AT+CMEE=2\r\n", "OK", 1000); // extended error report
-    send_cmd_check_recv("AT+CPIN?\r\n", "READY", 1000);
-    set_apn();
-    uart_puts(UART_ID, "AT+CGCONTRDP\r\n");
-    send_cmd_check_recv("AT+CGCONTRDP\r\n", "OK", 5000);
 
 #if CHINESE_NTP == 1
     send_cmd_check_recv("AT+CSNTPSTART=\"jp.ntp.org.cn\",\"+32\"\r\n", "OK", 20000);
@@ -286,6 +292,20 @@ static void set_time_ntp()
     send_cmd_check_recv("AT+CSNTPSTOP\r\n", "OK", 5000);
 }
 
+static bool initialize_sim_module()
+{
+    send_cmd_check_recv("AT\r\n", "OK", 5000);
+    send_cmd_check_recv("AT+CMEE=2\r\n", "OK", 5000); // extended error report
+    send_cmd_check_recv("AT+CPIN?\r\n", "READY", 1000);
+    set_apn();
+    // uart_puts(UART_ID, "AT+CGCONTRDP\r\n");
+    send_cmd_check_recv("AT+CGCONTRDP\r\n", "OK", 5000); // get APN settings
+    send_cmd_check_recv("AT+CIPMUX=0\r\n", "OK", 5000);  // enable single connection
+    send_cmd_check_recv("AT+CIPMODE=1\r\n", "OK", 5000); // enable transparent mode
+
+    return true;
+}
+
 static void sim7020_task(void *pvParameters)
 {
 
@@ -297,29 +317,34 @@ static void sim7020_task(void *pvParameters)
     log_info("sim gpio initialized");
     enable_sim_module();
     log_info("sim enabled");
-    set_time_ntp();
+    initialize_sim_module();
+    xSemaphoreGive(sim_init_done_sem);
 
     while (true)
     {
-        log_info("Wait");
+        // log_info("Wait");
         vTaskDelay(pdTICKS_TO_MS(1000));
-    }
-}
-
-static void sim7020_task_responses(void *pvParameters)
-{
-    uart_response_t uart_response;
-    while (true)
-    {
-        if (xQueueReceive(uart_rx_packet_queue, &(uart_response), 100) == pdPASS)
-        {
-            log_info(uart_response.response);
-        }
     }
 }
 
 bool internet_task_send_udp(uint8_t *message, uint32_t size, const char *dst_ip, uint16_t port)
 {
+    char connection_string[256] = {0};
+    sprintf(connection_string, "AT+CIPSTART=\"UDP\",\"%s\",\"%d\"\r\n", dst_ip, port);
+    if (xSemaphoreTake(sim_mutex, 10000) == pdTRUE)
+    {
+
+        send_cmd_check_recv("AT+CSOC=1,2,1\r\n", "+CSOC:", 5000);
+        send_cmd_check_recv(connection_string, "CONNECT OK", 60000);
+        send_cmd_check_recv("AT+CIPCHAN\r\n", "CONNECT", 10000); // enable transparent mode
+
+        uart_write_blocking(UART_ID, message, size);
+        sleep_ms(1500);
+        uart_puts(UART_ID, "+++"); // disable transparent mode
+        sleep_ms(1500);
+        send_cmd_check_recv("AT+CIPCLOSE=0\r\n", "OK", 5000);
+        xSemaphoreGive(sim_mutex);
+    }
     return true;
 }
 
@@ -331,38 +356,67 @@ bool internet_task_register_time_callback(set_time_callback_t time_callback)
 
 bool internet_task_trigger_get_time(void)
 {
-    set_time_ntp();
+    static bool sim_initialized = false;
+
+    if (!sim_initialized)
+    {
+        if (xSemaphoreTake(sim_init_done_sem, pdTICKS_TO_MS(60000)) == pdTRUE)
+        {
+            sim_initialized = true;
+        }
+        else
+        {
+            log_error("failed to take sim_init_done_sem");
+            return false;
+        }
+    }
+
+    if (xSemaphoreTake(sim_mutex, 1000) == pdTRUE)
+    {
+        get_time_ntp();
+        xSemaphoreGive(sim_mutex);
+    }
+
     return true;
+}
+
+void internet_task_print_task_stats(void)
+{
+    free_rtos_memory_print_usage(sim7020_task_handle, "sim7020_task", SIM7020_TASK_STACK_SIZE_WORDS * sizeof(UBaseType_t));
 }
 
 bool internet_task_init(void)
 {
 
-    uart_rx_packet_queue = xQueueCreate(QUEUE_LENGTH, sizeof(uart_response_t));
+    sim_mutex = xSemaphoreCreateMutex();
+    if (!sim_mutex)
+    {
+        log_error("xSemaphoreCreateMutex failed: sim_mutex");
+    }
+
+    uart_rx_packet_queue = xQueueCreate(UART_RX_QUEUE_LENGTH, sizeof(uart_response_t));
     if (!uart_rx_packet_queue)
     {
         log_error("create uart_rx_packet_queue  failed");
     }
 
-    BaseType_t ret = xTaskCreate(sim7020_task,
-                                 "SIM7020_TASK",
-                                 1024 * 8,
-                                 NULL,
-                                 1,
-                                 NULL);
-    if (ret != pdPASS)
+    sim7020_task_handle = xTaskCreateStatic(sim7020_task,
+                                            "SIM7020_TASK",
+                                            SIM7020_TASK_STACK_SIZE_WORDS,
+                                            NULL,
+                                            1,
+                                            sim7020_task_stack,
+                                            &sim7020_task_buffer);
+    if (sim7020_task_handle == NULL)
     {
         log_error("xTaskCreate failed: sending_task");
         return false;
     }
+    sim_init_done_sem = xSemaphoreCreateBinary();
+    if (!sim_init_done_sem)
+    {
+        log_error("xSemaphoreCreateBinary failed: sim_init_done_sem");
+    }
 
-#if 0
-    ret = xTaskCreate(sim7020_task_responses,
-                      "SIM7020_TASK_RSP",
-                      1024 * 8,
-                      NULL,
-                      1,
-                      NULL);
-#endif
     return true;
 }

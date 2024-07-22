@@ -18,7 +18,7 @@
 #define WAIT_FOR_CDC 1        /* Wait for USB serial connectivity before continue*/
 #define ENABLE_GW_TASK 0      /* Start Gatway Task*/
 #define ENABLE_PKT_FWD 1      /* Start Packet forwarder task*/
-#define ENABLE_MEMORY_STATS 1 /* print memory stats */
+#define ENABLE_MEMORY_STATS 0 /* print memory stats */
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
@@ -65,7 +65,7 @@ int main()
         log_error("failed: stdio_usb_init()");
     }
 
-#if (WAIT_FOR_CDC == 1)
+#if (WAIT_FOR_CDC == 1 && INTERNET_SIM == 0)
     while (!tud_cdc_connected())
     {
         printf(".");

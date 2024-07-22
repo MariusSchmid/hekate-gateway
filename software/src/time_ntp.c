@@ -16,7 +16,7 @@
 #define NTP_TEST_TIME (30 * 1000)
 #define NTP_RESEND_TIME (10 * 1000)
 
-typedef struct NTP_T_ 
+typedef struct NTP_T_
 {
     ip_addr_t ntp_server_address;
     bool dns_request_sent;
@@ -76,7 +76,6 @@ static void ntp_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_ad
 
 static int64_t ntp_failed_handler(alarm_id_t id, void *user_data);
 
-
 static NTP_T *ntp_init(void)
 {
     NTP_T *state = (NTP_T *)calloc(1, sizeof(NTP_T));
@@ -95,7 +94,6 @@ static NTP_T *ntp_init(void)
     udp_recv(state->ntp_pcb, ntp_recv, state);
     return state;
 }
-
 
 static void ntp_request(NTP_T *state)
 {
@@ -131,26 +129,30 @@ static void ntp_dns_found(const char *hostname, const ip_addr_t *ipaddr, void *a
 
 static void get_ntp_time()
 {
-    NTP_T *state = ntp_init();
-    if (!state)
+    static NTP_T *ntp_state = NULL;
+    if (!ntp_state)
+    {
+        ntp_state = ntp_init();
+    }
+    if (!ntp_state)
         return;
-    if (absolute_time_diff_us(get_absolute_time(), state->ntp_test_time) < 0 && !state->dns_request_sent)
+    if (absolute_time_diff_us(get_absolute_time(), ntp_state->ntp_test_time) < 0 && !ntp_state->dns_request_sent)
     {
         // Set alarm in case udp requests are lost
-        state->ntp_resend_alarm = add_alarm_in_ms(NTP_RESEND_TIME, ntp_failed_handler, state, true);
+        ntp_state->ntp_resend_alarm = add_alarm_in_ms(NTP_RESEND_TIME, ntp_failed_handler, ntp_state, true);
         cyw43_arch_lwip_begin();
-        int err = dns_gethostbyname(NTP_SERVER, &state->ntp_server_address, ntp_dns_found, state);
+        int err = dns_gethostbyname(NTP_SERVER, &ntp_state->ntp_server_address, ntp_dns_found, ntp_state);
         cyw43_arch_lwip_end();
 
-        state->dns_request_sent = true;
+        ntp_state->dns_request_sent = true;
         if (err == ERR_OK)
         {
-            ntp_request(state); // Cached result
+            ntp_request(ntp_state); // Cached result
         }
         else if (err != ERR_INPROGRESS)
         { // ERR_INPROGRESS means expect a callback
             log_error("dns request failed");
-            ntp_result(state, -1, NULL);
+            ntp_result(ntp_state, -1, NULL);
         }
     }
 }

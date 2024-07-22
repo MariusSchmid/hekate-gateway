@@ -48,7 +48,8 @@
         "system_error": "c",
         "compare": "c",
         "executor": "c",
-        "free_rtos_memory.h": "c"
+        "free_rtos_memory.h": "c",
+        "queue.h": "c"
     },
     // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
     "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/",

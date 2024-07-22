@@ -194,7 +194,7 @@ void packet_forwarder_task_init(void)
     }
 
     time_mutex = xSemaphoreCreateMutex();
-    if (!send_status_sem)
+    if (!time_mutex)
     {
         log_error("xSemaphoreCreateMutex failed: time_mutex");
     }
