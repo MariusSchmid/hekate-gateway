@@ -52,7 +52,7 @@ set(CMAKE_BUILD_TYPE Debug)
 # rest of your project
 add_executable(hekate_gateway
     src/main.c
-    src/gateway_task.c
+    src/lora_task.c
     src/packet_forwarder_task.c
     src/time_ntp.c
     src/free_rtos_memory.c

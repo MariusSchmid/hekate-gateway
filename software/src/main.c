@@ -1,6 +1,6 @@
 
 
-#include "gateway_task.h"
+#include "lora_task.h"
 #include "packet_forwarder_task.h"
 #include "internet_task_if.h"
 
@@ -82,7 +82,7 @@ int main()
 #endif
 
 #if (ENABLE_GW_TASK == 1)
-    gateway_task_init();
+    lora_task_init();
 #endif
 
 #if ENABLE_MEMORY_STATS == 1

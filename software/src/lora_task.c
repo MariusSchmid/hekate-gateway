@@ -1,4 +1,4 @@
-#include "gateway_task.h"
+#include "lora_task.h"
 #include "concentrator.h"
 #include "concentrator_types.h"
 #include "packet_forwarder_task.h"
@@ -178,7 +178,7 @@ static void gateway_task(void *pvParameters)
     }
 }
 
-void gateway_task_init(void)
+void lora_task_init(void)
 {
 
     BaseType_t ret = xTaskCreate(gateway_task,

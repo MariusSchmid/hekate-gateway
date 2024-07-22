@@ -38,6 +38,9 @@ const uint sim_reset_key = SIM_RESET_PIN;
 
 static set_time_callback_t this_time_callback;
 
+
+
+
 #define MAX_UART_RESPONSE 128
 typedef struct uart_response_s
 {
@@ -297,9 +300,11 @@ static bool initialize_sim_module()
     send_cmd_check_recv("AT\r\n", "OK", 5000);
     send_cmd_check_recv("AT+CMEE=2\r\n", "OK", 5000); // extended error report
     send_cmd_check_recv("AT+CPIN?\r\n", "READY", 1000);
+
     set_apn();
     // uart_puts(UART_ID, "AT+CGCONTRDP\r\n");
     send_cmd_check_recv("AT+CGCONTRDP\r\n", "OK", 5000); // get APN settings
+
     send_cmd_check_recv("AT+CIPMUX=0\r\n", "OK", 5000);  // enable single connection
     send_cmd_check_recv("AT+CIPMODE=1\r\n", "OK", 5000); // enable transparent mode
 
@@ -334,7 +339,7 @@ bool internet_task_send_udp(uint8_t *message, uint32_t size, const char *dst_ip,
     if (xSemaphoreTake(sim_mutex, 10000) == pdTRUE)
     {
 
-        send_cmd_check_recv("AT+CSOC=1,2,1\r\n", "+CSOC:", 5000);
+        send_cmd_check_recv("AT+CSOC=1,2,1\r\n", "+CSOC:", 10000);
         send_cmd_check_recv(connection_string, "CONNECT OK", 60000);
         send_cmd_check_recv("AT+CIPCHAN\r\n", "CONNECT", 10000); // enable transparent mode
 
