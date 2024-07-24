@@ -56,7 +56,8 @@ add_executable(hekate_gateway
     src/packet_forwarder_task.c
     src/time_ntp.c
     src/free_rtos_memory.c
-    $<$<BOOL:${INTERNET_SIM}>:src/sim7020_internet_task.c>
+    $<$<BOOL:${INTERNET_SIM}>:src/sim7020/sim7020_internet_task.c>
+    $<$<BOOL:${INTERNET_SIM}>:src/sim7020/sim7020_hal.c>
     $<$<BOOL:${INTERNET_WIFI}>:src/wifi_internet_task.c>
 )
 
@@ -76,6 +77,7 @@ target_link_libraries(hekate_gateway PRIVATE
 target_include_directories(hekate_gateway 
     PRIVATE 
     src
+    src/sim7020
 )
 
 # enable usb output, disable uart output

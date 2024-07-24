@@ -49,14 +49,14 @@
         "compare": "c",
         "executor": "c",
         "free_rtos_memory.h": "c",
-        "queue.h": "c"
+        "queue.h": "c",
+        "uart.h": "c",
+        "sim7020_hal.h": "c"
     },
-    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/concentrator",
+
     "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/",
 
-    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application/hekate_gateway",
-    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application/gateway_packets_example",
-    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/application/SIM7020",
+    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/applications/sim_state_machine",
     "cmake.ignoreCMakeListsMissing": false,
     "cmake.configureOnOpen": true,
     "cortex-debug.gdbPath": "arm-none-eabi-gdb",

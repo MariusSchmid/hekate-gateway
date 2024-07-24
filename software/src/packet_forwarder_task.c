@@ -38,6 +38,22 @@ static StaticTask_t set_time_task_buffer;
 static char stat_packet[512];
 char rx_packet[1024];
 
+static bool try_to_connect(uint32_t nr_retries)
+{
+    for (size_t i = 0; i < nr_retries; i++)
+    {
+        if (!internet_task_connect(LORA_LNS_IP, UDP_PORT))
+        {
+            log_warn("internet_task_connect failed, retry....");
+        }
+        else
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 static void send_status_packet()
 {
     uint32_t packet_size = 0;
@@ -52,14 +68,24 @@ static void send_status_packet()
         log_error("cant get time_mutex");
     }
     semtech_packet_create_stat(stat_packet, sizeof(stat_packet), &packet_size, &gateway_stats);
-    if (!internet_task_send_udp(stat_packet, packet_size, LORA_LNS_IP, UDP_PORT))
+
+    if (!try_to_connect(3))
     {
-        log_error("internet_task_send_udp");
+        log_error("internet_task_connect failed");
+        return;
     }
-    else
+
+    if (!internet_task_send_udp(stat_packet, packet_size))
     {
-        log_info("sending: %s", &stat_packet[12]);
+        log_error("internet_task_send_udp failed");
+        return;
     }
+    if (!internet_task_disconnect())
+    {
+        log_error("internet_task_disconnect failed");
+        return;
+    }
+    log_info("sending: %s", &stat_packet[12]);
 }
 
 static void send_lora_package(lora_rx_packet_t *packet)
@@ -68,14 +94,12 @@ static void send_lora_package(lora_rx_packet_t *packet)
 
     semtech_packet_create_rxpk(rx_packet, sizeof(rx_packet), &packet_size, packet);
 
-    if (!internet_task_send_udp(stat_packet, packet_size, LORA_LNS_IP, UDP_PORT))
+    if (!internet_task_send_udp(stat_packet, packet_size))
     {
-        log_error("internet_task_send_udp");
+        log_error("internet_task_send_udp failed");
+        return;
     }
-    else
-    {
-        log_info("sending: %s", &rx_packet[12]);
-    }
+    log_info("sending: %s", &rx_packet[12]);
 }
 
 #define QUEUE_LENGTH 64
@@ -113,10 +137,33 @@ static void forwarding_task(void *pvParameters)
             xSemaphoreTake(send_status_sem, 0);
             send_status_packet();
         }
-        if (xQueueReceive(lora_rx_packet_queue, &(lora_rx_packet), 0) == pdPASS)
+        UBaseType_t number_of_packets = uxQueueMessagesWaiting(lora_rx_packet_queue);
+        if (number_of_packets > 0)
         {
-            send_lora_package(&lora_rx_packet);
+            if (!try_to_connect(3))
+            {
+                log_error("internet_task_connect failed");
+            }
+            else
+            {
+                while (true)
+                {
+                    if (xQueueReceive(lora_rx_packet_queue, &(lora_rx_packet), 2000) == pdPASS)
+                    {
+                        send_lora_package(&lora_rx_packet);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            if (!internet_task_disconnect())
+            {
+                log_error("internet_task_disconnect failed");
+            }
         }
+
         vTaskDelay(pdTICKS_TO_MS(1));
     }
 }
@@ -172,7 +219,6 @@ static void init_gateway_config()
 {
     gateway_config.mac_address = mac;
 }
-
 
 void packet_forwarder_print_task_stats(void)
 {
