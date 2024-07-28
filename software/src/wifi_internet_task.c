@@ -13,7 +13,7 @@
 #define WIFI_TIMEOUT_CONNECT_MS 30000
 
 static SemaphoreHandle_t wifi_init_done_sem;
-static volatile bool time_set = false;
+static SemaphoreHandle_t time_callback_sem;
 
 static struct udp_pcb *pcb_rxpt;
 static struct udp_pcb *pcb_status;
@@ -23,12 +23,64 @@ TaskHandle_t wifi_task_handle;
 StackType_t wifi_task_stack[WIFI_TASK_STACK_SIZE_WORDS];
 StaticTask_t wifi_task_buffer;
 
-static set_time_callback_t this_time_callback;
+static ip_addr_t this_ip_addr;
+static uint16_t this_port;
 
-bool internet_task_send_udp(uint8_t *message, uint32_t size, const char *dst_ip, uint16_t port)
+struct tm *this_time;
+
+static void time_set_cb(struct tm time)
 {
-    ip_addr_t addr;
-    if (!ipaddr_aton(dst_ip, &addr))
+    memcpy(this_time, &time, sizeof(struct tm));
+    xSemaphoreGive(time_callback_sem);
+}
+
+static bool trigger_get_time(void)
+{
+    static bool wifi_initialized = false;
+
+    if (!wifi_initialized)
+    {
+        if (xSemaphoreTake(wifi_init_done_sem, WIFI_TIMEOUT_CONNECT_MS) == pdTRUE)
+        {
+            wifi_initialized = true;
+            time_npt_set_time(time_set_cb);
+        }
+        else
+        {
+            log_error("failed to take wifi_init_done_sem");
+            return false;
+        }
+    }
+    else
+    {
+        time_npt_set_time(time_set_cb);
+    }
+    return true;
+}
+
+bool internet_task_get_time(struct tm *time)
+{
+    this_time = time;
+    if (!trigger_get_time())
+    {
+        return false;
+    }
+    if (xSemaphoreTake(time_callback_sem, WIFI_TIMEOUT_CONNECT_MS) == pdTRUE)
+    {
+        return true;
+    }
+    else
+    {
+        log_error("failed to take time_callback_sem");
+        return false;
+    }
+
+    return true;
+}
+
+bool internet_task_connect(const char *dst_ip, uint16_t port)
+{
+    if (!ipaddr_aton(dst_ip, &this_ip_addr))
     {
         log_error("can not convert %s into ip address", dst_ip);
         return false;
@@ -37,20 +89,26 @@ bool internet_task_send_udp(uint8_t *message, uint32_t size, const char *dst_ip,
     {
         log_info("LORA_LNS_IP: %s", dst_ip);
     }
+    this_port = port;
+    return true;
+}
+
+bool internet_task_disconnect(void)
+{
+    return true;
+}
+
+bool internet_task_send_udp(uint8_t *message, uint32_t size)
+{
+
     struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
     memcpy(p->payload, message, size);
-    err_t er = udp_sendto(pcb_status, p, &addr, port);
+    err_t er = udp_sendto(pcb_status, p, &this_ip_addr, this_port);
     pbuf_free(p);
     if (er != ERR_OK)
     {
         log_error("Failed to send send_status_packet packet! error=%d", er);
     }
-}
-
-static void time_set_cb(struct tm time)
-{
-    ENSURE(this_time_callback);
-    this_time_callback(time);
 }
 
 static void wifi_task(void *pvParameters)
@@ -74,8 +132,6 @@ static void wifi_task(void *pvParameters)
         log_info("WiFi connected");
     }
 
-    log_info("start to get NTP Time");
-    // time_npt_set_time(time_set_cb);
     pcb_status = udp_new();
     if (pcb_status == NULL)
     {
@@ -85,6 +141,7 @@ static void wifi_task(void *pvParameters)
     {
         log_info("udp_new for pcb_status successful");
     }
+
     pcb_rxpt = udp_new();
     if (pcb_rxpt == NULL)
     {
@@ -101,37 +158,6 @@ static void wifi_task(void *pvParameters)
         vTaskDelay(pdTICKS_TO_MS(1));
     }
     cyw43_arch_deinit();
-}
-
-bool internet_task_register_time_callback(set_time_callback_t time_callback)
-{
-    ENSURE_RET(time_callback, false);
-    this_time_callback = time_callback;
-}
-
-bool internet_task_trigger_get_time(void)
-{
-    static bool wifi_initialized = false;
-
-    if (!wifi_initialized)
-    {
-        if (xSemaphoreTake(wifi_init_done_sem, WIFI_TIMEOUT_CONNECT_MS) == pdTRUE)
-        {
-            wifi_initialized = true;
-            time_npt_set_time(time_set_cb);
-        }
-        else
-        {
-            log_error("failed to take wifi_init_done_sem");
-            return false;
-        }
-    }
-    else
-    {
-        time_npt_set_time(time_set_cb);
-    }
-
-    return true;
 }
 
 void internet_task_print_task_stats(void)
@@ -159,5 +185,13 @@ bool internet_task_init(void)
     if (!wifi_init_done_sem)
     {
         log_error("xSemaphoreCreateBinary failed: wifi_init_done_sem");
+        return false;
+    }
+
+    time_callback_sem = xSemaphoreCreateBinary();
+    if (!wifi_init_done_sem)
+    {
+        log_error("xSemaphoreCreateBinary failed: time_callback_sem");
+        return false;
     }
 }

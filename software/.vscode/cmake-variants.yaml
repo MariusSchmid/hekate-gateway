@@ -1,11 +1,19 @@
 buildType:
-  default: debug
+  default: SIM
   choices:
-    debug:
-      short: debug
-      long: debug with example
+    SIM:
+      short: SIM
+      long: debug with SIM enabled
       buildType: Debug
       settings:
         PICO_BOARD: pico_w
-        INTERNET_WIFI: OFF
-        INTERNET_SIM: ON
+        INTERNET_WIFI: ON
+        INTERNET_SIM: OFF
+    WIFI:
+      short: WIFI
+      long: debug with WIFI enabled
+      buildType: Debug
+      settings:
+        PICO_BOARD: pico_w
+        INTERNET_WIFI: ON
+        INTERNET_SIM: OFF
