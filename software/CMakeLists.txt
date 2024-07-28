@@ -56,8 +56,10 @@ add_executable(hekate_gateway
     src/packet_forwarder_task.c
     src/time_ntp.c
     src/free_rtos_memory.c
-    $<$<BOOL:${INTERNET_SIM}>:src/sim7020/sim7020_internet_task.c>
+    $<$<BOOL:${INTERNET_SIM}>:src/sim7020/sim7020_state_machine.c>
+    # $<$<BOOL:${INTERNET_SIM}>:src/sim7020/sim7020_internet_task.c>
     $<$<BOOL:${INTERNET_SIM}>:src/sim7020/sim7020_hal.c>
+    $<$<BOOL:${INTERNET_SIM}>:src/sim7020/sim7020.c>
     $<$<BOOL:${INTERNET_WIFI}>:src/wifi_internet_task.c>
 )
 

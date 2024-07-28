@@ -7,8 +7,8 @@
 #define BEACON_MSG_LEN_MAX 1024
 // #define LORA_LNS_IP "192.168.0.113"
 #define LORA_LNS_IP "52.212.223.226"
-#define STATUS_INTERVAL_MS 30000
-#define TIME_INTERVAL_S 60
+#define STATUS_INTERVAL_MS 60000
+#define TIME_INTERVAL_S 60*10
 
 /**
  * @brief Send packket upstream to the LNS

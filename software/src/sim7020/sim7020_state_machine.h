@@ -1,12 +1,18 @@
-#ifndef C61DE8BC_D8FA_4BEE_BB44_C44067BFF756
-#define C61DE8BC_D8FA_4BEE_BB44_C44067BFF756
+
 #ifndef EDA4A5BF_B4E3_4AE5_89A2_437F51148E2F
 #define EDA4A5BF_B4E3_4AE5_89A2_437F51148E2F
+#include <stdint.h>
+#include <stdbool.h>
 
 
-bool sim7020_state_machine_start();
+#include "internet_task_if.h"
+
+// bool sim7020_state_machine_init();
+// bool sim7020_state_machine_send_udp(uint8_t *message, uint32_t size);
+// bool sim7020_state_machine_connect( const char *dst_ip, uint16_t port);
+// bool sim7020_state_machine_disconnect(void);
+// bool sim7020_state_machine_get_time();
+
+// void sim7020_state_print_task_stats(void);
 
 #endif /* EDA4A5BF_B4E3_4AE5_89A2_437F51148E2F */
-
-
-#endif /* C61DE8BC_D8FA_4BEE_BB44_C44067BFF756 */

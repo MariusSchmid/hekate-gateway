@@ -24,6 +24,9 @@ bool sim7020_hal_sim_gpio_init(void);
 
 bool sim7020_hal_init(void);
 
+bool sim7020_hal_sleep_ms(uint32_t ms);
+
+
 #endif /* A16C374F_FD54_42E6_BBFB_74BDDABD7DAF */
 
 #endif /* B2753E96_8A4A_435E_967D_AC895D2ABA3B */

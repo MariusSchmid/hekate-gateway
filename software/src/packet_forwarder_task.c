@@ -35,8 +35,8 @@ static TaskHandle_t set_time_task_handle;
 static StackType_t set_time_task_stack[SET_TIME_TASK_STACK_SIZE_WORDS];
 static StaticTask_t set_time_task_buffer;
 
-static char stat_packet[512];
-char rx_packet[1024];
+
+
 
 static bool try_to_connect(uint32_t nr_retries)
 {
@@ -57,7 +57,7 @@ static bool try_to_connect(uint32_t nr_retries)
 static void send_status_packet()
 {
     uint32_t packet_size = 0;
-
+    static char stat_packet[512];
     if (xSemaphoreTake(time_mutex, 100) == pdTRUE)
     {
         gateway_stats.time = time(NULL);
@@ -91,15 +91,14 @@ static void send_status_packet()
 static void send_lora_package(lora_rx_packet_t *packet)
 {
     uint32_t packet_size = 0;
-
+    char rx_packet[1024];
     semtech_packet_create_rxpk(rx_packet, sizeof(rx_packet), &packet_size, packet);
-
-    if (!internet_task_send_udp(stat_packet, packet_size))
+    log_info("sending: %s", &rx_packet[12]);
+    if (!internet_task_send_udp(rx_packet, packet_size))
     {
         log_error("internet_task_send_udp failed");
         return;
     }
-    log_info("sending: %s", &rx_packet[12]);
 }
 
 #define QUEUE_LENGTH 64
@@ -170,14 +169,14 @@ static void forwarding_task(void *pvParameters)
 
 static bool time_set = false;
 
-static bool set_time_callback(struct tm time)
+static bool set_time(struct tm *time)
 {
     struct timeval now = {0};
     if (xSemaphoreTake(time_mutex, 100) == pdTRUE)
     {
-        log_info("set time: %02d/%02d/%04d %02d:%02d:%02d", time.tm_mday, time.tm_mon + 1, time.tm_year + 1900,
-                 time.tm_hour, time.tm_min, time.tm_sec);
-        now.tv_sec = mktime(&time);
+        log_info("set time: %02d/%02d/%04d %02d:%02d:%02d", time->tm_mday, time->tm_mon + 1, time->tm_year + 1900,
+                 time->tm_hour, time->tm_min, time->tm_sec);
+        now.tv_sec = mktime(time);
         settimeofday(&now, NULL);
         time_set = true;
         xSemaphoreGive(time_mutex);
@@ -194,6 +193,7 @@ static void status_task(void *pvParameters)
 {
     while (1)
     {
+#if 1
         if (time_set)
         {
             if (pdTRUE != xSemaphoreGive(send_status_sem))
@@ -201,17 +201,29 @@ static void status_task(void *pvParameters)
                 log_error("xSemaphoreGive failed: send_status_sem");
             }
         }
+#endif
         vTaskDelay(pdTICKS_TO_MS(STATUS_INTERVAL_MS));
     }
 }
 
 static void set_time_task(void *pvParameters)
 {
-    internet_task_register_time_callback(set_time_callback);
+    struct tm time;
+    // internet_task_register_time_callback(set_time_callback);
     while (1)
     {
-        internet_task_trigger_get_time();
-        vTaskDelay(pdTICKS_TO_MS(TIME_INTERVAL_S * 1000));
+#if 1
+        if (internet_task_get_time(&time))
+        {
+            set_time(&time);
+            vTaskDelay(pdTICKS_TO_MS(TIME_INTERVAL_S * 1000));
+        }
+        else
+        {
+            log_error("failed to get time!");
+            vTaskDelay(pdTICKS_TO_MS(10 * 1000));
+        }
+#endif
     }
 }
 

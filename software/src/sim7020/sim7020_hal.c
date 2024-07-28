@@ -155,7 +155,7 @@ bool sim7020_hal_send_cmd_get_recv(char *cmd, char *expected_result, uint32_t ti
 bool sim7020_hal_send_cmd_check_recv(char *cmd, char *expected_result, uint32_t timeout)
 {
     uart_response_t uart_response;
-    sim7020_hal_send_cmd_get_recv(cmd, expected_result, timeout, uart_response.response,sizeof(uart_response.response));
+    sim7020_hal_send_cmd_get_recv(cmd, expected_result, timeout, uart_response.response, sizeof(uart_response.response));
     return true;
 }
 
@@ -204,4 +204,10 @@ bool sim7020_hal_init(void)
         log_error("create uart_rx_packet_queue  failed");
     }
     return false;
+}
+
+bool sim7020_hal_sleep_ms(uint32_t ms)
+{
+    sleep_ms(ms);
+    return true;
 }
