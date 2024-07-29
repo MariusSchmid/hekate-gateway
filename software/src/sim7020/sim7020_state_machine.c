@@ -102,6 +102,8 @@ static SemaphoreHandle_t get_time_response_sem;
 
 typedef state_t state_func_t(instance_data_t *data);
 
+
+
 static state_t do_state_initialize(instance_data_t *data)
 {
     instance_data.current_state = STATE_INITIALIZE;
@@ -117,12 +119,12 @@ static state_t do_state_initialize(instance_data_t *data)
     }
     if (!sim7020_hal_enable_sim_module())
     {
-        log_error("sim7020_hal_sim_gpio_init failed");
+        log_error("sim7020_hal_enable_sim_module failed");
         return STATE_ERROR;
     }
     if (!sim7020_initialize_sim_module())
     {
-        log_error("sim7020_hal_sim_gpio_init failed");
+        log_error("sim7020_initialize_sim_module failed");
         return STATE_ERROR;
     }
 

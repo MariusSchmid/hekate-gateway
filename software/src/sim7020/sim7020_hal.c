@@ -1,4 +1,5 @@
 #include "sim7020_hal.h"
+#include "hekate_utils.h"
 
 #include "log.h"
 #include "FreeRTOS.h"
@@ -124,7 +125,8 @@ bool wait_for_resp(uint32_t timeout_ms, char *expected_result, char *uart_respon
 
             if (strstr(response_queue_entry.response, expected_result) != NULL)
             {
-                strncat(uart_response, response_queue_entry.response, uart_response_buffer_size - 1);
+                hekate_utils_strcpy_s(uart_response, uart_response_buffer_size, response_queue_entry.response, response_queue_entry.size);
+                hekate_utils_remove_character(uart_response, '\r');
                 return true;
             }
         }
@@ -143,12 +145,13 @@ bool sim7020_hal_send_cmd_get_recv(char *cmd, char *expected_result, uint32_t ti
     }
     printf("S: %s \n", cmd);
     uart_puts(UART_ID, cmd);
+
     if (!wait_for_resp(timeout, expected_result, uart_response, uart_response_buffer_size))
     {
         log_error("%s not found in response for %s", expected_result, cmd);
         return false;
     }
-    // log_info("%s%s", cmd, uart_response->response);
+    // log_info("resp: %s", uart_response);
     return true;
 }
 

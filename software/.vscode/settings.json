@@ -54,12 +54,12 @@
         "sim7020_hal.h": "c",
         "sim7020.h": "c",
         "typeinfo": "c",
-        "sim7020_state_machine.h": "c"
+        "sim7020_state_machine.h": "c",
+        "inttypes.h": "c"
     },
 
-    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/",
-
-    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/applications/sim_state_machine",
+    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/",
+    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/applications/SIM7020_hal",
     "cmake.ignoreCMakeListsMissing": false,
     "cmake.configureOnOpen": true,
     "cortex-debug.gdbPath": "arm-none-eabi-gdb",

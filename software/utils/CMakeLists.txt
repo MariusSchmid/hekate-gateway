@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 project(hekate_utils)
 
-add_library(hekate_utils STATIC "utils.c")
+add_library(hekate_utils STATIC "hekate_utils.c")
 
 target_include_directories(hekate_utils
     PUBLIC 

@@ -54,7 +54,7 @@ bool sim7020_connect(const char *dst_ip, uint16_t port)
     {
         sim7020_disconnect();
         return false;
-    } 
+    }
 
     return true;
 }
@@ -192,4 +192,104 @@ bool sim7020_is_PDP_active(void)
         return true;
     }
     return false;
+}
+
+#include <inttypes.h>
+#include <string.h>
+
+static bool get_info(char *cmd, char *exp_resp, char *dst, uint16_t dst_size)
+{
+    if (!sim7020_hal_send_cmd_get_recv(cmd, exp_resp, 5000, dst, dst_size))
+    {
+        log_error("%s failed", cmd);
+        return false;
+    }
+    hekate_utils_strremove(dst, exp_resp);
+    hekate_utils_remove_character(dst, '\"');
+    return true;
+}
+
+
+#define RXPK_ENTRY_VAL(x, y)                                                 \
+    sprintf_size = snprintf(dst_buffer + msg_cnt, dst_size - msg_cnt, x, y); \
+    msg_cnt += sprintf_size
+#define RXPK_ENTRY(x)                                                     \
+    sprintf_size = snprintf(dst_buffer + msg_cnt, dst_size - msg_cnt, x); \
+    msg_cnt += sprintf_size
+
+
+/*
+    sim7020 status:
+    Current Operator Selection  | AT+COPS?
+    Signal Quality              | AT+CSQ
+    Network registration        | AT+CREG?
+    PLMN List                   | AT+CPLS?
+    PDP Address                 | AT+IPCONFIG
+    EPS Network Registration    | AT+CEREG?
+    Mobile Operation Band       | AT+CBAND?
+    Report Network State        | AT+CENG
+
+    Home Network Information    | AT+CHOMENW?
+
+    Preferred Operator List     | AT+CPOL?
+    Available Operator List     | AT+COPS=?
+    SIM card ID                 | AT+CIMI
+*/
+char response[512];
+bool sim7020_get_information_json(char *dst_buffer, uint16_t dst_size, uint16_t *size)
+{
+    uint32_t sprintf_size = 0;
+    uint32_t msg_cnt = 0;
+    RXPK_ENTRY("{\"sim_status\":{");
+
+    //current operator selected
+    get_info("AT+COPS?\r\n", "+COPS: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"COPS\":\"%s\",", response);
+
+    //Available Operator List
+#if 0 //only partially working
+    get_info("AT+COPS=?\r\n", "+COPS: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"ALL_COPS\":\"%s\",", response);
+#endif
+
+    //Signal quality
+    get_info("AT+CSQ\r\n", "+CSQ: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"CSQ\":\"%s\",", response);
+
+    //Preferred Operator List
+#if 0 //not supported
+    get_info("AT+CPOL?\r\n", "+CPOL: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"CPOL\":\"%s\",", response);
+#endif
+
+    //Network registration
+    get_info("AT+CREG?\r\n", "+CREG: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"CREG\":\"%s\",", response);
+    
+    //PLMN List
+    get_info("AT+CPLS?\r\n", "+CPLS: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"CPLS\":\"%s\",", response);        
+    
+    //PDP Address
+    get_info("AT+IPCONFIG\r\n", "+IPCONFIG: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"IPCONFIG\":\"%s\",", response);
+
+    //EPS Network Registration
+    get_info("AT+CEREG?\r\n", "+CEREG: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"CEREG\":\"%s\",", response);    
+
+    //Mobile Operation Band
+    get_info("AT+CBAND?\r\n", "+CBAND: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"CBAND\":\"%s\",", response);
+
+    //Report Network State
+    get_info("AT+CENG?\r\n", "+CENG: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"CENG\":\"%s\",", response);
+
+    //Home Network Information
+    get_info("AT+CHOMENW?\r\n", "+CHOMENW: ", response, sizeof(response));
+    RXPK_ENTRY_VAL("\"CHOMENW\":\"%s\"", response);    
+
+    RXPK_ENTRY("}");
+    return true;
 }
