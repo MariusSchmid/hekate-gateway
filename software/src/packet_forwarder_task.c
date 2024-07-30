@@ -1,4 +1,5 @@
 #include "packet_forwarder_task.h"
+#include "application_config.h"
 #include "semtech_packet.h"
 #include "internet_task_if.h"
 #include "free_rtos_memory.h"
@@ -35,14 +36,11 @@ static TaskHandle_t set_time_task_handle;
 static StackType_t set_time_task_stack[SET_TIME_TASK_STACK_SIZE_WORDS];
 static StaticTask_t set_time_task_buffer;
 
-
-
-
 static bool try_to_connect(uint32_t nr_retries)
 {
     for (size_t i = 0; i < nr_retries; i++)
     {
-        if (!internet_task_connect(LORA_LNS_IP, UDP_PORT))
+        if (!internet_task_connect(LORA_LNS_IP, LORA_LNS_PORT))
         {
             log_warn("internet_task_connect failed, retry....");
         }
@@ -202,7 +200,7 @@ static void status_task(void *pvParameters)
             }
         }
 #endif
-        vTaskDelay(pdTICKS_TO_MS(STATUS_INTERVAL_MS));
+        vTaskDelay(pdTICKS_TO_MS(LORA_STATUS_INTERVAL_MINUTES * 60 * 1000));
     }
 }
 
@@ -216,7 +214,7 @@ static void set_time_task(void *pvParameters)
         if (internet_task_get_time(&time))
         {
             set_time(&time);
-            vTaskDelay(pdTICKS_TO_MS(TIME_INTERVAL_S * 1000));
+            vTaskDelay(pdTICKS_TO_MS(SNTP_INTERVAL_MINUTES * 60 * 1000));
         }
         else
         {

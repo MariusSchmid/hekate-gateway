@@ -3,11 +3,6 @@
 
 #include "concentrator_types.h"
 
-#define UDP_PORT 1700
-#define BEACON_MSG_LEN_MAX 1024
-#define LORA_LNS_IP "52.212.223.226"
-#define STATUS_INTERVAL_MS 1000*30
-#define TIME_INTERVAL_S 60*1
 
 /**
  * @brief Send packket upstream to the LNS

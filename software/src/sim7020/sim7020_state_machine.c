@@ -1,4 +1,5 @@
 #include "sim7020_state_machine.h"
+#include "application_config.h"
 #include "sim7020.h"
 #include "sim7020_hal.h"
 #include "free_rtos_memory.h"
@@ -386,7 +387,7 @@ static void status_task(void *pvParameters)
 
     while (1)
     {
-        vTaskDelay(pdMS_TO_TICKS(1000 * 60 * STATUS_INTERVAL_MIN));
+        vTaskDelay(pdMS_TO_TICKS(1000 * 60 * STATUS_INTERVAL_MINUTES));
         if (pdTRUE != xSemaphoreGive(send_status_sem))
         {
             log_warn("xSemaphoreGive event_received_sem failed");
