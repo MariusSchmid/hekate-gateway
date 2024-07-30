@@ -9,6 +9,7 @@
       "type": "cortex-debug",
       "servertype": "openocd",
       "gdbPath": "arm-none-eabi-gdb",
+      "ipAddress": "127.0.0.1",
       "openOCDLaunchCommands": ["adapter speed 5000"],
       "device": "RP2040",
       "showDevDebugOutput":"raw",

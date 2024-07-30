@@ -16,7 +16,7 @@
 #include "log.h"
 
 #define WAIT_FOR_CDC 1        /* Wait for USB serial connectivity before continue*/
-#define ENABLE_LORA_TASK 1      /* Start Lora Task*/
+#define ENABLE_LORA_TASK 1    /* Start Lora Task*/
 #define ENABLE_PKT_FWD 1      /* Start Packet forwarder task*/
 #define ENABLE_MEMORY_STATS 0 /* print memory stats */
 

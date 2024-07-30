@@ -58,8 +58,8 @@
         "inttypes.h": "c"
     },
 
-    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/",
-    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/applications/SIM7020_hal",
+    "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/",
+    // "cmake.sourceDirectory": "/workspaces/hekate-gateway/software/applications/SIM7020_hal",
     "cmake.ignoreCMakeListsMissing": false,
     "cmake.configureOnOpen": true,
     "cortex-debug.gdbPath": "arm-none-eabi-gdb",

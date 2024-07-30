@@ -28,15 +28,17 @@ endif()
 
 
 
-
-
-
 # initialize the Raspberry Pi Pico SDK
 set(PICO_SDK_PATH /home/dev/pico-sdk/)
 include(src/pico_sdk_import.cmake)
 pico_sdk_init()
 
+
 project(hekate_gateway)
+
+
+
+
 
 add_subdirectory(utils)
 add_subdirectory(concentrator)

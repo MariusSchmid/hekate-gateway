@@ -9,15 +9,16 @@
 
 #include <string.h>
 
-#define FOREACH_STATE(STATE)  \
-    STATE(STATE_INITIALIZE)   \
-    STATE(STATE_ENABLE_GPRS)  \
-    STATE(STATE_GET_TIME)     \
-    STATE(STATE_CONNECT)      \
-    STATE(STATE_SENDING_DATA) \
-    STATE(STATE_DISCONNECT)   \
-    STATE(STATE_WAIT)         \
-    STATE(STATE_ERROR)        \
+#define FOREACH_STATE(STATE)    \
+    STATE(STATE_INITIALIZE)     \
+    STATE(STATE_ENABLE_GPRS)    \
+    STATE(STATE_GET_TIME)       \
+    STATE(STATE_CONNECT)        \
+    STATE(STATE_SENDING_DATA)   \
+    STATE(STATE_SENDING_STATUS) \
+    STATE(STATE_DISCONNECT)     \
+    STATE(STATE_WAIT)           \
+    STATE(STATE_ERROR)          \
     STATE(NUM_STATES)
 
 #define GENERATE_ENUM(ENUM) ENUM,
@@ -36,6 +37,13 @@ TaskHandle_t state_machine_task_handle;
 #define STATE_MACHINE_TASK_STACK_SIZE_WORDS 1024
 StackType_t state_machine_task_stack[STATE_MACHINE_TASK_STACK_SIZE_WORDS];
 StaticTask_t state_machine_task_buffer;
+
+TaskHandle_t status_task_handle;
+#define STATUS_TASK_STACK_SIZE_WORDS 1024
+StackType_t status_task_stack[STATUS_TASK_STACK_SIZE_WORDS];
+StaticTask_t status_task_buffer;
+
+static SemaphoreHandle_t send_status_sem;
 
 static SemaphoreHandle_t state_machine_mutex;
 
@@ -102,7 +110,7 @@ static SemaphoreHandle_t get_time_response_sem;
 
 typedef state_t state_func_t(instance_data_t *data);
 
-
+#define MUTEX_WAIT_TIME_MS 60000
 
 static state_t do_state_initialize(instance_data_t *data)
 {
@@ -299,7 +307,48 @@ static state_t do_state_wait(instance_data_t *data)
     {
         return STATE_GET_TIME;
     }
+    if (pdTRUE == xSemaphoreTake(send_status_sem, 0))
+    {
+        return STATE_SENDING_STATUS;
+    }
     vTaskDelay(pdMS_TO_TICKS(1000));
+    return STATE_WAIT;
+}
+
+static state_t do_state_sending_status(instance_data_t *data)
+{
+    char status_buffer[512];
+    uint16_t msg_length;
+    state_t current_state = instance_data.current_state;
+    if (current_state != STATE_CONNECT && current_state != STATE_WAIT)
+    {
+        log_error("Cant transition from %s to %s", STATE_STRING[current_state], STATE_STRING[STATE_CONNECT]);
+        return STATE_ERROR;
+    }
+    if (!sim7020_get_information_json(status_buffer, sizeof(status_buffer), &msg_length))
+    {
+        log_error("sim7020_get_information_json failed");
+    }
+
+    if (!sim7020_connect(STATUS_SERVER_IP, STATUS_SERVER_PORT))
+    {
+        log_error("sim7020_connect failed to %s:%d", STATUS_SERVER_IP, STATUS_SERVER_PORT);
+        return STATE_ERROR;
+    }
+
+    if (sim7020_send_udp(status_buffer, msg_length))
+    {
+        log_info("sim7020_send_udp OK for status buffer");
+    }
+    else
+    {
+        log_error("sim7020_send_udp status buffer failed ");
+    }
+
+    if (!sim7020_disconnect())
+    {
+        log_warn("sim7020_disconnect failed");
+    }
     return STATE_WAIT;
 }
 
@@ -309,6 +358,7 @@ state_func_t *const state_table[NUM_STATES] = {
     do_state_get_time,
     do_state_connecting,
     do_state_sending_data,
+    do_state_sending_status,
     do_state_disconnecting,
     do_state_wait,
     do_state_error,
@@ -331,10 +381,23 @@ static void state_machine_task(void *pvParameters)
     }
 }
 
+static void status_task(void *pvParameters)
+{
+
+    while (1)
+    {
+        vTaskDelay(pdMS_TO_TICKS(1000 * 60 * STATUS_INTERVAL_MIN));
+        if (pdTRUE != xSemaphoreGive(send_status_sem))
+        {
+            log_warn("xSemaphoreGive event_received_sem failed");
+        }
+    }
+}
+
 bool internet_task_send_udp(uint8_t *message, uint32_t size)
 {
     bool result = false;
-    if (xSemaphoreTake(state_machine_mutex, pdMS_TO_TICKS(1000 * 10)) == pdTRUE)
+    if (xSemaphoreTake(state_machine_mutex, pdMS_TO_TICKS(MUTEX_WAIT_TIME_MS)) == pdTRUE)
     {
 
         udp_request.udp_message = message;
@@ -367,7 +430,7 @@ bool internet_task_send_udp(uint8_t *message, uint32_t size)
 bool internet_task_connect(const char *dst_ip, uint16_t port)
 {
     bool result = false;
-    if (xSemaphoreTake(state_machine_mutex, pdMS_TO_TICKS(1000 * 10)) == pdTRUE)
+    if (xSemaphoreTake(state_machine_mutex, pdMS_TO_TICKS(MUTEX_WAIT_TIME_MS)) == pdTRUE)
     {
         connect_request.ip = dst_ip;
         connect_request.port = port;
@@ -397,7 +460,7 @@ bool internet_task_connect(const char *dst_ip, uint16_t port)
 bool internet_task_disconnect(void)
 {
     bool result = false;
-    if (xSemaphoreTake(state_machine_mutex, pdMS_TO_TICKS(1000 * 10)) == pdTRUE)
+    if (xSemaphoreTake(state_machine_mutex, pdMS_TO_TICKS(MUTEX_WAIT_TIME_MS)) == pdTRUE)
     {
         if (pdTRUE != xSemaphoreGive(disconnect_request_sem))
         {
@@ -477,6 +540,7 @@ bool internet_task_init()
     CREATE_SEMAPHORE(disconnect_respone_sem);
     CREATE_SEMAPHORE(get_time_request_sem);
     CREATE_SEMAPHORE(get_time_response_sem);
+    CREATE_SEMAPHORE(send_status_sem);
 
     state_machine_task_handle = xTaskCreateStatic(state_machine_task,
                                                   "STATE_MACHINE_TASK",
@@ -491,6 +555,22 @@ bool internet_task_init()
         log_error("xTaskCreate failed: sending_task");
         return false;
     }
+
+#if 0
+    status_task_handle = xTaskCreateStatic(status_task,
+                                           "STATUS_TASK",
+                                           STATUS_TASK_STACK_SIZE_WORDS,
+                                           NULL,
+                                           1,
+                                           status_task_stack,
+                                           &status_task_buffer);
+
+    if (status_task_handle == NULL)
+    {
+        log_error("xTaskCreate failed: sending_task");
+        return false;
+    }
+#endif
 
     if (!sim7020_hal_init())
     {

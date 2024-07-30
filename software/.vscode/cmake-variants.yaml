@@ -7,8 +7,8 @@ buildType:
       buildType: Debug
       settings:
         PICO_BOARD: pico_w
-        INTERNET_WIFI: ON
-        INTERNET_SIM: OFF
+        INTERNET_WIFI: OFF
+        INTERNET_SIM: ON
     WIFI:
       short: WIFI
       long: debug with WIFI enabled

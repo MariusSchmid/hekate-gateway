@@ -7,6 +7,10 @@
 
 #include "internet_task_if.h"
 
+#define STATUS_SERVER_IP "45.83.104.74"
+#define STATUS_SERVER_PORT 7074
+#define STATUS_INTERVAL_MIN 2
+
 // bool sim7020_state_machine_init();
 // bool sim7020_state_machine_send_udp(uint8_t *message, uint32_t size);
 // bool sim7020_state_machine_connect( const char *dst_ip, uint16_t port);

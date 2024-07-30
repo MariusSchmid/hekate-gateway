@@ -129,6 +129,10 @@ bool wait_for_resp(uint32_t timeout_ms, char *expected_result, char *uart_respon
                 hekate_utils_remove_character(uart_response, '\r');
                 return true;
             }
+            if (strstr(response_queue_entry.response, "CME ERROR") != NULL)
+            {
+                return false;
+            }
         }
         timeout_cnt += 100;
     }
