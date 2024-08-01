@@ -373,11 +373,16 @@ state_t run_state(state_t cur_state, instance_data_t *data)
 static void state_machine_task(void *pvParameters)
 {
     next_state = STATE_INITIALIZE;
+    state_t last_state = STATE_ERROR;
     instance_data.current_state = STATE_INITIALIZE;
     while (1)
     {
 
-        log_info("next_state: %s", STATE_STRING[next_state]);
+        if (last_state != next_state)
+        {
+            log_info("next_state: %s", STATE_STRING[next_state]);
+            last_state = next_state;
+        }
         next_state = run_state(next_state, &instance_data);
     }
 }

@@ -6,7 +6,7 @@
 /* Port to the lora LNS (e.g TTN )*/
 #define LORA_LNS_PORT 1700
 /* How often send the gateway status to the lora lns*/
-#define LORA_STATUS_INTERVAL_MINUTES 2
+#define LORA_STATUS_INTERVAL_MINUTES 5
 
 
 /* Intervall to sync the pico time with sntp time*/
